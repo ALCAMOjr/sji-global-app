@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3000/api') + '/expedientes/create';
 
-export default async function createExpediente({ Numero, Nombre, URL, Expediente,  token }) {
+export default async function createExpediente({ numero, nombre, url, expediente,  token }) {
     try {
         const config = {
             headers: {
@@ -12,10 +12,10 @@ export default async function createExpediente({ Numero, Nombre, URL, Expediente
         };
 
         const response = await axios.post(baseUrl, {
-            Numero,
-            Nombre,
-            URL,
-            Expediente,
+            numero,
+            nombre,
+            url,
+            expediente,
         }, config);
 
         if (response.status !== 200) {

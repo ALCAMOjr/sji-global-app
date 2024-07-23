@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import TableComponent from './Table.jsx';
+import TableExpedientes from './Table.jsx';
 import Cards from './Cards.jsx'; 
-
+import TableEdit from './prueba..jsx';
 const TableConditional = ({
     currentExpedientes,
     currentPage,
     totalPages,
-    onPageChange,
+    handleChangePage,
+    handleChangeRowsPerPage,
     handleMenuToggle,
     isOpen,
     openMenuIndex,
@@ -35,11 +36,12 @@ const TableConditional = ({
     }, []);
 
     return shouldRenderTable ? (
-        <TableComponent
+        <TableEdit
            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
             handleMenuToggle={handleMenuToggle}
             isOpen={isOpen}
             openMenuIndex={openMenuIndex}
@@ -54,7 +56,8 @@ const TableConditional = ({
            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            handleChangePage={handleChangePage}
+            handleChangeRowsPerPage={handleChangeRowsPerPage}
             handleMenuToggle={handleMenuToggle}
             isOpen={isOpen}
             openMenuIndex={openMenuIndex}

@@ -13,7 +13,7 @@ import user from "../assets/user.png"
 import logo2 from "../assets/sji.png";
 import Abogados from './Abogados/Abogado.jsx';
 import expedientelogo from "../assets/expedientes.png"
-// import Expedientes from './Expediente/Expedientes.jsx';
+import Expedientes from './Expediente/Expedientes.jsx';
 function Dashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { jwt } = useContext(Context);
@@ -192,7 +192,7 @@ function Dashboard() {
             <div className="mt-40">
                     {isHomeActive && <Home />}
                     {isAbogadosActive && <Abogados />} 
-                    {isExpedienteActive && <Abogados />} 
+                    {isExpedienteActive && <Expedientes />} 
                 </div>
             </div>
 

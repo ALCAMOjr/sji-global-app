@@ -8,12 +8,13 @@ import ProtectedRoute from "./components/middleware/ProtectedRoute.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
+import { ProviderModal } from './components/Expediente/ContextModal.jsx';
 
 function App() {
   return (
     <NextUIProvider>
 
-
+<ProviderModal>
           <UserContextProvider>
             <ToastContainer />
             <Routes>
@@ -25,6 +26,7 @@ function App() {
               } />
             </Routes>
           </UserContextProvider>
+          </ProviderModal>
     </NextUIProvider>
   );
 }

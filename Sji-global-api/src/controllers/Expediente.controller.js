@@ -1,20 +1,19 @@
-import { pool } from "../db.js"
-import bcryptjs from 'bcryptjs'
-import jsonwebtoken from 'jsonwebtoken'
-import dotenv from 'dotenv'
+import { pool } from "../db.js";
+import bcryptjs from 'bcryptjs';
+import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-dotenv.config()
- 
+dotenv.config();
+
 export const createExpediente = async (req, res) => {
     try {
-        let { Numero, Nombre, URL, Expediente } = req.body;
+        let { numero, nombre, url, expediente } = req.body;
         const { userId } = req;
 
-       
-        Numero = parseInt(Numero, 10);
+        numero = parseInt(numero, 10);
 
-        if (!Numero || !Nombre) {
-            return res.status(400).send({ error: 'Missing required fields: Numero and Nombre are required.' });
+        if (!numero || !nombre) {
+            return res.status(400).send({ error: 'Missing required fields: numero and nombre are required.' });
         }
 
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
@@ -27,12 +26,12 @@ export const createExpediente = async (req, res) => {
         }
 
         const [result] = await pool.query(
-            'INSERT INTO expTribunalA (Numero, Nombre, URL, Expediente) VALUES (?, ?, ?, ?)',
-            [Numero, Nombre, URL, Expediente]
+            'INSERT INTO expTribunalA (numero, nombre, url, expediente) VALUES (?, ?, ?, ?)',
+            [numero, nombre, url, expediente]
         );
 
         const newExpedienteId = result.insertId;
-        const [newExpediente] = await pool.query('SELECT * FROM expTribunalA WHERE Id = ?', [newExpedienteId]);
+        const [newExpediente] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [newExpedienteId]);
         if (newExpediente.length > 0) {
             res.status(200).send(newExpediente[0]);
         } else {
@@ -43,7 +42,6 @@ export const createExpediente = async (req, res) => {
         res.status(500).send({ error: 'An error occurred while creating the expediente' });
     }
 };
-
 
 export const getAllExpedientes = async (req, res) => {
     try {
@@ -64,7 +62,6 @@ export const getAllExpedientes = async (req, res) => {
     }
 };
 
-
 export const getExpedienteById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -77,7 +74,7 @@ export const getExpedienteById = async (req, res) => {
         if (user.user_type !== 'coordinador') {
             return res.status(403).send({ error: 'Unauthorized' });
         }
-        const [expedientes] = await pool.query('SELECT * FROM expTribunalA WHERE Id = ?', [id]);
+        const [expedientes] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [id]);
         if (expedientes.length > 0) {
             res.status(200).send(expedientes[0]);
         } else {
@@ -89,11 +86,10 @@ export const getExpedienteById = async (req, res) => {
     }
 };
 
-
 export const updateExpediente = async (req, res) => {
     try {
         const { id } = req.params;
-        let { Numero, Nombre, URL, Expediente } = req.body;
+        let { numero, nombre, url, expediente } = req.body;
         const { userId } = req;
 
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
@@ -105,30 +101,27 @@ export const updateExpediente = async (req, res) => {
             return res.status(403).send({ error: 'Unauthorized' });
         }
 
-        const [existingExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE Id = ?', [id]);
+        const [existingExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [id]);
         if (existingExpedientes.length <= 0) {
             return res.status(404).send({ error: 'Expediente not found' });
         }
 
- 
         const [result] = await pool.query(
-            'UPDATE expTribunalA SET Numero = IFNULL(?, Numero), Nombre = IFNULL(?, Nombre), URL = IFNULL(?, URL), Expediente = IFNULL(?, Expediente) WHERE Id = ?',
-            [Numero, Nombre, URL, Expediente, id]
+            'UPDATE expTribunalA SET numero = IFNULL(?, numero), nombre = IFNULL(?, nombre), url = IFNULL(?, url), expediente = IFNULL(?, expediente) WHERE id = ?',
+            [numero, nombre, url, expediente, id]
         );
 
-    
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Failed to update expediente' });
         }
 
-        const [updatedExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE Id = ?', [id]);
+        const [updatedExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [id]);
         res.status(200).send(updatedExpedientes[0]);
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'An error occurred while updating the expediente' });
     }
 };
-
 
 export const deleteExpediente = async (req, res) => {
     try {
@@ -143,12 +136,12 @@ export const deleteExpediente = async (req, res) => {
             return res.status(403).send({ error: 'Unauthorized' });
         }
 
-        const [existingExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE Id = ?', [id]);
+        const [existingExpedientes] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [id]);
         if (existingExpedientes.length <= 0) {
             return res.status(404).send({ error: 'Expediente not found' });
         }
 
-        const [result] = await pool.query('DELETE FROM expTribunalA WHERE Id = ?', [id]);
+        const [result] = await pool.query('DELETE FROM expTribunalA WHERE id = ?', [id]);
 
         if (result.affectedRows <= 0) {
             return res.status(404).send({ error: 'Failed to delete expediente' });
@@ -160,4 +153,3 @@ export const deleteExpediente = async (req, res) => {
         res.status(500).send({ error: 'An error occurred while deleting the expediente' });
     }
 };
-

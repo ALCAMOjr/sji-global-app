@@ -26,7 +26,6 @@ CREATE TABLE expTribunalA (
     Nombre VARCHAR(255),
     URL VARCHAR(255),
     Expediente VARCHAR(50),
-    NumeroExp INT NOT NULL,
     Juzgado VARCHAR(50),
     Juicio VARCHAR(100),
     Ubicacion VARCHAR(150),

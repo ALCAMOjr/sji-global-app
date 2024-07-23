@@ -13,6 +13,7 @@ import user from "../assets/user.png"
 import logo2 from "../assets/sji.png";
 import Abogados from './Abogados/Abogado.jsx';
 import expedientelogo from "../assets/expedientes.png"
+import tasklogo from "../assets/task.png"
 import Expedientes from './Expediente/Expedientes.jsx';
 function Dashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,6 +26,7 @@ function Dashboard() {
     const [isHomeActive, setIsHomeActive] = useState(true);
     const [isAbogadosActive, setIsAbogadosActive] = useState(false);
     const [isExpedienteActive, setIsExpedienteActive] = useState(false);
+    const [isTaskActive, setIsTaskActive] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -50,19 +52,39 @@ function Dashboard() {
         setIsHomeActive(true); 
         setIsAbogadosActive(false); 
         setIsExpedienteActive(false); 
-
+        setIsTaskActive(false)
     };
 
     const handleAbogadosClick = () => {
         setIsHomeActive(false); 
         setIsAbogadosActive(true); 
         setIsExpedienteActive(false); 
+        setIsTaskActive(false)
     };
 
     const handleExpedienteClick = () => {
         setIsHomeActive(false); 
         setIsAbogadosActive(false); 
         setIsExpedienteActive(true); 
+        setIsTaskActive(false)
+    };
+
+    const handleTaskClick = () => {
+        setIsHomeActive(false); 
+        setIsAbogadosActive(false); 
+        setIsExpedienteActive(false); 
+        setIsTaskActive(true)
+    };
+
+
+
+
+    const handleDynamicClick = () => {
+        if (userType === 'coordinador') {
+            handleExpedienteClick();
+        } else if (userType === 'abogado') {
+            handleTaskClick();
+        }
     };
 
     useEffect(() => {
@@ -179,20 +201,28 @@ function Dashboard() {
                             )}
                         </li>
                         <li>
+                            <a className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${isTaskActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`} onClick={handleTaskClick}>
+                            <img src={tasklogo} className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                            <span className="ms-3">Tareas</span>
+                            </a>
+                        </li>
+                        <li>
                             <a onClick={handleLogout} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <CgLogOut className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="flex-1 ms-3 whitespace-nowrap">Cerrar sesión</span>
                             </a>
                         </li>
+                  
 
                     </ul>
                 </div>
             </aside>
             <div className="flex justify-center items-center h-full">
             <div className="mt-40">
-                    {isHomeActive && <Home handleExpedienteClick={handleExpedienteClick} />}
+                    {isHomeActive && <Home handleDynamicClick={handleDynamicClick}  />}
                     {isAbogadosActive && <Abogados />} 
                     {isExpedienteActive && <Expedientes />} 
+                    {isTaskActive && <Home />} 
                 </div>
             </div>
 

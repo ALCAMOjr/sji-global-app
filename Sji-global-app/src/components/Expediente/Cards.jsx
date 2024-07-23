@@ -9,13 +9,41 @@ import { MdCall } from "react-icons/md";
 import { Pagination } from "flowbite-react";
 
 
+const customTheme = {
+    pagination: {
+      base: "flex overflow-x-auto justify-center",
+      layout: {
+        table: {
+          base: "text-sm text-gray-700 dark:text-gray-400",
+          span: "font-semibold text-gray-900 dark:text-white"
+        }
+      },
+      pages: {
+        base: "xs:mt-0 mt-2 inline-flex items-center -space-x-px",
+        showIcon: "inline-flex",
+        previous: {
+          base: "ml-0 rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 enabled:hover:bg-gray-100 enabled:hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 enabled:dark:hover:bg-gray-700 enabled:dark:hover:text-white",
+          icon: "h-5 w-5"
+        },
+        next: {
+          base: "rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 enabled:hover:bg-gray-100 enabled:hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 enabled:dark:hover:bg-gray-700 enabled:dark:hover:text-white",
+          icon: "h-5 w-5"
+        },
+        selector: {
+          base: "w-12 border border-gray-300 bg-white py-2 leading-tight text-gray-500 enabled:hover:bg-gray-100 enabled:hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 enabled:dark:hover:bg-gray-700 enabled:dark:hover:text-white",
+          active: "bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white",
+          disabled: "cursor-not-allowed opacity-50"
+        }
+      }
+    }
+  };
 
-const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, setOpenMenuIndex, setIsOpen, currentPage, totalPages,  onPageChange, handleChangePage, handleChangeRowsPerPage, }) => {
+
+const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, setOpenMenuIndex, setIsOpen, currentPage, totalPages,  onPageChange, handleChangePage}) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
     const { openModalViewAllContext, closeModalViewAllContext } = useContext(ModalContext);
 
-    console.log(currentPage, totalPages,  handleChangePage)
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
@@ -69,7 +97,7 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                             </h5>
                             <a
                                 onClick={() => OpenModal(expediente)}
-                                className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 cursor-pointer"
+                                className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                             >
                                 Ver todo
                             </a>
@@ -137,8 +165,17 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
             ))}
         </div>
         <div className="flex overflow-x-auto justify-center">
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
-        </div>
+        <Pagination
+          theme={customTheme.pagination}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          labelRowsPerPage="Filas por página:"
+          showIcons
+        />
+      </div>
             {showModal && (
                 <div id="timeline-modal" tabIndex="-1" aria-hidden="true" className="fixed inset-0 z-50 overflow-y-auto bg-gray-800 bg-opacity-50 flex justify-center items-center">
                     <div className="relative p-4 w-full max-w-md">

@@ -102,6 +102,7 @@ const TableExpedientes = ({
                 page={currentPage}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage="Filas por página:"
             />
         </div>
     );
@@ -161,11 +162,11 @@ const Row = ({
                         <div className={`absolute right-0 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options ${menuDirection}`} style={{ zIndex: 9999, bottom: menuDirection === 'up' ? (index === currentExpedientes.length - 1 ? '2cm' : index === currentExpedientes.length - 2 ? '4cm' : 'initial') : 'initial' }}>
                             <ul>
                                 <li className="flex items-center">
-                                    <GrUpdate className="inline-block ml-8" />
+                                    <GrUpdate className="inline-block ml-8 w-4 h-4" />
                                     <a onClick={() => openModalUpdate(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Actualizar Expediente</a>
                                 </li>
                                 <li className="flex items-center">
-                                    <IoTrash className="inline-block ml-8" />
+                                    <IoTrash className="inline-block ml-8 w-4 h-4" />
                                     <a onClick={() => openModalDelete(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar Expediente</a>
                                 </li>
                             </ul>

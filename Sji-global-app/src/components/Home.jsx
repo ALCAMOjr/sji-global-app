@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function Home({handleExpedienteClick}) {
+function Home({handleDynamicClick}) {
 
   const motivationalPhrases = [
     "La justicia está de tu lado. Nosotros también.",
@@ -22,7 +22,7 @@ function Home({handleExpedienteClick}) {
     <section className="bg-white text-start justify-center ml-0 lg:-ml-64 xl:-ml-72">
       <div className="py-8 px-4 max-w-screen-xl text-center lg:py-16 z-10 relative container xs:mx-auto sm:mx-auto md:mx-auto lg:mx-36 xl:mx-64 lg:pl-80">
         <button
-          onClick={handleExpedienteClick}
+          onClick={handleDynamicClick}
           className="inline-flex justify-between items-center py-1 px-1 pe-4 mb-7 text-sm text-primary bg-primary/30 rounded-full dark:bg-blue-900 dark:text-blue-300 hover:bg-primary/40 dark:hover:bg-blue-800 sm:text-xs md:text-sm"
         >
           <span className="text-xs bg-primary rounded-full text-white px-4 py-1.5 me-3">¡Confía en nosotros!</span>
@@ -37,7 +37,7 @@ function Home({handleExpedienteClick}) {
         <form className="w-full max-w-md mx-auto sm:w-full md:w-3/4 lg:w-1/2">
           <div className="relative">
             <button
-               onClick={handleExpedienteClick}
+         onClick={handleDynamicClick}
               className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-primary hover:bg-primary/80 focus:ring-4 focus:ring-primary/80 dark:focus:ring-blue-900 sm:text-sm md:text-base"
             >
               Comenzar

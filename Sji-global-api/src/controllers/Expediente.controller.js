@@ -86,6 +86,31 @@ export const getExpedienteById = async (req, res) => {
     }
 };
 
+export const getExpedientesByNumero = async (req, res) => {
+    try {
+        const { numero } = req.params;
+        const { userId } = req;
+        const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
+        if (users.length <= 0) {
+            return res.status(400).send({ error: 'Invalid user id' });
+        }
+        const user = users[0];
+        if (user.user_type !== 'coordinador') {
+            return res.status(403).send({ error: 'Unauthorized' });
+        }
+
+        const [expedientes] = await pool.query('SELECT * FROM expTribunalA WHERE numero = ?', [numero]);
+        if (expedientes.length > 0) {
+            res.status(200).send(expedientes[0]);
+        } else {
+            res.status(404).send({ error: 'Expediente not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred while retrieving the expediente' });
+    }
+};
+
 export const updateExpediente = async (req, res) => {
     try {
         const { id } = req.params;

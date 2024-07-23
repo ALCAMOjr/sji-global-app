@@ -10,11 +10,12 @@ import { Pagination } from "flowbite-react";
 
 
 
-const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, setOpenMenuIndex, setIsOpen, currentPage, totalPages,  handleChangePage, handleChangeRowsPerPage, }) => {
+const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, setOpenMenuIndex, setIsOpen, currentPage, totalPages,  onPageChange, handleChangePage, handleChangeRowsPerPage, }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
     const { openModalViewAllContext, closeModalViewAllContext } = useContext(ModalContext);
 
+    console.log(currentPage, totalPages,  handleChangePage)
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
@@ -45,101 +46,105 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
         closeModalViewAllContext()
     }
 
-    const truncateText = (text, maxLength) => {
-        if (text.length > maxLength) {
-            return text.substring(0, maxLength) + '...';
-        }
-        return text;
-    };
+
 
 
 
     return (
         <div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem', marginBottom: '15rem', marginTop: '-1rem', overflow: 'auto' }}>
-                {currentExpedientes.map((expediente, index) => (
-                    <div>
-                        <Card key={index} className="sm:max-w-xs bg-white text-black transform transition duration-500 ease-in-out hover:scale-105" style={{ width: '100%', maxWidth: '18rem', marginBottom: '5cm', margin: '1rem' }}>
-                            <div className="mb-4 flex items-center justify-between">
-                                <button id="menu-button"
-                                    onClick={() => handleMenuToggle(index)}
-                                    className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 "
-                                >
-                                    <RxHamburgerMenu />
-                                </button>
-                                <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-                                    Expediente  #{expediente.numero}
-                                </h5>
-                                <a
-
-                                    onClick={() => OpenModal(expediente)}
-                                    className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-                                >
-                                    Ver todo
-                                </a>
-
-                            </div>
-                            {openMenuIndex === index && (
-                                <div className={`absolute right-13 bg-white mt-1 py-2 w-48 border rounded-lg shadow-lg menu-options`}>
-                                    <ul>
-                                        <li className="flex items-center">
-                                            <GrUpdate className="inline-block ml-8" />
-                                            <a onClick={() => openModalUpdate(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Actualizar expediente</a>
-                                        </li>
-                                        <li className="flex items-center">
-                                            <IoTrash className="inline-block ml-8" />
-                                            <a onClick={() => openModalDelete(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar expediente</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            )}
-
-                            <div className="flow-root">
-                                <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                                    <li className="py-3 sm:py-4">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="shrink-0"></div>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                                                    Nombre: {expediente.nombre}
-                                                </p>
-                                                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                                                    URL: {expediente.url}
-                                                </p>
-                                                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                                                    Expediente: {expediente.expediente}
-                                                </p>
-                                                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                                                    Juzgado: {expediente.juzgado}
-                                                </p>
-                                                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                                                    Juicio: {expediente.juicio}
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Ubicación: {expediente.ubicacion}
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Partes: {expediente.partes}
-                                                </p>
-                                            </div>
-                                        </div>
+        <div className="flex flex-wrap justify-center gap-4 mt-[-1rem] overflow-auto">
+            {currentExpedientes.map((expediente, index) => (
+                <div key={index} className="w-full max-w-xs mb-20 m-4">
+                    <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
+                        <div className="mb-4 flex items-center justify-between">
+                            <button
+                                id="menu-button"
+                                onClick={() => handleMenuToggle(index)}
+                                className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
+                            >
+                                <RxHamburgerMenu />
+                            </button>
+                            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+                                Expediente #{expediente.numero}
+                            </h5>
+                            <a
+                                onClick={() => OpenModal(expediente)}
+                                className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 cursor-pointer"
+                            >
+                                Ver todo
+                            </a>
+                        </div>
+                        {openMenuIndex === index && (
+                            <div className="absolute right-13 bg-white mt-1 py-2 w-48 border rounded-lg shadow-lg">
+                                <ul>
+                                    <li className="flex items-center">
+                                        <GrUpdate className="inline-block ml-2" />
+                                        <a
+                                            onClick={() => openModalUpdate(expediente)}
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                            role="menuitem"
+                                        >
+                                            Actualizar expediente
+                                        </a>
+                                    </li>
+                                    <li className="flex items-center">
+                                        <IoTrash className="inline-block ml-2" />
+                                        <a
+                                            onClick={() => openModalDelete(expediente)}
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                            role="menuitem"
+                                        >
+                                            Eliminar expediente
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
-
-                        </Card>
-
-                    </div>
-
-                ))}
-
-            </div>
+                        )}
+    
+                        <div className="flow-root">
+                            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                                <li className="py-3 sm:py-4">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                                                Nombre: {expediente.nombre}
+                                            </p>
+                                            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                                                URL: {expediente.url}
+                                            </p>
+                                            <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                                                Expediente: {expediente.expediente}
+                                            </p>
+                                            <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                                                Juzgado: {expediente.juzgado}
+                                            </p>
+                                            <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                                                Juicio: {expediente.juicio}
+                                            </p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                Ubicación: {expediente.ubicacion}
+                                            </p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                Partes: {expediente.partes}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </Card>
+                </div>
+            ))}
+        </div>
+        <div className="flex overflow-x-auto justify-center">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+        </div>
             {showModal && (
                 <div id="timeline-modal" tabIndex="-1" aria-hidden="true" className="fixed inset-0 z-50 overflow-y-auto bg-gray-800 bg-opacity-50 flex justify-center items-center">
                     <div className="relative p-4 w-full max-w-md">
-                        {/* Modal content */}
+            
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
-                            {/* Modal header */}
+                       
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                     Expediente #{selectedExpediente.numero}
@@ -151,16 +156,16 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                                     <span className="sr-only">Close modal</span>
                                 </button>
                             </div>
-                            {/* Modal body */}
+                    
                             <div className="p-4 md:p-5" style={{ wordWrap: 'break-word' }}>
-                                {/* Your modal content goes here */}
+                            
                                 <p>Nombre: {selectedExpediente.nombre}</p>
                                 <p>Apellido: {selectedExpediente.url}</p>
                                 <p>Email: {selectedExpediente.expediente}</p>
 
 
                                 <p>Juzgado: {selectedExpediente.juzgado}</p>
-                                <p>Partes: {truncateText(selectedExpediente.partes, 8)} </p>
+                                <p>Partes: {selectedExpediente.partes} </p>
                             </div>
                         </div>
 

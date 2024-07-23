@@ -209,7 +209,7 @@ const Abogados = () => {
 
 
     if (loading) return (
-        <div className="flex items-start justify-center h-screen top-2 pt-20">
+        <div className="flex items-center -mt-44 ml-0 lg:ml-44 xl:ml-44 justify-start h-screen">
                  <Spinner className="h-10 w-10" color="primary" />
         </div>
     )

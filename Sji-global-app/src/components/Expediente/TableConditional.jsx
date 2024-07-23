@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import TableExpedientes from './Table.jsx';
 import Cards from './Cards.jsx'; 
-import TableEdit from './prueba..jsx';
+import TableExpedientes from './TableExpedientes.jsx';
 const TableConditional = ({
     currentExpedientes,
     currentPage,
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
+    onPageChange,
     handleMenuToggle,
     isOpen,
     openMenuIndex,
@@ -36,7 +36,7 @@ const TableConditional = ({
     }, []);
 
     return shouldRenderTable ? (
-        <TableEdit
+        <TableExpedientes
            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
@@ -58,6 +58,7 @@ const TableConditional = ({
             totalPages={totalPages}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
+            onPageChange={onPageChange}
             handleMenuToggle={handleMenuToggle}
             isOpen={isOpen}
             openMenuIndex={openMenuIndex}

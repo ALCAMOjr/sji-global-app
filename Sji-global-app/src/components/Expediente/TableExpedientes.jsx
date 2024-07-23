@@ -16,12 +16,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
 import TablePagination from '@mui/material/TablePagination';
-import { styled } from '@mui/material/styles';
 
-
-
-
-const TableEdit = ({ 
+const TableExpedientes = ({ 
     currentExpedientes, 
     currentPage, 
     totalPages, 
@@ -56,62 +52,60 @@ const TableEdit = ({
         setIsOpen([]);
     };
 
+    const truncateText = (text, maxLength = 10) => {
+        if (!text) return '';
+        return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+    };
+
     return (
         <div>
-  
-        <TableContainer component={Paper} className='justify-center flex relative min-w-max ml-32'>
-        <Table stickyHeader aria-label="collapsible table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell />
-                        <TableCell>Nombre</TableCell>
-                        <TableCell>Numero</TableCell>
-                        <TableCell>URL</TableCell>
-                        <TableCell>Expediente</TableCell>
-                        <TableCell>Juzgado</TableCell>
-                        <TableCell>Juicio</TableCell>
-                        <TableCell>Ubicacion</TableCell>
-                        <TableCell>Partes</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {currentExpedientes.map((expediente, index) => (
-                        <Row
-                            key={expediente.id}
-                            currentExpedientes={currentExpedientes}
-                            expediente={expediente}
-                            index={index}
-                            handleMenuToggle={handleMenuToggle}
-                            isOpen={isOpen}
-                            openMenuIndex={openMenuIndex}
-                            openModalUpdate={openModalUpdate}
-                            openModalDelete={openModalDelete}
-                            menuDirection={menuDirection}
-                        />
-                    ))}
-                </TableBody>
-            </Table>
-           
-        </TableContainer>
-        <TablePagination
-        rowsPerPageOptions={[6, 16, 30]}
-        component="div"
-        count={currentExpedientes.length}
-        rowsPerPage={totalPages}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+            <TableContainer component={Paper} className='justify-center flex relative min-w-max ml-32'>
+                <Table aria-label="collapsible table">
+                    <TableHead className='bg-gray-100'>
+                        <TableRow>
+                            <TableCell />
+                            <TableCell>Nombre</TableCell>
+                            <TableCell>Numero</TableCell>
+                            <TableCell>URL</TableCell>
+                            <TableCell>Expediente</TableCell>
+                            <TableCell>Juzgado</TableCell>
+                            <TableCell>Juicio</TableCell>
+                            <TableCell>Ubicacion</TableCell>
+                            <TableCell>Partes</TableCell>
+                            <TableCell>Opciones</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {currentExpedientes.map((expediente, index) => (
+                            <Row
+                                key={expediente.id}
+                                currentExpedientes={currentExpedientes}
+                                expediente={expediente}
+                                index={index}
+                                handleMenuToggle={handleMenuToggle}
+                                isOpen={isOpen}
+                                openMenuIndex={openMenuIndex}
+                                openModalUpdate={openModalUpdate}
+                                openModalDelete={openModalDelete}
+                                menuDirection={menuDirection}
+                                truncateText={truncateText}
+                            />
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[6, 16, 30]}
+                component="div"
+                count={currentExpedientes.length}
+                rowsPerPage={totalPages}
+                page={currentPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
         </div>
     );
 }
-
-export default TableEdit;
-
-
-
-
-
 
 const Row = ({ 
     currentExpedientes,
@@ -122,14 +116,13 @@ const Row = ({
     openMenuIndex, 
     openModalUpdate, 
     openModalDelete, 
-    menuDirection, 
+    menuDirection,
+    truncateText
 }) => {
     const [open, setOpen] = React.useState(false);
 
     return (
-   
         <Fragment>
-      
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <IconButton
@@ -140,16 +133,16 @@ const Row = ({
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row">
-                    {expediente.nombre}
+                <TableCell component="th" scope="row" className="max-w-xs truncate">
+                    {truncateText(expediente.nombre)}
                 </TableCell>
-                <TableCell>{expediente.numero}</TableCell>
-                <TableCell>{expediente.url}</TableCell>
-                <TableCell>{expediente.expediente}</TableCell>
-                <TableCell>{expediente.juzgado}</TableCell>
-                <TableCell>{expediente.juicio}</TableCell>
-                <TableCell>{expediente.ubicacion}</TableCell>
-                <TableCell>{expediente.partes}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.numero)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.url)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.expediente)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.juzgado)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.juicio)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.ubicacion)}</TableCell>
+                <TableCell className="max-w-xs truncate">{truncateText(expediente.partes)}</TableCell>
                 <TableCell>
                     <button id="menu-button" onClick={() => handleMenuToggle(index)} className={`relative group p-2 ${isOpen[index] ? 'open' : ''}`}>
                         <div className={`relative flex overflow-hidden items-center justify-center rounded-full w-[32px] h-[32px] transform transition-all bg-white ring-0 ring-gray-300 hover:ring-8  ${isOpen[index] ? 'ring-4' : ''} ring-opacity-30 duration-200 shadow-md`}>
@@ -185,28 +178,24 @@ const Row = ({
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
-                                History
+                                Historial
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
+                                        <TableCell>Fecha</TableCell>
+                                        <TableCell>Detalles</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            Hola
-                                        </TableCell>
-                                        <TableCell>Hola</TableCell>
-                                        <TableCell align="right">Hola</TableCell>
-                                        <TableCell align="right">
-                                            Hola
-                                        </TableCell>
-                                    </TableRow>
+                        
+                                        <TableRow>
+                                            <TableCell component="th" scope="row">
+                                              Holaaa
+                                            </TableCell>
+                                            <TableCell>Holaaaaa</TableCell>
+                                        </TableRow>
+                                  
                                 </TableBody>
                             </Table>
                         </Box>
@@ -214,6 +203,7 @@ const Row = ({
                 </TableCell>
             </TableRow>
         </Fragment>
-    
     );
 }
+
+export default TableExpedientes;

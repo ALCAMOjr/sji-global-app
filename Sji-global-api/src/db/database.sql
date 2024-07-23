@@ -1,8 +1,7 @@
--- Crear la base de datos
 CREATE DATABASE Tribunal;
 
--- Usar la base de datos
 USE Tribunal;
+
 
 
 -- Crear la tabla 'abogados'
@@ -19,48 +18,52 @@ CREATE TABLE abogados (
     PRIMARY KEY (id)
 );
 
+
 -- Crear la tabla 'expTribunalA'
 CREATE TABLE expTribunalA (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Numero INT NOT NULL,
-    Nombre VARCHAR(255),
-    URL VARCHAR(255),
-    Expediente VARCHAR(50),
-    Juzgado VARCHAR(50),
-    Juicio VARCHAR(100),
-    Ubicacion VARCHAR(150),
-    Partes TEXT
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero INT NOT NULL,
+    nombre VARCHAR(255),
+    url VARCHAR(255),
+    expediente VARCHAR(50),
+    juzgado VARCHAR(50),
+    juicio VARCHAR(100),
+    ubicacion VARCHAR(150),
+    partes TEXT
 );
 
+select * from expTribunalA;
 -- Crear la tabla 'expTribunalDetA'
 CREATE TABLE expTribunalDetA (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    NumeroExp INT NOT NULL,
-    Ver_Acuerdo VARCHAR(50) NULL,
-    Fecha VARCHAR(20) NULL,
-    Etapa VARCHAR(50) NULL,
-    Termino VARCHAR(250) NULL,
-    Notificacion VARCHAR(250) NULL,
-    Seleccionar VARCHAR(50) NULL,
-    Expediente VARCHAR(50) NULL,
-    expTribunalA_Id INT,
-    FOREIGN KEY (expTribunalA_Id) REFERENCES expTribunalA(Id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numeroexp INT NOT NULL,
+    ver_acuerdo VARCHAR(50) NULL,
+    fecha VARCHAR(20) NULL,
+    etapa VARCHAR(50) NULL,
+    termino VARCHAR(250) NULL,
+    notificacion VARCHAR(250) NULL,
+    seleccionar VARCHAR(50) NULL,
+    expediente VARCHAR(50) NULL,
+    expTribunalA_id INT,
+    FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
 );
 
--- Crear la tabla 'Tareas'
+
 CREATE TABLE Tareas (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    expTribunalA_Id INT NOT NULL,
-    URL VARCHAR(255) NULL,
-    Abogado_ID INT,
-    Tarea TEXT NULL,
-    Fecha_Registro DATE NULL,
-    Fecha_Estimada_Entrega DATE NULL,
-    Fecha_Real_Entrega DATE NULL,
-    Fecha_Estimada_Respuesta DATE NULL,
-    Estado_Tarea ENUM('Asignada', 'Iniciada', 'Terminada') NULL,
-    Fecha_Inicio DATE NULL,  
-    Observaciones TEXT NULL,
-    FOREIGN KEY (Abogado_ID) REFERENCES abogados(Id),
-    FOREIGN KEY (expTribunalA_Id) REFERENCES expTribunalA(Id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    exptribunalA_id INT NOT NULL,
+    url VARCHAR(255) NULL,
+    abogado_id INT,
+    tarea TEXT NULL,
+    fecha_registro DATE NULL,
+    fecha_estimada_entrega DATE NULL,
+    fecha_real_entrega DATE NULL,
+    fecha_estimada_respuesta DATE NULL,
+    estado_tarea ENUM('Asignada', 'Iniciada', 'Terminada') NULL,
+    fecha_inicio DATE NULL,  
+    observaciones TEXT NULL,
+    FOREIGN KEY (abogado_id) REFERENCES abogados(id),
+    FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
 );
+
+describe expTribunalA;

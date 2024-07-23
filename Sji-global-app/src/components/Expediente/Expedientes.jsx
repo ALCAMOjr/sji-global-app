@@ -42,12 +42,20 @@ const Expedientes = () => {
         let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
         setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
         setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+
     }, [expedientes, currentPage, itemsPerPage]);
 
 
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = (newPage) => {
         setCurrentPage(newPage); 
     };
+
+
+    const onPageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    
 
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(+event.target.value);
@@ -168,7 +176,7 @@ const Expedientes = () => {
         setIsLoading(true);
 
         try {
-            const { success } = await updateExpediente({
+            const { success, error } = await updateExpediente({
                 id: formData.id,
                 numero: formData.numero,
                 nombre: formData.nombre,
@@ -270,6 +278,15 @@ const Expedientes = () => {
         }
     };
 
+
+
+
+    if (loading) return (
+        <div className="flex items-center -mt-44 ml-0 lg:ml-44 xl:ml-44 justify-start h-screen">
+            <Spinner className="h-10 w-10" color="primary" />
+        </div>
+    );
+    
     return (
         <div className="flex flex-col min-h-screen">
             {!isOpenModalContext && !isOpenModalUpdateContext && !isOpenModalDeleteContext && !isOpenModalViewAllContext && !isModalOpen && (
@@ -620,6 +637,7 @@ const Expedientes = () => {
                     totalPages={totalPages}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    onPageChange={onPageChange}
                     handleMenuToggle={handleMenuToggle}
                     isOpen={isOpen}
                     openMenuIndex={openMenuIndex}

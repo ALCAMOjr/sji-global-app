@@ -353,7 +353,7 @@ const Expedientes = () => {
                                 <div className="relative z-0 w-full mb-5 group">
                                     <input
                                         type="text"
-                                        name="URL"
+                                        name="url"
                                         id="floating_url"
                                         value={formData.url}
                                         onChange={handleChange}
@@ -365,7 +365,7 @@ const Expedientes = () => {
                                 <div className="relative z-0 w-full mb-5 group">
                                     <input
                                         type="text"
-                                        name="Expediente"
+                                        name="expediente"
                                         id="floating_expediente"
                                         value={formData.expediente}
                                         onChange={handleChange}

@@ -16,6 +16,11 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
 import TablePagination from '@mui/material/TablePagination';
+import { styled } from '@mui/material/styles';
+
+
+
+
 const TableEdit = ({ 
     currentExpedientes, 
     currentPage, 
@@ -55,7 +60,7 @@ const TableEdit = ({
         <div>
   
         <TableContainer component={Paper} className='justify-center flex relative min-w-max ml-32'>
-            <Table aria-label="collapsible table">
+        <Table stickyHeader aria-label="collapsible table">
                 <TableHead>
                     <TableRow>
                         <TableCell />
@@ -160,7 +165,7 @@ const Row = ({
                         </div>
                     </button>
                     {openMenuIndex === index && (
-                        <div className={`absolute right-0 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options ${menuDirection}`} style={{ zIndex: 9999, bottom: menuDirection === 'up' ? (index === currentExpedientes.length - 1 ? '2cm' : index === currentExpedientes.length - 2 ? '1cm' : 'initial') : 'initial' }}>
+                        <div className={`absolute right-0 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options ${menuDirection}`} style={{ zIndex: 9999, bottom: menuDirection === 'up' ? (index === currentExpedientes.length - 1 ? '2cm' : index === currentExpedientes.length - 2 ? '4cm' : 'initial') : 'initial' }}>
                             <ul>
                                 <li className="flex items-center">
                                     <GrUpdate className="inline-block ml-8" />

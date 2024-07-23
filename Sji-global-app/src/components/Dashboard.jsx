@@ -190,7 +190,7 @@ function Dashboard() {
             </aside>
             <div className="flex justify-center items-center h-full">
             <div className="mt-40">
-                    {isHomeActive && <Home />}
+                    {isHomeActive && <Home handleExpedienteClick={handleExpedienteClick} />}
                     {isAbogadosActive && <Abogados />} 
                     {isExpedienteActive && <Expedientes />} 
                 </div>

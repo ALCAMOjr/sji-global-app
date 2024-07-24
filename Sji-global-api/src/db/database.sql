@@ -25,10 +25,10 @@ CREATE TABLE expTribunalA (
     numero INT NOT NULL,
     nombre VARCHAR(255),
     url VARCHAR(255),
-    expediente VARCHAR(50),
-    juzgado VARCHAR(50),
-    juicio VARCHAR(100),
-    ubicacion VARCHAR(150),
+    expediente VARCHAR(255),
+    juzgado VARCHAR(255),
+    juicio VARCHAR(255),
+    ubicacion VARCHAR(255),
     partes TEXT
 );
 

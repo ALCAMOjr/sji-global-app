@@ -122,7 +122,7 @@ function Dashboard() {
                                 <FaBars className="w-6 h-6" />
                             </button>
 
-                            <a href="https://gateway.pinata.cloud/ipfs/QmfDd1ht7GD3jcmtzNuNvc8xgLWcmy4jtendDAtf58vVMK" className="flex ms-2 md:me-24">
+                            <a className="flex ms-2 md:me-24">
                                 <img src={logo2} className="h-8 me-3 rounded-full" alt="FlowBite Logo" />
                                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">SJI Global</span>
                             </a>

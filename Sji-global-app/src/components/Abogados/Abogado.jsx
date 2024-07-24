@@ -106,7 +106,7 @@ const Abogados = () => {
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al crear el abogado: ${error?.message || 'Error desconocido'}`);
+                toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
             }
         } catch (error) {
             console.error(error);
@@ -165,8 +165,9 @@ const Abogados = () => {
 
                     toast.error('El nombre de usuario ya existe. Por favor, elige otro.');
                 } else {
+                    console.log(error.message)
+                    toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
 
-                    toast.error(`Algo mal sucedió al crear el abogado: ${error?.message || 'Error desconocido'}`);
                 }
                 setIsModalOpenCreate(false);
             }

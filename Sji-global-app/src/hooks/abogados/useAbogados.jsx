@@ -59,7 +59,7 @@ export default function useAbogados() {
             return { success: false, error: 'El nombre de usuario ya existe' };
         } else {
             console.error(error);
-            return { success: false, error: 'Error al crear el abogado' };
+            return { success: false, error: error };
         }
     }
 }, [jwt]);

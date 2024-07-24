@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
 import TableExpedientes from './TableExpedientes.jsx';
+
+
+
 const TableConditional = ({
     currentExpedientes,
     currentPage,

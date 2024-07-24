@@ -3,7 +3,6 @@ import { Card } from "flowbite-react";
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { ModalContext } from './ContextModal.jsx';
 import { FaWhatsapp } from "react-icons/fa";
 import { MdCall } from "react-icons/md";
 import { Pagination } from "flowbite-react";
@@ -42,7 +41,6 @@ const customTheme = {
 const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, setOpenMenuIndex, setIsOpen, currentPage, totalPages,  onPageChange, handleChangePage}) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
-    const { openModalViewAllContext, closeModalViewAllContext } = useContext(ModalContext);
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -61,12 +59,6 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
     const handleMenuClose = () => {
         setOpenMenuIndex(null);
         setIsOpen([]);
-    };
-
-    const OpenModal = (Expediente) => {
-        setSelectedExpediente(Expediente);
-        setShowModal(true);
-        openModalViewAllContext()
     };
 
     const CloseModal = () => {
@@ -92,11 +84,11 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                             >
                                 <RxHamburgerMenu />
                             </button>
-                            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
+                            <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
                                 Expediente #{expediente.numero}
                             </h5>
                             <a
-                                onClick={() => OpenModal(expediente)}
+                       
                                 className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                             >
                                 Ver todo
@@ -152,9 +144,7 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 Ubicación: {expediente.ubicacion}
                                             </p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                Partes: {expediente.partes}
-                                            </p>
+                                          
                                         </div>
                                     </div>
                                 </li>
@@ -202,7 +192,6 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
 
 
                                 <p>Juzgado: {selectedExpediente.juzgado}</p>
-                                <p>Partes: {selectedExpediente.partes} </p>
                             </div>
                         </div>
 

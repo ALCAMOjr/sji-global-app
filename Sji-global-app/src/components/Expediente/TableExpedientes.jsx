@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -16,21 +16,21 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
 import TablePagination from '@mui/material/TablePagination';
-
-const TableExpedientes = ({ 
-    currentExpedientes, 
-    currentPage, 
-    totalPages, 
+import copiaricon from "../../assets/copiaricon.png"
+const TableExpedientes = ({
+    currentExpedientes,
+    currentPage,
+    totalPages,
     handleChangePage,
-    handleChangeRowsPerPage, 
-    handleMenuToggle, 
-    isOpen, 
-    openMenuIndex, 
-    openModalUpdate, 
-    openModalDelete, 
-    menuDirection, 
-    setOpenMenuIndex, 
-    setIsOpen 
+    handleChangeRowsPerPage,
+    handleMenuToggle,
+    isOpen,
+    openMenuIndex,
+    openModalUpdate,
+    openModalDelete,
+    menuDirection,
+    setOpenMenuIndex,
+    setIsOpen
 }) => {
 
     useEffect(() => {
@@ -52,11 +52,6 @@ const TableExpedientes = ({
         setIsOpen([]);
     };
 
-    const truncateText = (text, maxLength = 10) => {
-        if (!text) return '';
-        return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-    };
-
     return (
         <div>
             <TableContainer component={Paper} className='justify-center flex relative min-w-max ml-32'>
@@ -66,12 +61,9 @@ const TableExpedientes = ({
                             <TableCell />
                             <TableCell>Nombre</TableCell>
                             <TableCell>Numero</TableCell>
-                            <TableCell>URL</TableCell>
-                            <TableCell>Expediente</TableCell>
-                            <TableCell>Juzgado</TableCell>
                             <TableCell>Juicio</TableCell>
+                            <TableCell>Expediente</TableCell>
                             <TableCell>Ubicacion</TableCell>
-                            <TableCell>Partes</TableCell>
                             <TableCell>Opciones</TableCell>
                         </TableRow>
                     </TableHead>
@@ -88,7 +80,7 @@ const TableExpedientes = ({
                                 openModalUpdate={openModalUpdate}
                                 openModalDelete={openModalDelete}
                                 menuDirection={menuDirection}
-                                truncateText={truncateText}
+
                             />
                         ))}
                     </TableBody>
@@ -108,19 +100,34 @@ const TableExpedientes = ({
     );
 }
 
-const Row = ({ 
+const Row = ({
     currentExpedientes,
-    expediente, 
-    index, 
-    handleMenuToggle, 
-    isOpen, 
-    openMenuIndex, 
-    openModalUpdate, 
-    openModalDelete, 
+    expediente,
+    index,
+    handleMenuToggle,
+    isOpen,
+    openMenuIndex,
+    openModalUpdate,
+    openModalDelete,
     menuDirection,
-    truncateText
+
+
 }) => {
     const [open, setOpen] = React.useState(false);
+    const [copySuccess, setCopySuccess] = useState(false);
+
+
+    const handleCopy = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                setCopySuccess(true);
+                setTimeout(() => setCopySuccess(false), 3000);
+            })
+            .catch(err => {
+                console.error('Error al copiar al portapapeles: ', err);
+            });
+    };
+
 
     return (
         <Fragment>
@@ -135,15 +142,12 @@ const Row = ({
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row" className="max-w-xs truncate">
-                    {truncateText(expediente.nombre)}
+                    {expediente.nombre}
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.numero)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.url)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.expediente)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.juzgado)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.juicio)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.ubicacion)}</TableCell>
-                <TableCell className="max-w-xs truncate">{truncateText(expediente.partes)}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.numero}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.juicio}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.ubicacion}</TableCell>
                 <TableCell>
                     <button id="menu-button" onClick={() => handleMenuToggle(index)} className={`relative group p-2 ${isOpen[index] ? 'open' : ''}`}>
                         <div className={`relative flex overflow-hidden items-center justify-center rounded-full w-[32px] h-[32px] transform transition-all bg-white ring-0 ring-gray-300 hover:ring-8  ${isOpen[index] ? 'ring-4' : ''} ring-opacity-30 duration-200 shadow-md`}>
@@ -179,24 +183,48 @@ const Row = ({
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
-                                Historial
+                                Detalles
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Fecha</TableCell>
-                                        <TableCell>Detalles</TableCell>
+                                        <TableCell>Url</TableCell>
+                                        <TableCell>Juzgado</TableCell>
+                 
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                        
-                                        <TableRow>
-                                            <TableCell component="th" scope="row">
-                                              Holaaa
-                                            </TableCell>
-                                            <TableCell>Holaaaaa</TableCell>
-                                        </TableRow>
-                                  
+
+                                    <TableRow>
+                                        <TableCell  align="center"  component="th" scope="row" className="text-xs max-w-xs truncate flex items-start">
+                                   {expediente.url && (
+                                                <button
+                                                    onClick={() => handleCopy(expediente.url)}
+                                                    className="text-white pr-2 rounded-lg hover:bg-gray-100 transition-all"
+                                                >
+                                                    {copySuccess ? (
+                                                        <svg className="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    ) : (
+                                                        <img src={copiaricon} alt='copiar icon' className='w-4 h-4' />
+                                                    )}
+                                                </button>
+                                            
+                                            )}
+                                                {expediente.url}
+                                        </TableCell>
+
+                                        <TableCell className="text-xs max-w-xs truncate">{expediente.juzgado}</TableCell>
+
+                                          <TableCell>
+                                          <button type="button" class="text-primary bg-white hover:underline focus:outline-none   rounded-lg text-sm inline-flex items-center px-2 py-2 text-center">
+                            Ver mas
+                        </button>
+                                          </TableCell>
+
+                                    </TableRow>
+
                                 </TableBody>
                             </Table>
                         </Box>

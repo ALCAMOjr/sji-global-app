@@ -42,22 +42,40 @@ export default function useExpedientes() {
             const updatedExpediente = await updateExpedientes({ id, numero, nombre, url, expediente, token: jwt });
             setExpedientes(prevExpedientes => prevExpedientes.map(expediente => expediente.id === id ? updatedExpediente : expediente));
             return { success: true, data: updatedExpediente };
-        } catch (err) {
-            console.error(err);
-            return { success: false, error: err };
+        } catch (error) {
+            if (error.response && error.response.status === 500 && error.response.data.error === 'Scraping failed for the provided URL.') {
+                return { success: false, error: 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.' };
+            } else {
+                console.error(error);
+                return { success: false, error: 'Error al actualizar el expediente' };
+            }
         }
     }, [jwt]);
-
+    
     const registerNewExpediente = useCallback(async ({ numero, nombre, url, expediente }) => {
         try {
             const newExpediente = await createExpediente({ numero, nombre, url, expediente, token: jwt });
             setExpedientes(prevExpedientes => [...prevExpedientes, newExpediente]);
             return { success: true, data: newExpediente };
         } catch (error) {
-            console.error(error);
-            return { success: false, error: 'Error al crear el expediente' };
+            if (error.response && error.response.status === 400) {
+                const errorMessage = error.response.data.error;
+                if (errorMessage === 'An expediente with this number already exists.') {
+                    return { success: false, error: 'El expediente con este número ya existe.' };
+                } else {
+                    console.error(error);
+                    return { success: false, error: errorMessage || 'Error al crear el expediente' };
+                }
+            } else if (error.response && error.response.status === 500 && error.response.data.error === 'Scraping failed for the provided URL.') {
+                console.error(error);
+                return { success: false, error: 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.' };
+            } else {
+                console.error(error);
+                return { success: false, error: 'Error al crear el expediente' };
+            }
         }
     }, [jwt]);
-
+    
     return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente };
+    
 }

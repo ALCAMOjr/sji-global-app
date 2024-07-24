@@ -11,6 +11,8 @@ import { RiChatNewLine } from "react-icons/ri";
 import { ModalContext } from './ContextModal.jsx';
 import getExpedienteByNumero from '../../views/expedientes/getExpedienteByNumero.js';
 import Context from '../../context/abogados.context.jsx';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import masicon from "../../assets/mas.png"
 
 
 
@@ -29,8 +31,6 @@ const Expedientes = () => {
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
     const [menuDirection, setMenuDirection] = useState('down');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { openModalContext, closeModalContext, isOpenModalContext, openModalUpdateContext, closeModalUpdateContext, isOpenModalUpdateContext, openModalDeleteContext, closeModalDeleteContext, isOpenModalDeleteContext, isOpenModalViewAllContext } = useContext(ModalContext);
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const [ismodalOpenUpdate, setisModalOpenUpdate] = useState(false);
     const [isModalOpenDelete, setisModalOpenDelete] = useState(false);
     const [numeroActive, setNumeroActive] = useState(false);
@@ -66,13 +66,6 @@ const Expedientes = () => {
         setCurrentPage(1);
     };
 
-    const handleMouseEnter = () => {
-        setIsTooltipVisible(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsTooltipVisible(false);
-    };
 
     const [formData, setFormData] = useState({
         id: '',
@@ -112,23 +105,21 @@ const Expedientes = () => {
             partes: '',
         });
         setIsModalOpen(true);
-        openModalContext()
-        setIsTooltipVisible(false);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        closeModalContext()
     };
-
 
     const handleCreate = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
         const { numero, nombre, url, expediente } = formData;
+
         try {
             const { success, error } = await registerNewExpediente({ numero, nombre, url, expediente });
+
             if (success) {
                 toast.info('Se creó correctamente el expediente', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -137,17 +128,21 @@ const Expedientes = () => {
                     }
                 });
             } else {
-                toast.error('Algo mal sucedió al crear el expediente: ' + error.message);
+                if (error === 'El expediente con este número ya existe.') {
+                    toast.error('El número de expediente ya existe. Intente con otro número.');
+                } else if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
+                    toast.error('No se pudo obtener la información de la URL proporcionada. Intente de nuevo.');
+                } else {
+                    toast.error('Algo mal sucedió al crear el expediente: ' + error);
+                }
             }
         } catch (error) {
-            toast.error('Algo mal sucedió al crear el expediente: ');
-
+            console.error(error);
+            toast.error('Algo mal sucedió al crear el expediente');
         } finally {
             setIsModalOpen(false);
-            closeModalContext();
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
 
@@ -165,13 +160,11 @@ const Expedientes = () => {
 
         });
         setisModalOpenUpdate(true);
-        openModalUpdateContext();
         setOpenMenuIndex(null);
     };
 
     const closeModalUpdate = () => {
         setisModalOpenUpdate(false);
-        closeModalUpdateContext();
     };
 
 
@@ -189,25 +182,27 @@ const Expedientes = () => {
             });
 
             if (success) {
-                toast.info('Se actualizo correctamente el Expediente', {
+                toast.info('Se actualizó correctamente el Expediente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error('Algo mal sucedió al actualizar el Expediente: ' + error.message);
+                if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
+                    toast.error('No se pudo obtener la información de la URL proporcionada. Intente de nuevo.');
+                } else {
+                    toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
+                }
             }
-
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al actualizar el Expediente');
         } finally {
             setisModalOpenUpdate(false);
-            closeModalUpdateContext();
-        }
 
-        setIsLoading(false);
+            setIsLoading(false);
+        }
     };
 
 
@@ -224,13 +219,11 @@ const Expedientes = () => {
             partes: expediente.partes,
         });
         setisModalOpenDelete(true);
-        openModalDeleteContext();
         setOpenMenuIndex(null);
     };
 
     const closeModalDelete = () => {
         setisModalOpenDelete(false);
-        closeModalDeleteContext();
     };
 
     const handleDelete = async (e) => {
@@ -258,7 +251,6 @@ const Expedientes = () => {
         } finally {
             setIsDeleting(false);
             setisModalOpenDelete(false);
-            closeModalDeleteContext();
         }
     };
 
@@ -303,9 +295,9 @@ const Expedientes = () => {
             filteredExpedientes = expedientes.filter(expediente => expediente.nombre.toLowerCase().includes(lowercaseSearchTerm));
         } else if (searchType === 'Numero') {
             try {
-            
+
                 console.log(lowercaseSearchTerm, jwt)
-                const expediente = await getExpedienteByNumero({numero: lowercaseSearchTerm, token: jwt});
+                const expediente = await getExpedienteByNumero({ numero: lowercaseSearchTerm, token: jwt });
                 if (expediente) {
                     filteredExpedientes.push(expediente);
                 } else {
@@ -370,33 +362,29 @@ const Expedientes = () => {
 
     return (
         <div className="flex flex-col min-h-screen">
-            {!isOpenModalContext && !isOpenModalUpdateContext && !isOpenModalDeleteContext && !isOpenModalViewAllContext && !isModalOpen && (
-                <div className="absolute right-1/4 top-24 z-50">
+          
+                <div className="absolute right-56 top-24 z-50">
                     <div className="relative">
-                        <button
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                            type="button"
-                            onClick={openModal}
-                            className="text-white bg-primary hover:bg-primary/80 focus:ring-4 focus:ring-primary/80 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/80 focus:outline-none dark:focus:ring-primary/80"
-                        >
-                            <RiChatNewLine />
-                            <span className="sr-only">Open modal</span>
-                        </button>
-
-                        {isTooltipVisible && (
-                            <div
-                                id="tooltip-share"
-                                role="tooltip"
-                                className="absolute z-10 w-auto px-2 py-1 text-xs font-medium text-gray-900 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm -top-10 left-1/2 transform -translate-x-1/2"
-                            >
-                                Nuevo Expediente
-                                <div className="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        )}
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button color='primary'
+                                    isIconOnly
+                                    aria-label="Mas"
+                                    
+                                >
+                                    <img src={masicon} alt="Mas" className='w-4 h-4'/>
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Static Actions">
+                                <DropdownItem  key="new">Subir Archivo</DropdownItem>
+                                <DropdownItem onClick={openModal} key="copy">Crear Expediente</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </div>
                 </div>
-            )}
+            
+
+
 
             {isModalOpen && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
@@ -416,7 +404,7 @@ const Expedientes = () => {
                             <div className="grid gap-4 mb-4 grid-cols-2">
                                 <div className="relative z-0 w-full mb-5 group">
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="numero"
                                         id="floating_numero"
                                         value={formData.numero}
@@ -514,37 +502,21 @@ const Expedientes = () => {
                         <form onSubmit={handleUpdate} className="p-4 md:p-5">
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
-                                    type="text"
+                                    type="number"
                                     name="numero"
                                     id="floating_numero"
                                     value={formData.numero}
-                                    onChange={handleChange}
-                                    className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${numeroActive ? '' : 'pointer-events-none'}`}
+                                    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer 'pointer-events-none"
                                     placeholder=" "
                                     required
-                                    readOnly={!numeroActive}
+                                    readOnly
                                 />
                                 <label
                                     htmlFor="floating_numero"
                                     className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                 >
-                                    Número
+                                    Número de Expediente
                                 </label>
-                                <div className="flex items-center">
-                                    <input
-                                        checked={numeroActive}
-                                        onChange={() => setNumeroActive(!numeroActive)}
-                                        id="numero-checkbox"
-                                        type="checkbox"
-                                        className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    />
-                                    <label
-                                        htmlFor="numero-checkbox"
-                                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                    >
-                                        Editar
-                                    </label>
-                                </div>
                             </div>
 
                             <div className="grid gap-4 mb-4 grid-cols-2">
@@ -693,170 +665,167 @@ const Expedientes = () => {
             </div>
 
 
-            {!isOpenModalContext && !isOpenModalUpdateContext && !isOpenModalDeleteContext && !isOpenModalViewAllContext && (
-                <>
-                    {isDesktopOrLaptop ? (
-                        <form className="max-w-xs mx-auto mb-4" style={{ position: 'fixed', top: '11%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 999 }}>
-                            <div className="flex">
-                                <button
-                                    id="dropdown-button"
-                                    onClick={toggleDropdown}
-                                    className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                                    type="button"
-                                >
-                                    Filtrar por:
-                                    <svg
-                                        className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 10 6"
-                                    >
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-                                {isSearchOpen && (
-                                    <div
-                                        id="dropdown"
-                                        className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
-                                    >
-                                        <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                                    Nombre
-                                                    {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                    Numero
-                                                    {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
-                                <div className="relative w-full">
-                                    <input
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        type="search"
-                                        id="search-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        placeholder="Buscar Expedientes:"
-                                        required
-                                        style={{ width: "300px" }} // Establece un ancho específico para el botón
-                                    />
-                                    <button
-                                        type="button"
-                                        disabled={!isManualSearch} // Deshabilitado si no es una búsqueda manual
-                                        onClick={handleManualSearch} // Realiza la búsqueda manual
-                                        className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-
-                                    >
-                                        <svg
-                                            className="w-4 h-4"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                            />
-                                        </svg>
-                                        <span className="sr-only">Buscar</span>
+       
+    <>
+        {isDesktopOrLaptop ? (
+            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                <div className="flex">
+                    <button
+                        id="dropdown-button"
+                        onClick={toggleDropdown}
+                        className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                        type="button"
+                    >
+                        Filtrar por:
+                        <svg
+                            className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                        >
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+                    {isSearchOpen && (
+                        <div
+                            id="dropdown"
+                            className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
+                        >
+                            <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
+                                        Nombre
+                                        {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                     </button>
-                                </div>
-                            </div>
-                        </form>
-                    ) : (
-                        <form className="max-w-xs mx-auto mb-4" style={{ position: 'fixed', top: '11%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 999 }}>
-                            <div className="flex">
-                                <button
-                                    id="dropdown-button"
-                                    onClick={toggleDropdown}
-                                    className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                                    type="button"
-                                >
-                                    Filtrar por:
-                                    <svg
-                                        className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 10 6"
-                                    >
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
-                                {isSearchOpen && (
-                                    <div
-                                        id="dropdown"
-                                        className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
-                                    >
-                                        <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                                    Nombre
-                                                    {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                    Numero
-                                                    {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
-                                <div className="relative w-full">
-                                    <input
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        type="search"
-                                        id="search-dropdown"
-                                        className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary  focus:border-primary  dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary "
-                                        placeholder="Buscar Expedientes:"
-                                        required
-                                        style={{ width: "200px" }}
-                                    />
-                                    <button
-                                        type="button"
-                                        disabled={!isManualSearch} // Deshabilitado si no es una búsqueda manual
-                                        onClick={handleManualSearch} // Realiza la búsqueda manual
-                                        className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary  hover:bg-primary focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-primary  dark:hover:bg-primary  dark:focus:ring-primary "}`}
-                                    >
-                                        <svg
-                                            className="w-3 h-3"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                            />
-                                        </svg>
-                                        <span className="sr-only">Search</span>
+                                </li>
+                                <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                        Numero
+                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                     </button>
-                                </div>
-                            </div>
-                        </form>
-
-
+                                </li>
+                            </ul>
+                        </div>
                     )}
-                </>
-            )}
+                    <div className="relative w-full">
+                        <input
+                            value={search}
+                            onChange={handleSearchInputChange}
+                            type="search"
+                            id="search-dropdown"
+                            className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                            placeholder="Buscar Expedientes:"
+                            required
+                            style={{ width: "300px" }}
+                        />
+                        <button
+                            type="button"
+                            disabled={!isManualSearch}
+                            onClick={handleManualSearch}
+                            className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                        >
+                            <svg
+                                className="w-4 h-4"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                />
+                            </svg>
+                            <span className="sr-only">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        ) : (
+            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+                <div className="flex">
+                    <button
+                        id="dropdown-button"
+                        onClick={toggleDropdown}
+                        className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                        type="button"
+                    >
+                        Filtrar por:
+                        <svg
+                            className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                        >
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+                    {isSearchOpen && (
+                        <div
+                            id="dropdown"
+                            className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
+                        >
+                            <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
+                                        Nombre
+                                        {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                        Numero
+                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                    <div className="relative w-full">
+                        <input
+                            value={search}
+                            onChange={handleSearchInputChange}
+                            type="search"
+                            id="search-dropdown"
+                            className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                            placeholder="Buscar Expedientes:"
+                            required
+                            style={{ width: "200px" }}
+                        />
+                        <button
+                            type="button"
+                            disabled={!isManualSearch}
+                            onClick={handleManualSearch}
+                            className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
+                        >
+                            <svg
+                                className="w-3 h-3"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                />
+                            </svg>
+                            <span className="sr-only">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        )}
+    </>
+
 
             {currentExpedientes.length === 0 ? (
                 <div className="flex items-center justify-center min-h-screen">

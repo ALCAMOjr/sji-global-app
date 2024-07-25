@@ -3,7 +3,6 @@ import axios from "axios";
 const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/expedientes/number';
 
 export default async function getExpedienteByNumero({ numero, token }) {
-    console.log("Probamdo..", numero, token)
     try {
         const config = {
             headers: {

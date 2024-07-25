@@ -33,8 +33,6 @@ const TableExpedientes = ({
     setIsOpen
 }) => {
 
-    console.log(currentExpedientes)
-
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {

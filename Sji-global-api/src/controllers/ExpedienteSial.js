@@ -2,6 +2,7 @@ import csv from 'csvtojson';
 import { pool } from "../db.js";
 import path from 'path';
 
+
 export const uploadAndConvertCsv = async (req, res) => {
     try {
         const { userId } = req;
@@ -25,6 +26,8 @@ export const uploadAndConvertCsv = async (req, res) => {
         if (user.user_type !== 'coordinador') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
+
+        await pool.query('DELETE FROM CreditosSIAL');
 
         const csvBuffer = file.buffer.toString('utf-8');
         const jsonArray = await csv().fromString(csvBuffer);
@@ -55,6 +58,7 @@ export const uploadAndConvertCsv = async (req, res) => {
             expediente: 'expediente',
             juzgado: 'juzgado'
         };
+
         const insertPromises = jsonArray.map(row => {
             const values = {};
             for (const [key, value] of Object.entries(fieldMapping)) {
@@ -72,7 +76,6 @@ export const uploadAndConvertCsv = async (req, res) => {
         res.status(500).json({ message: 'Error converting CSV to JSON', error });
     }
 };
-
 
 
 export const getAllCreditsSial = async (req, res) => {

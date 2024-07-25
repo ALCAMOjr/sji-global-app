@@ -45,7 +45,7 @@ const ExpedientesSial = () => {
         setCurrentPage(newPage);
     };
 
-  
+
 
     const onPageChange = (page) => {
         setCurrentPage(page);
@@ -64,13 +64,16 @@ const ExpedientesSial = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setSelectedFile(null)
     };
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
-        setIsFileSelected(true);
-        setErrors((prevErrors) => ({ ...prevErrors, uploadFile: '' }));
+        if (e.target.files.length > 0) {
+            setSelectedFile(e.target.files[0]);
+            setErrors((prevErrors) => ({ ...prevErrors, uploadFile: '' }));
+        }
     };
+    
 
     const handleUploadFile = async () => {
         if (!selectedFile) {
@@ -81,9 +84,9 @@ const ExpedientesSial = () => {
         setIsLoading(true);
 
         try {
-            const {success, error} = await uploadFile(selectedFile);
+            const { success, error } = await uploadFile(selectedFile);
             if (success) {
-                toast.info('Se creó correctamente el expediente', {
+                toast.info('Se subio correctamente el archivo', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
@@ -95,9 +98,12 @@ const ExpedientesSial = () => {
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al subir el archivo');
+           
         } finally {
             setIsLoading(false);
             setIsModalOpen(false);
+            setSelectedFile(null)
+            setErrors({})
         }
     };
 
@@ -186,7 +192,7 @@ const ExpedientesSial = () => {
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
-    
+
 
     if (error) return <Error message={error.message} />;
 
@@ -208,16 +214,16 @@ const ExpedientesSial = () => {
             </div>
 
             {isModalOpen && (
-                <div id="verification-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden overflow-y-auto h-full">
-                    <div className="relative w-full max-w-4xl max-h-[100vh] min-w-[40vw]">
-                        <div className="relative rounded-lg shadow dark:bg-gray-800 h-full">
-                            <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-[#31323E] bg-[#31323E] dark:bg-[#31323E]">
-                                <h3 className="text-xl font-semibold text-white dark:text-white">
+                <div id="verification-modal" tabIndex="-1" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50">
+                    <div className="relative w-full max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
+                        <div className="relative rounded-lg shadow bg-white max-w-md w-full mx-auto">
+                            <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-white bg-gray-200">
+                                <h3 className="text-xl font-semibold text-primary/80">
                                     Subir Archivo
                                 </h3>
                                 <button
                                     type="button"
-                                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                     onClick={closeModal}
                                 >
                                     <svg
@@ -238,26 +244,27 @@ const ExpedientesSial = () => {
                                     <span className="sr-only">Close modal</span>
                                 </button>
                             </div>
-                            <div className="p-6 space-y-6 h-full flex-grow">
-                                <div className="flex justify-between items-start mt-4">
+                            <div className="p-6 space-y-6 flex flex-col items-center">
+                                <div className="flex flex-col items-center w-full max-w-xs">
                                     <button
-                                        className="relative mb-2 mr-[320px] w-[200px] h-[193px] flex items-center justify-center bg-[#202129] rounded-xl border-2 border-dashed border-gray-500 text-white"
+                                        className="relative mb-2 w-full h-auto flex items-center justify-center bg-gray-200 rounded-xl border-2 border-dashed border-black text-white"
                                         onClick={() => inputFileRef.current.click()}
                                     >
                                         <div className="flex flex-col items-center">
                                             {isLoading ? (
-                                                <Spinner label="Loading..." color="primary" labelColor="primary" />
+                                                <Spinner className='text-center mt-6 mb-8 text-sm' label="Loading..." color="primary" size='lg' labelColor="primary" />
                                             ) : (
                                                 <>
-                                                    <img src={agregar} className="absolute h-12 w-12 mb-8 z-10" style={{ top: '30%', transform: 'translateY(-50%)' }} alt="Circulo Icon" />
-                                                    <span className='text-sm text-gray-400 text-center mt-24 z-30'>
-                                                        Click para subir el archivo
+                                                    <img src={agregar} className="absolute h-8 w-8 mb-8 z-10" style={{ top: '30%', transform: 'translateY(-50%)' }} alt="Circulo Icon" />
+                                                    <span className='text-sm text-black text-center mt-24 mb-4 z-30'>
+                                                        {selectedFile ? `Archivo seleccionado: ${selectedFile.name}` : 'Click para subir el archivo'}
                                                     </span>
                                                     {errors.uploadFile && <p className="text-[#E16060] text-xs">{errors.uploadFile}</p>}
                                                 </>
                                             )}
                                         </div>
                                     </button>
+
                                     <input
                                         type="file"
                                         ref={inputFileRef}
@@ -265,16 +272,14 @@ const ExpedientesSial = () => {
                                         onChange={handleFileChange}
                                     />
                                 </div>
-                                <div className="flex justify-end mt-4">
-                                    <div className="absolute top-50 mt-2 left-1/2 transform -translate-x-1/2 w-5/6 h-[0.5px] bg-gray-700 "></div>
+                                <div className="flex justify-end mt-4 w-full">
+
                                     <button
                                         disabled={isLoading}
                                         onClick={handleUploadFile}
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center"
+                                        className="bg-primary text-white text-lg px-4 py-1 rounded-lg flex items-center justify-center mt-4"
                                     >
-                                        {isLoading ? (
-                                            <Spinner label="Loading..." color="primary" labelColor="primary" />
-                                        ) : 'Subir Archivo'}
+                                       Subir Archivo
                                     </button>
                                 </div>
                             </div>
@@ -283,166 +288,166 @@ const ExpedientesSial = () => {
                 </div>
             )}
 
-       
-    <>
-        {isDesktopOrLaptop ? (
-            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
-                <div className="flex">
-                    <button
-                        id="dropdown-button"
-                        onClick={toggleDropdown}
-                        className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                        type="button"
-                    >
-                        Filtrar por:
-                        <svg
-                            className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 10 6"
-                        >
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                        </svg>
-                    </button>
-                    {isSearchOpen && (
-                        <div
-                            id="dropdown"
-                            className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
-                        >
-                            <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                        Nombre
-                                        {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                        Numero
-                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
-                    <div className="relative w-full">
-                        <input
-                            value={search}
-                            onChange={handleSearchInputChange}
-                            type="search"
-                            id="search-dropdown"
-                            className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                            placeholder="Buscar Expedientes:"
-                            required
-                            style={{ width: "300px" }}
-                        />
-                        <button
-                            type="button"
-                            disabled={!isManualSearch}
-                            onClick={handleManualSearch}
-                            className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                        >
-                            <svg
-                                className="w-4 h-4"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
+
+            <>
+                {isDesktopOrLaptop ? (
+                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                        <div className="flex">
+                            <button
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
+                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                type="button"
                             >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                Filtrar por:
+                                <svg
+                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                            {isSearchOpen && (
+                                <div
+                                    id="dropdown"
+                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
+                                >
+                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
+                                                Nombre
+                                                {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                                Numero
+                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                            <div className="relative w-full">
+                                <input
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "300px" }}
                                 />
-                            </svg>
-                            <span className="sr-only">Buscar</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
-        ) : (
-            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                <div className="flex">
-                    <button
-                        id="dropdown-button"
-                        onClick={toggleDropdown}
-                        className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                        type="button"
-                    >
-                        Filtrar por:
-                        <svg
-                            className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 10 6"
-                        >
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                        </svg>
-                    </button>
-                    {isSearchOpen && (
-                        <div
-                            id="dropdown"
-                            className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
-                        >
-                            <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                        Nombre
-                                        {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                        Numero
-                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
-                            </ul>
+                                <button
+                                    type="button"
+                                    disabled={!isManualSearch}
+                                    onClick={handleManualSearch}
+                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                                >
+                                    <svg
+                                        className="w-4 h-4"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                    <span className="sr-only">Buscar</span>
+                                </button>
+                            </div>
                         </div>
-                    )}
-                    <div className="relative w-full">
-                        <input
-                            value={search}
-                            onChange={handleSearchInputChange}
-                            type="search"
-                            id="search-dropdown"
-                            className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                            placeholder="Buscar Expedientes:"
-                            required
-                            style={{ width: "200px" }}
-                        />
-                        <button
-                            type="button"
-                            disabled={!isManualSearch}
-                            onClick={handleManualSearch}
-                            className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
-                        >
-                            <svg
-                                className="w-3 h-3"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
+                    </form>
+                ) : (
+                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                        <div className="flex">
+                            <button
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
+                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                type="button"
                             >
-                                <path
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                Filtrar por:
+                                <svg
+                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                            {isSearchOpen && (
+                                <div
+                                    id="dropdown"
+                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
+                                >
+                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
+                                                Nombre
+                                                {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                                Numero
+                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                            <div className="relative w-full">
+                                <input
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "200px" }}
                                 />
-                            </svg>
-                            <span className="sr-only">Buscar</span>
-                        </button>
-                    </div>
-                </div>
-            </form>
-        )}
-    </>
+                                <button
+                                    type="button"
+                                    disabled={!isManualSearch}
+                                    onClick={handleManualSearch}
+                                    className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
+                                >
+                                    <svg
+                                        className="w-3 h-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                    <span className="sr-only">Buscar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                )}
+            </>
 
 
             {currentExpedientes.length === 0 ? (

@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../../context/abogados.context.jsx'; 
-import UploadFile from '../../views/ExpedienteSial/UploadFile.js'
-import getAllExpedientesSial from '../../views/ExpedienteSial/getAllExpedienteSial.js';
+import UploadFile from '../../views/expedientesial/UploadFile.js'
+import getAllExpedientesSial from '../../views/expedientesial/getAllExpedienteSial.js';
 
 export default function useExpedientesSial() {
     const { jwt } = useContext(Context);

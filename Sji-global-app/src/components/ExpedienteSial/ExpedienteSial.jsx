@@ -8,7 +8,7 @@ import { useMediaQuery } from 'react-responsive';
 import agregar from "../../assets/agregar.png"
 import check from "../../assets/check.png";
 import Context from '../../context/abogados.context.jsx';
-import getExpedienteByNumeroSial from '../../views/ExpedienteSial/getExpedientebyNumero.js';
+import getExpedienteByNumeroSial from '../../views/expedientesial/getExpedientebyNumero.js';
 import { IoMdCheckmark } from "react-icons/io";
 import masicon from "../../assets/mas.png"
 
@@ -188,7 +188,7 @@ const ExpedientesSial = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-60 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -215,7 +215,7 @@ const ExpedientesSial = () => {
 
             {isModalOpen && (
                 <div id="verification-modal" tabIndex="-1" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50">
-                    <div className="relative w-full max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
+                    <div className="relative  w-auto max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
                         <div className="relative rounded-lg shadow bg-white max-w-md w-full mx-auto">
                             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-white bg-gray-200">
                                 <h3 className="text-xl font-semibold text-primary/80">
@@ -369,7 +369,7 @@ const ExpedientesSial = () => {
                         </div>
                     </form>
                 ) : (
-                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                    <form className="max-w-xs mx-auto mb-4 -ml-8 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                         <div className="flex">
                             <button
                                 id="dropdown-button"

@@ -11,7 +11,7 @@ import getExpedienteByNumero from '../../views/expedientes/getExpedienteByNumero
 import Context from '../../context/abogados.context.jsx';
 import { Tooltip, Button } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
-
+import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
 
 const Expedientes = () => {
     const { expedientes, loading, error, registerNewExpediente, deleteExpediente, updateExpediente } = useExpedientes();
@@ -30,14 +30,12 @@ const Expedientes = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ismodalOpenUpdate, setisModalOpenUpdate] = useState(false);
     const [isModalOpenDelete, setisModalOpenDelete] = useState(false);
-    const [numeroActive, setNumeroActive] = useState(false);
-    const [nombreActive, setNombreActive] = useState(false);
     const [urlActive, setUrlActive] = useState(false);
-    const [expedienteActive, setExpedienteActive] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
-
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
    
 
@@ -78,17 +76,52 @@ const Expedientes = () => {
         partes: '',
 
     });
-
-
     const handleChange = (e) => {
         let value = e.target.value;
-
-
         setFormData({
             ...formData,
             [e.target.name]: value
         });
+    
+        if (e.target.name === 'numero' && errorMsg) {
+            setErrorMsg('');
+            setIsSubmitDisabled(false);
+        }
     };
+    
+    
+    
+    const handleNumeroBlur = async () => {
+        if (formData.numero.trim() === '') {
+            setErrorMsg('');
+            setIsSubmitDisabled(false);
+            setFormData({
+                ...formData,
+                nombre: ''
+            });
+            return;
+        }
+        const nombre = await getNombrebyNumero({ numero: formData.numero, token: jwt });
+
+        if (nombre) {
+            setFormData({
+                ...formData,
+                nombre
+            });
+            setErrorMsg('');
+            setIsSubmitDisabled(false);
+        } else {
+            setFormData({
+                ...formData,
+                nombre: ''
+            });
+            setErrorMsg(`Expediente con el número: ${formData.numero} no ha sido encontrado`);
+            setIsSubmitDisabled(true);
+        }
+    };
+    
+    
+
 
 
     const openModal = () => {
@@ -108,16 +141,17 @@ const Expedientes = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
+        setErrorMsg('');
     };
 
     const handleCreate = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
-        const { numero, nombre, url, expediente } = formData;
+        const { numero, nombre, url } = formData;
 
         try {
-            const { success, error } = await registerNewExpediente({ numero, nombre, url, expediente });
+            const { success, error } = await registerNewExpediente({ numero, nombre, url });
 
             if (success) {
                 toast.info('Se creó correctamente el expediente', {
@@ -164,6 +198,7 @@ const Expedientes = () => {
 
     const closeModalUpdate = () => {
         setisModalOpenUpdate(false);
+        setUrlActive(false)
     };
 
 
@@ -177,7 +212,6 @@ const Expedientes = () => {
                 numero: formData.numero,
                 nombre: formData.nombre,
                 url: formData.url,
-                expediente: formData.expediente,
             });
 
             if (success) {
@@ -349,7 +383,7 @@ const Expedientes = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-60 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -376,106 +410,98 @@ const Expedientes = () => {
             
 
 
+                {isModalOpen && (
+    <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+        <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
+            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Crear Nuevo Expediente
+                </h3>
+                <button onClick={closeModal} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span className="sr-only">Close modal</span>
+                </button>
+            </div>
+            <form onSubmit={handleCreate} className="p-4 md:p-5">
+                <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="number"
+                            name="numero"
+                            id="floating_numero"
+                            value={formData.numero}
+                            onChange={handleChange}
+                            onBlur={handleNumeroBlur}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
+                            placeholder=" "
+                            required
+                        />
+                        <label
+                            htmlFor="floating_numero"
+                            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                            Numero de Expediente
+                        </label>
+                        {errorMsg && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMsg}
+                            </p>
+                        )}
+                    </div>
 
-            {isModalOpen && (
-                <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
-                    <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
-                        <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Crear Nuevo Expediente
-                            </h3>
-                            <button onClick={closeModal} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                                <span className="sr-only">Close modal</span>
-                            </button>
-                        </div>
-                        <form onSubmit={handleCreate} className="p-4 md:p-5">
-                            <div className="grid gap-4 mb-4 grid-cols-2">
-                                <div className="relative z-0 w-full mb-5 group">
-                                    <input
-                                        type="number"
-                                        name="numero"
-                                        id="floating_numero"
-                                        value={formData.numero}
-                                        onChange={handleChange}
-                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
-                                        placeholder=" "
-                                        required
-                                    />
-                                    <label
-                                        htmlFor="floating_numero"
-                                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                    >
-                                        Numero de Expediente
-                                    </label>
-                                </div>
-
-                                <div className="relative z-0 w-full mb-5 group">
-                                    <input
-                                        type="text"
-                                        name="nombre"
-                                        id="floating_nombre"
-                                        value={formData.nombre}
-                                        onChange={handleChange}
-                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
-                                        placeholder=" "
-                                        required
-                                    />
-                                    <label htmlFor="floating_nombre" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre del expediente</label>
-                                </div>
-                            </div>
-                            <div className="grid gap-4 mb-4 grid-cols-2">
-                                <div className="relative z-0 w-full mb-5 group">
-                                    <input
-                                        type="text"
-                                        name="url"
-                                        id="floating_url"
-                                        value={formData.url}
-                                        onChange={handleChange}
-                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
-                                        placeholder=" "
-                                    />
-                                    <label htmlFor="floating_apellido" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL (Opcional)</label>
-                                </div>
-                                <div className="relative z-0 w-full mb-5 group">
-                                    <input
-                                        type="text"
-                                        name="expediente"
-                                        id="floating_expediente"
-                                        value={formData.expediente}
-                                        onChange={handleChange}
-                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
-                                        placeholder=" "
-
-                                    />
-                                    <label htmlFor="floating_cedula" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Expediente (Opcional)</label>
-                                </div>
-                            </div>
-
-                            <div>
-                                <button
-                                    type="submit"
-                                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
-                                >
-                                    {isLoading ? (
-                                        <div role="status">
-                                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8435 15.1192 80.8826 10.723 75.2124 7.41289C69.5422 4.10282 63.2754 1.94025 56.7459 1.05182C51.9119 0.367309 46.9723 0.446843 42.1812 1.27873C39.776 1.69443 38.3056 4.18666 38.9427 6.6121C39.5798 9.03754 42.0486 10.4294 44.4933 10.107C48.1735 9.60903 51.9217 9.65443 55.5554 10.2378C60.8781 11.1108 65.9404 13.1622 70.3623 16.2552C74.7841 19.3482 78.4674 23.4103 81.0915 28.1577C83.2563 31.8759 84.9323 35.9276 86.0774 40.1518C86.7802 42.5095 89.5422 43.6781 91.9676 43.0409Z" fill="currentFill" />
-                                            </svg>
-                                            <span className="sr-only">Loading...</span>
-                                        </div>
-                                    ) : (
-                                        'Guardar'
-                                    )}
-                                </button>
-                            </div>
-                        </form>
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="text"
+                            name="nombre"
+                            id="floating_nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:border-primary"
+                            placeholder=" "
+                            readOnly
+                        />
+                        <label htmlFor="floating_nombre" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre del expediente</label>
                     </div>
                 </div>
-            )}
+                <div className="grid gap-4 mb-4 grid-cols-1">
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="text"
+                            name="url"
+                            id="floating_url"
+                            value={formData.url}
+                            onChange={handleChange}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
+                            placeholder=" "
+                            required
+                        />
+                        <label htmlFor="floating_url" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL del expediente ( Opcional )</label>
+                    </div>
+                </div>
+                <button
+                    type="submit"
+                    disabled={isSubmitDisabled}
+                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                >
+                    {isLoading ? (
+                        <div role="status">
+                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7234 75.2124 7.55338C69.5422 4.38335 63.2754 2.51539 56.7663 2.05081C51.7668 1.68134 46.7392 2.05829 41.8592 3.16224C39.3322 3.76176 37.8618 6.25956 38.4989 8.68497C39.1359 11.1104 41.6143 12.5452 44.1373 11.9457C47.8203 11.0764 51.6026 10.8296 55.3196 11.2228C60.8785 11.7913 66.1942 13.543 70.9048 16.3926C75.6155 19.2423 79.6142 23.1216 82.6685 27.793C84.9175 31.0338 86.6015 34.6088 87.6735 38.3892C88.4295 40.7753 91.5423 41.6631 93.9676 39.0409Z" fill="currentFill" />
+                            </svg>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    ) : (
+                        "Crear Expediente"
+                    )}
+                </button>
+            </form>
+        </div>
+    </div>
+)}
+
             {ismodalOpenUpdate && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
                     <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
@@ -491,6 +517,7 @@ const Expedientes = () => {
                             </button>
                         </div>
                         <form onSubmit={handleUpdate} className="p-4 md:p-5">
+                        <div className="grid gap-4 mb-4 grid-cols-2">
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
                                     type="number"
@@ -510,18 +537,18 @@ const Expedientes = () => {
                                 </label>
                             </div>
 
-                            <div className="grid gap-4 mb-4 grid-cols-2">
+                     
                                 <div className="relative z-0 w-full mb-5 group">
                                     <input
                                         type="text"
                                         name="nombre"
                                         id="floating_nombre"
                                         value={formData.nombre}
-                                        onChange={handleChange}
-                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${nombreActive ? '' : 'pointer-events-none'}`}
+                
+                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer pointer-events-none"
                                         placeholder=" "
                                         required
-                                        readOnly={!nombreActive}
+                                        readOnly
                                     />
                                     <label
                                         htmlFor="floating_nombre"
@@ -529,21 +556,8 @@ const Expedientes = () => {
                                     >
                                         Nombre
                                     </label>
-                                    <div className="flex items-center">
-                                        <input
-                                            checked={nombreActive}
-                                            onChange={() => setNombreActive(!nombreActive)}
-                                            id="nombre-checkbox"
-                                            type="checkbox"
-                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                        />
-                                        <label
-                                            htmlFor="nombre-checkbox"
-                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                        >
-                                            Editar
-                                        </label>
-                                    </div>
+                                    
+                                </div>
                                 </div>
                                 <div className="relative z-0 w-full mb-5 group">
                                     <input
@@ -578,42 +592,8 @@ const Expedientes = () => {
                                         </label>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="grid md:grid-cols-2 md:gap-6">
-                                <div className="relative z-0 w-full mb-5 group">
-                                    <input
-                                        type="text"
-                                        name="expediente"
-                                        id="floating_expediente"
-                                        value={formData.expediente}
-                                        onChange={handleChange}
-                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${expedienteActive ? '' : 'pointer-events-none'}`}
-                                        placeholder=" "
-                                        readOnly={!expedienteActive}
-                                    />
-                                    <label
-                                        htmlFor="floating_expediente"
-                                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                    >
-                                        Expediente (Opcional)
-                                    </label>
-                                    <div className="flex items-center">
-                                        <input
-                                            checked={expedienteActive}
-                                            onChange={() => setExpedienteActive(!expedienteActive)}
-                                            id="expediente-checkbox"
-                                            type="checkbox"
-                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                        />
-                                        <label
-                                            htmlFor="expediente-checkbox"
-                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                                        >
-                                            Editar
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                          
+                           
                             <div>
                                 <button
                                     type="submit"
@@ -737,7 +717,7 @@ const Expedientes = () => {
                 </div>
             </form>
         ) : (
-            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+            <form className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                 <div className="flex">
                     <button
                         id="dropdown-button"

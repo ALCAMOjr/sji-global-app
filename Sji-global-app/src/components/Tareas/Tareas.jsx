@@ -95,8 +95,6 @@ const Tareas = () => {
 
         try {
             const { success, error } = await deteleAbogado(selectedAbogado.id);
-
-            console.log(success)
             if (success) {
                 toast.info('Se eliminó correctamente el abogado', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -164,7 +162,6 @@ const Tareas = () => {
 
                     toast.error('El nombre de usuario ya existe. Por favor, elige otro.');
                 } else {
-                    console.log(error.message)
                     toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
 
                 }

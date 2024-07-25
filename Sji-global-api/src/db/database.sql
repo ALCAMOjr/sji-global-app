@@ -65,4 +65,33 @@ CREATE TABLE Tareas (
     FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
 );
 
+
+CREATE TABLE CreditosSIAL (
+  id BIGINT,
+  num_credito VARCHAR(250),
+  estatus VARCHAR(250),
+  acreditado VARCHAR(250),
+  omisos INT,
+  estado VARCHAR(250),
+  municipio VARCHAR(250),
+  calle_y_numero VARCHAR(250),
+  fraccionamiento_o_colonia VARCHAR(250),
+  codigo_postal VARCHAR(250),
+  ultima_etapa_reportada VARCHAR(250),
+  fecha_ultima_etapa_reportada DATE,
+  estatus_ultima_etapa VARCHAR(250),
+  macroetapa_aprobada VARCHAR(250),
+  ultima_etapa_aprobada VARCHAR(250),
+  fecha_ultima_etapa_aprobada VARCHAR(20),
+  etapa_construida VARCHAR(250),
+  siguiente_etapa VARCHAR(250),
+  despacho VARCHAR(250),
+  semaforo VARCHAR(250),
+  descorto VARCHAR(250),
+  abogado VARCHAR(250),
+  expediente VARCHAR(250),
+  juzgado VARCHAR(250)
+);
+
+
 describe expTribunalA;

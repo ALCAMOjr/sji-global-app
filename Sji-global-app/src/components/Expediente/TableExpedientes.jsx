@@ -217,10 +217,10 @@ const Row = ({
                                         {expediente.detalles.map((detalle, idx) => (
                                             detalle && (
                                                 <TableRow key={idx}>
-                                                    <TableCell className="text-xs">{detalle.fecha || 'N/A'}</TableCell>
-                                                    <TableCell className="text-xs">{detalle.etapa || 'N/A'}</TableCell>
-                                                    <TableCell className="text-xs">{detalle.termino || 'N/A'}</TableCell>
-                                                    <TableCell className="text-xs">{detalle.notificacion || 'N/A'}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.fecha}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.etapa}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.termino}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.notificacion}</TableCell>
                                                 </TableRow>
                                             )
                                         ))}

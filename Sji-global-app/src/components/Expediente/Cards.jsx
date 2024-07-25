@@ -38,6 +38,8 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
 
+    console.log(selectedExpediente)
+
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
@@ -165,79 +167,51 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                 />
             </div>
             {showModal && selectedExpediente && (
-                <div id="timeline-modal" tabIndex="-1" aria-hidden="true" className="fixed inset-0 z-50 overflow-y-auto bg-gray-800 bg-opacity-50 flex justify-center items-center">
-                    <div className="relative p-4 w-full max-w-4xl">
-                        <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
-                            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Detalles del Expediente #{selectedExpediente.numero}
-                                </h3>
-                                <button
-                                    type="button"
-                                    onClick={CloseModal}
-                                    className="text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white p-1.5 ml-auto inline-flex h-8 w-8 items-center justify-center rounded-lg"
-                                >
-                                    <svg
-                                        className="h-5 w-5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        ></path>
-                                    </svg>
-                                    <span className="sr-only">Close modal</span>
-                                </button>
-                            </div>
-                            <div className="p-4 md:p-5">
-                                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-400">
-                                        <tr>
-                                            <th scope="col" className="px-6 py-3">Campo</th>
-                                            <th scope="col" className="px-6 py-3">Valor</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Nombre</td>
-                                            <td className="px-6 py-4">{selectedExpediente.nombre}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">URL</td>
-                                            <td className="px-6 py-4">{selectedExpediente.url}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Expediente</td>
-                                            <td className="px-6 py-4">{selectedExpediente.expediente}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Juzgado</td>
-                                            <td className="px-6 py-4">{selectedExpediente.juzgado}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Juicio</td>
-                                            <td className="px-6 py-4">{selectedExpediente.juicio}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Ubicación</td>
-                                            <td className="px-6 py-4">{selectedExpediente.ubicacion}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">Partes</td>
-                                            <td className="px-6 py-4">{selectedExpediente.partes}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+    <div id="timeline-modal" tabIndex="-1" aria-hidden="true" className="fixed inset-0 z-50 overflow-y-auto bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div className="relative p-4 w-full max-w-4xl">
+            <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Detalles del Expediente #{selectedExpediente.numero}
+                    </h3>
+                    <button type="button" onClick={() => CloseModal()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
+                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span className="sr-only">Close modal</span>
+                    </button>
                 </div>
-            )}
+                <div className="p-4 md:p-5">
+                    <div className="overflow-x-auto">
+                        <div className="max-h-96 overflow-y-auto">
+                            <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-600 sticky top-0">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">Fecha</th>
+                                        <th scope="col" className="px-6 py-3">Etapa</th>
+                                        <th scope="col" className="px-6 py-3">Término</th>
+                                        <th scope="col" className="px-6 py-3">Notificación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedExpediente.detalles.map((detalle, index) => (
+                                        <tr key={index}>
+                                            <td className="px-6 py-4">{detalle.fecha}</td>
+                                            <td className="px-6 py-4">{detalle.etapa}</td>
+                                            <td className="px-6 py-4">{detalle.termino}</td>
+                                            <td className="px-6 py-4 truncate">{detalle.notificacion}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                               
+                            </div>
+            </div>
+          </div>
+        </div>
+      )}
         </div>
     );
 };

@@ -13,6 +13,7 @@ import Expedientes from './components/Expediente/Expedientes.jsx';
 import Abogados from './components/Abogados/Abogado.jsx';
 import Home from './components/Home.jsx';
 import Tareas from './components/Tareas/Tareas.jsx';
+import ExpedientesSial from './components/ExpedienteSial/ExpedienteSial.jsx';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/abogados" element={<Abogados />} />
             <Route path="/expedientes" element={<Expedientes />} />
+            <Route path="/expedientesSial" element={<ExpedientesSial />} />
             <Route path="/tareas" element={<Tareas />} />
           </Route>
           <Route path="*" element={<NotFound />} />

@@ -9,9 +9,8 @@ import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
 import getExpedienteByNumero from '../../views/expedientes/getExpedienteByNumero.js';
 import Context from '../../context/abogados.context.jsx';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import { Tooltip, Button } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
-import TableExpedientes from './TableExpedientes.jsx';
 
 
 const Expedientes = () => {
@@ -276,7 +275,6 @@ const Expedientes = () => {
 
 
     const handleSearchTypeChange = (type) => {
-        console.log(type)
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
@@ -295,8 +293,6 @@ const Expedientes = () => {
             filteredExpedientes = expedientes.filter(expediente => expediente.nombre.toLowerCase().includes(lowercaseSearchTerm));
         } else if (searchType === 'Numero') {
             try {
-
-                console.log(lowercaseSearchTerm, jwt)
                 const expediente = await getExpedienteByNumero({ numero: lowercaseSearchTerm, token: jwt });
                 if (expediente) {
                     filteredExpedientes.push(expediente);
@@ -353,7 +349,7 @@ const Expedientes = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 ml-0 lg:ml-44 xl:ml-44 justify-start h-screen">
+        <div className="flex items-center -mt-44 -ml-60 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -363,24 +359,19 @@ const Expedientes = () => {
     return (
         <div className="flex flex-col min-h-screen">
           
-                <div className="fixed right-8 lg:right-56 xl:right-56  mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50">
-                    <div className="relative">
-                        <Dropdown>
-                            <DropdownTrigger>
+                 <div className="relative">
+                    <Tooltip showArrow={true} content="Crear Expediente">
                                 <Button color='primary'
+                                className='fixed right-16 lg:right-56 xl:right-56  mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
                                     isIconOnly
                                     aria-label="Mas"
-                                    
+                                    onClick={openModal}
                                 >
                                     <img src={masicon} alt="Mas" className='w-4 h-4'/>
                                 </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem  key="new">Subir Archivo</DropdownItem>
-                                <DropdownItem onClick={openModal} key="copy">Crear Expediente</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                                </Tooltip>
+                            
+                   
                 </div>
             
 
@@ -828,7 +819,7 @@ const Expedientes = () => {
 
 
             {currentExpedientes.length === 0 ? (
-                <div className="flex items-center justify-center min-h-screen">
+                <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
                     <div className="flex flex-col items-center justify-center">
                         <div className="text-gray-400 mb-2">
                             <svg width="116" height="116" viewBox="0 0 116 116" fill="none" xmlns="http://www.w3.org/2000/svg">

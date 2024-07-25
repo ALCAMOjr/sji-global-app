@@ -96,8 +96,6 @@ const Abogados = () => {
 
         try {
             const { success, error } = await deteleAbogado(selectedAbogado.id);
-
-            console.log(success)
             if (success) {
                 toast.info('Se eliminó correctamente el abogado', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -165,7 +163,6 @@ const Abogados = () => {
 
                     toast.error('El nombre de usuario ya existe. Por favor, elige otro.');
                 } else {
-                    console.log(error.message)
                     toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
 
                 }
@@ -210,10 +207,10 @@ const Abogados = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 ml-0 lg:ml-44 xl:ml-44 justify-start h-screen">
+        <div className="flex items-center -mt-44 -ml-60 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
-    )
+    );
 
 
     if (error) return <Error message={error.message} />;

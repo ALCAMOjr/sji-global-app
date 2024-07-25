@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/expedientes';
-export default async function getAllExpedientes({ token }) {
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/expedientesSial/number';
+
+export default async function getExpedienteByNumeroSial({ numero, token }) {
     try {
         const config = {
             headers: {
@@ -10,7 +11,7 @@ export default async function getAllExpedientes({ token }) {
             }
         };
 
-        const response = await axios.get(baseUrl, config);
+        const response = await axios.get(`${baseUrl}/${numero}`, config);
 
         if (response.status !== 200) {
             throw new Error('Response is NOT ok');

@@ -32,7 +32,6 @@ export const createTask = async (req, res) => {
         }
 
         const Fecha_Registro = format(new Date(), 'yyyy-MM-dd');
-        console.log(Fecha_Registro);
         const [result] = await pool.query(
             'INSERT INTO Tareas (expTribunalA_Id, URL, Abogado_ID, Tarea, Fecha_Registro, Fecha_Estimada_Entrega, Fecha_Real_Entrega, Fecha_Estimada_Respuesta, Estado_Tarea, Observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [expTribunalA_Id, URL, Abogado_ID, Tarea, Fecha_Registro, Fecha_Estimada_Entrega, Fecha_Real_Entrega, Fecha_Estimada_Respuesta, Estado_Tarea, Observaciones]

@@ -11,7 +11,7 @@ import getExpedienteByNumero from '../../views/expedientes/getExpedienteByNumero
 import Context from '../../context/abogados.context.jsx';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
-
+import TableExpedientes from './TableExpedientes.jsx';
 
 
 const Expedientes = () => {
@@ -39,6 +39,8 @@ const Expedientes = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
 
+
+   
 
     useEffect(() => {
         let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
@@ -361,7 +363,7 @@ const Expedientes = () => {
     return (
         <div className="flex flex-col min-h-screen">
           
-                <div className="fixed lg:absolute xl:absolute right-8 lg:right-56 xl:right-56  mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50">
+                <div className="fixed right-8 lg:right-56 xl:right-56  mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50">
                     <div className="relative">
                         <Dropdown>
                             <DropdownTrigger>
@@ -744,7 +746,7 @@ const Expedientes = () => {
                 </div>
             </form>
         ) : (
-            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+            <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                 <div className="flex">
                     <button
                         id="dropdown-button"

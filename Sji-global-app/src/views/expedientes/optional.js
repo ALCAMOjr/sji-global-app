@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Obtener la URL base de la variable de entorno o usar la URL local por defecto
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3001/api') + '/expedientes';
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4004/api') + '/expedientes';
 
 
 export async function updateExpedientes({ id, numero, nombre, url, expediente, juzgado, juicio, ubicacion, partes, token }) {

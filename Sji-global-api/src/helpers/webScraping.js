@@ -61,4 +61,48 @@ async function fillExpTribunalA(page, url) {
     return { juzgado, juicio, ubicacion, partes, expediente };
 }
 
-export { initializeBrowser, fillExpTribunalA };
+async function scrappingDet(page, url) {
+    let attempts = 0;
+    let navigated = false;
+    while (!navigated && attempts < 3) {
+        try {
+            await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+            navigated = true;
+        } catch (error) {
+            attempts++;
+            if (attempts >= 3) {
+                throw new Error(`No se pudo navegar a la URL: ${url} después de 3 intentos.`);
+            }
+        }
+    }
+
+    const content = await page.content();
+    const $ = cheerio.load(content);
+
+    const rows = $('#ContentPlaceHolderPrincipal_dgDetalle_dgDetallado tr.tdatos');
+    const data = [];
+
+    for (let i = 0; i < rows.length; i++) {
+        const cells = $(rows[i]).find('td');
+        const verAcuerdo = $(cells[0]).find('a').attr('title');
+        const fecha = $(cells[1]).find('span').text();
+        const etapa = $(cells[2]).text().trim();
+        const termino = $(cells[3]).text().trim();
+        const notificacion = $(cells[4]).find('a').text().trim();
+
+            data.push({
+                verAcuerdo,
+                fecha,
+                etapa,
+                termino,
+                notificacion,
+            });
+
+    
+     
+    }
+
+    return data;
+}
+
+export { initializeBrowser, fillExpTribunalA, scrappingDet };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3000/api') + '/expedientes';
-
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/expedientes';
+console.log(baseUrl)
 export default async function getAllExpedientes({ token }) {
     try {
         const config = {

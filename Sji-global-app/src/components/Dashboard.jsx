@@ -5,33 +5,23 @@ import { GrUserAdmin } from "react-icons/gr";
 import { LiaSellsy } from "react-icons/lia";
 import Context from '../context/abogados.context.jsx';
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import useUser from "../hooks/auth.jsx";
 import { GrHome } from "react-icons/gr";
-import Home from './Home.jsx';
-import user from "../assets/user.png"
+import user from "../assets/user.png";
 import logo2 from "../assets/sji.png";
-import Abogados from './Abogados/Abogado.jsx';
-import expedientelogo from "../assets/expedientes.png"
-import tasklogo from "../assets/task.png"
-import Expedientes from './Expediente/Expedientes.jsx';
+import expedientelogo from "../assets/expedientes.png";
+import tasklogo from "../assets/task.png";
+
 function Dashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { jwt } = useContext(Context);
-    const { logout } = useUser()
+    const { logout } = useUser();
     const navigate = useNavigate();
-
+    const location = useLocation();
     const [username, setUsername] = useState("");
     const [userType, setUserType] = useState("");
-    const [isHomeActive, setIsHomeActive] = useState(true);
-    const [isAbogadosActive, setIsAbogadosActive] = useState(false);
-    const [isExpedienteActive, setIsExpedienteActive] = useState(false);
-    const [isTaskActive, setIsTaskActive] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
 
     useEffect(() => {
         if (jwt) {
@@ -41,54 +31,16 @@ function Dashboard() {
         }
     }, [jwt]);
 
-
     const handleLogout = () => {
         logout();
         navigate('/login'); 
     };
 
-
-    const handleHomeClick = () => {
-        setIsHomeActive(true); 
-        setIsAbogadosActive(false); 
-        setIsExpedienteActive(false); 
-        setIsTaskActive(false)
-    };
-
-    const handleAbogadosClick = () => {
-        setIsHomeActive(false); 
-        setIsAbogadosActive(true); 
-        setIsExpedienteActive(false); 
-        setIsTaskActive(false)
-    };
-
-    const handleExpedienteClick = () => {
-        setIsHomeActive(false); 
-        setIsAbogadosActive(false); 
-        setIsExpedienteActive(true); 
-        setIsTaskActive(false)
-    };
-
-    const handleTaskClick = () => {
-        setIsHomeActive(false); 
-        setIsAbogadosActive(false); 
-        setIsExpedienteActive(false); 
-        setIsTaskActive(true)
-    };
-
-
-
-
-    const handleDynamicClick = () => {
-        if (userType === 'coordinador') {
-            handleExpedienteClick();
-        } else if (userType === 'abogado') {
-            handleTaskClick();
-        }
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
 
     useEffect(() => {
-        
         const handleDocumentClick = (event) => {
             if (isMenuOpen && !event.target.closest("#logo-sidebar")) {
                 setIsMenuOpen(false);
@@ -104,7 +56,6 @@ function Dashboard() {
     const handlerSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen)
     }
-
 
     return (
         <div>
@@ -162,8 +113,6 @@ function Dashboard() {
                                             <img src={user} className="w-12 h-12" alt="User Icon" />
                                         </div>
                                     </button>
-
-
                                 </div>
                             </div>
                         </div>
@@ -174,37 +123,36 @@ function Dashboard() {
                 id="logo-sidebar"
                 className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} bg-white border-r border-gray-200 lg:translate-x-0 dark:bg-gray-800 dark:border-gray-700`}
                 aria-label="Sidebar"
-            >   <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            >
+                <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <a className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${isHomeActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`} onClick={handleHomeClick}>
+                            <Link to="/" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
                                 <GrHome className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="ms-3">Hogar</span>
-                            </a>
+                            </Link>
                         </li>
-                        
+                        {userType === 'coordinador' && (
+                            <>
+                                <li>
+                                    <Link to="/abogados" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/abogados' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <GrUserAdmin className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Abogados</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/expedientes" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/expedientes' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <img src={expedientelogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Expedientes</span>
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                         <li>
-                            {userType === 'coordinador' && (
-                                <a className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${isAbogadosActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`} onClick={handleAbogadosClick}>
-                                    <GrUserAdmin className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                                    <span className="flex-1 ms-3 whitespace-nowrap">Abogados</span>
-                                </a>
-                            )}
-                        </li>
-                        <li>
-                            {userType === 'coordinador' && (
-                                <a className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${isExpedienteActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`} onClick={handleExpedienteClick}>
-
-                                    <img src={expedientelogo} className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                                    <span className="flex-1 ms-3 whitespace-nowrap">Expedientes</span>
-                                </a>
-                            )}
-                        </li>
-                        <li>
-                            <a className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${isTaskActive ? 'bg-gray-100 dark:bg-gray-700' : ''}`} onClick={handleTaskClick}>
-                            <img src={tasklogo} className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                            <span className="ms-3">Tareas</span>
-                            </a>
+                            <Link to="/tareas" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/tareas' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                <img src={tasklogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                <span className="ms-3">Tareas</span>
+                            </Link>
                         </li>
                         <li>
                             <a onClick={handleLogout} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -212,21 +160,12 @@ function Dashboard() {
                                 <span className="flex-1 ms-3 whitespace-nowrap">Cerrar sesión</span>
                             </a>
                         </li>
-                  
-
                     </ul>
                 </div>
             </aside>
-            <div className="flex justify-center items-center h-full">
-            <div className="mt-40">
-                    {isHomeActive && <Home handleDynamicClick={handleDynamicClick}  />}
-                    {isAbogadosActive && <Abogados />} 
-                    {isExpedienteActive && <Expedientes />} 
-                    {isTaskActive && <Home />} 
-                </div>
-            </div>
-
-        
+            <main className="ml-64 pt-20 px-4">
+                <Outlet />
+            </main>
         </div>
     );
 }

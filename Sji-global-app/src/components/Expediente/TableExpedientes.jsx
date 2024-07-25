@@ -33,6 +33,8 @@ const TableExpedientes = ({
     setIsOpen
 }) => {
 
+    console.log(currentExpedientes)
+
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
@@ -54,16 +56,19 @@ const TableExpedientes = ({
 
     return (
         <div>
-            <TableContainer component={Paper} className='justify-center flex relative min-w-max ml-32'>
+            <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
                 <Table aria-label="collapsible table">
                     <TableHead className='bg-gray-100'>
                         <TableRow>
                             <TableCell />
                             <TableCell>Nombre</TableCell>
                             <TableCell>Numero</TableCell>
-                            <TableCell>Juicio</TableCell>
+                            <TableCell>Url</TableCell>
                             <TableCell>Expediente</TableCell>
+                            <TableCell>Juicio</TableCell>
                             <TableCell>Ubicacion</TableCell>
+                            <TableCell>Juzgado</TableCell>
+                            <TableCell>Partes</TableCell>
                             <TableCell>Opciones</TableCell>
                         </TableRow>
                     </TableHead>
@@ -110,12 +115,9 @@ const Row = ({
     openModalUpdate,
     openModalDelete,
     menuDirection,
-
-
 }) => {
     const [open, setOpen] = React.useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
-
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -127,7 +129,6 @@ const Row = ({
                 console.error('Error al copiar al portapapeles: ', err);
             });
     };
-
 
     return (
         <Fragment>
@@ -145,9 +146,28 @@ const Row = ({
                     {expediente.nombre}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.numero}</TableCell>
-                <TableCell className="max-w-xs truncate">{expediente.juicio}</TableCell>
+                <TableCell align="center" component="th" scope="row" className="text-xs max-w-xs truncate flex items-start">
+                    {expediente.url && (
+                        <button
+                            onClick={() => handleCopy(expediente.url)}
+                            className="text-white pr-2 rounded-lg hover:bg-gray-100 transition-all"
+                        >
+                            {copySuccess ? (
+                                <svg className="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            ) : (
+                                <img src={copiaricon} alt='copiar icon' className='w-4 h-4' />
+                            )}
+                        </button>
+                    )}
+                    {expediente.url}
+                </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.juicio}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.ubicacion}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.juzgado}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.partes}</TableCell>
                 <TableCell>
                     <button id="menu-button" onClick={() => handleMenuToggle(index)} className={`relative group p-2 ${isOpen[index] ? 'open' : ''}`}>
                         <div className={`relative flex overflow-hidden items-center justify-center rounded-full w-[32px] h-[32px] transform transition-all bg-white ring-0 ring-gray-300 hover:ring-8  ${isOpen[index] ? 'ring-4' : ''} ring-opacity-30 duration-200 shadow-md`}>
@@ -178,61 +198,43 @@ const Row = ({
                     )}
                 </TableCell>
             </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component="div">
-                                Detalles
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Url</TableCell>
-                                        <TableCell>Juzgado</TableCell>
-                 
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-
-                                    <TableRow>
-                                        <TableCell  align="center"  component="th" scope="row" className="text-xs max-w-xs truncate flex items-start">
-                                   {expediente.url && (
-                                                <button
-                                                    onClick={() => handleCopy(expediente.url)}
-                                                    className="text-white pr-2 rounded-lg hover:bg-gray-100 transition-all"
-                                                >
-                                                    {copySuccess ? (
-                                                        <svg className="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    ) : (
-                                                        <img src={copiaricon} alt='copiar icon' className='w-4 h-4' />
-                                                    )}
-                                                </button>
-                                            
-                                            )}
-                                                {expediente.url}
-                                        </TableCell>
-
-                                        <TableCell className="text-xs max-w-xs truncate">{expediente.juzgado}</TableCell>
-
-                                          <TableCell>
-                                          <button type="button" class="text-primary bg-white hover:underline focus:outline-none   rounded-lg text-sm inline-flex items-center px-2 py-2 text-center">
-                            Ver mas
-                        </button>
-                                          </TableCell>
-
-                                    </TableRow>
-
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+            {expediente.detalles && expediente.detalles.length > 0 && (
+                <TableRow>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                                <Typography variant="h6" gutterBottom component="div">
+                                    Detalles
+                                </Typography>
+                                <Table size="small" aria-label="details">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Fecha</TableCell>
+                                            <TableCell>Etapa</TableCell>
+                                            <TableCell>Termino</TableCell>
+                                            <TableCell>Notificación</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {expediente.detalles.map((detalle, idx) => (
+                                            detalle && (
+                                                <TableRow key={idx}>
+                                                    <TableCell className="text-xs">{detalle.fecha || 'N/A'}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.etapa || 'N/A'}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.termino || 'N/A'}</TableCell>
+                                                    <TableCell className="text-xs">{detalle.notificacion || 'N/A'}</TableCell>
+                                                </TableRow>
+                                            )
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </Box>
+                        </Collapse>
+                    </TableCell>
+                </TableRow>
+            )}
         </Fragment>
     );
-}
+};
 
 export default TableExpedientes;

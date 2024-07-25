@@ -42,7 +42,6 @@ CREATE TABLE expTribunalDetA (
     etapa VARCHAR(50) NULL,
     termino VARCHAR(250) NULL,
     notificacion VARCHAR(250) NULL,
-    seleccionar VARCHAR(50) NULL,
     expediente VARCHAR(50) NULL,
     expTribunalA_id INT,
     FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)

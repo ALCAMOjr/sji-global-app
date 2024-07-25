@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3000/api') + '/expedientes/create';
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/expedientes/create';
 
 export default async function createExpediente({ numero, nombre, url, expediente,  token }) {
     try {

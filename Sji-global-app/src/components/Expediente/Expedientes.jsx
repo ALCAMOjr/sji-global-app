@@ -20,7 +20,7 @@ const Expedientes = () => {
     const [isOpen, setIsOpen] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [search, setSearch] = useState('');
-    const [searchType, setSearchType] = useState('Nombre');
+    const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [currentPage, setCurrentPage] = useState(1);
@@ -475,7 +475,7 @@ const Expedientes = () => {
                             onChange={handleChange}
                             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
                             placeholder=" "
-                            required
+                   
                         />
                         <label htmlFor="floating_url" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL del expediente ( Opcional )</label>
                     </div>
@@ -664,18 +664,19 @@ const Expedientes = () => {
                             className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
                         >
                             <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                            <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                        Numero
+                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                         Nombre
                                         {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                     </button>
                                 </li>
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                        Numero
-                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
+                            
                             </ul>
                         </div>
                     )}
@@ -742,18 +743,19 @@ const Expedientes = () => {
                             className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
                         >
                             <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                            <li>
+                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                        Numero
+                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                         Nombre
                                         {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                     </button>
                                 </li>
-                                <li>
-                                    <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                        Numero
-                                        {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                    </button>
-                                </li>
+                            
                             </ul>
                         </div>
                     )}

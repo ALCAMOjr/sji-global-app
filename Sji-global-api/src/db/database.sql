@@ -32,7 +32,6 @@ CREATE TABLE expTribunalA (
     partes TEXT
 );
 
-select * from expTribunalA;
 -- Crear la tabla 'expTribunalDetA'
 CREATE TABLE expTribunalDetA (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,5 +92,50 @@ CREATE TABLE CreditosSIAL (
   juzgado VARCHAR(250)
 );
 
+
+CREATE TABLE EtapasTv (
+    etapa VARCHAR(50) NULL,
+    termino VARCHAR(250) NULL,
+    secuencia VARCHAR(5)
+);
+
+
+CREATE TABLE EtapasSial (
+    etapa VARCHAR(250) NULL,
+    secuencia VARCHAR(5)
+);
+
+        e.secuencia AS secuencia_etapa_aprobada
+    FROM CreditosSIAL c
+    LEFT JOIN EtapasSial e ON c.ultima_etapa_aprobada = e.etapa
+),
+
+-- Consulta 2: Tomar datos de expTribunalDetA y EtapasTv, y obtener registros con la fecha más reciente
+ExpTribunalEtapas AS (
+    SELECT 
+        etd.numeroexp,
+        etd.fecha,
+        etd.etapa,
+        etd.termino,
+        etv.secuencia AS secuencia_etapa_tv,
+        ROW_NUMBER() OVER (PARTITION BY etd.numeroexp ORDER BY STR_TO_DATE(etd.fecha, '%d/%b./%Y') DESC) AS row_num
+    FROM expTribunalDetA etd
+    LEFT JOIN EtapasTv etv ON etd.etapa = etv.etapa AND etd.termino = etv.termino
+)
+
+-- Seleccionar registros con la fecha más reciente para cada numeroexp
+SELECT 
+    ce.num_credito,
+    ce.ultima_etapa_aprobada,
+    ce.fecha_ultima_etapa_aprobada,
+    ce.secuencia_etapa_aprobada,
+    ete.numeroexp,
+    ete.fecha,
+    ete.etapa,
+    ete.termino,
+    ete.secuencia_etapa_tv
+FROM CreditosEtapas ce
+JOIN ExpTribunalEtapas ete ON ce.num_credito = ete.numeroexp
+WHERE ete.row_num = 1;
 
 describe expTribunalA;

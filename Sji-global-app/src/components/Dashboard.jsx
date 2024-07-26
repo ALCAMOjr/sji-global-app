@@ -13,7 +13,7 @@ import logo2 from "../assets/sji.png";
 import expedientelogo from "../assets/expedientes.png";
 import expedienteSiallogo from "../assets/expedienteSial.png";
 import tasklogo from "../assets/task.png";
-
+import positionlogo from "../assets/posicion.png";
 function Dashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { jwt } = useContext(Context);
@@ -142,18 +142,25 @@ function Dashboard() {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/expedientes" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/expedientes' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
-                                        <img src={expedientelogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                                        <span className="flex-1 ms-3 whitespace-nowrap">Expedientes</span>
-                                    </Link>
-                                </li>
-
-                                <li>
                                     <Link to="/expedientesSial" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/expedientesSial' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
                                         <img src={expedienteSiallogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                         <span className="flex-1 ms-3 whitespace-nowrap">Expedientes Sial</span>
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link to="/expedientes" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/expedientes' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <img src={expedientelogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Expedientes Tv</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/positions" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/positions' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <img src={positionlogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Posición Expediente</span>
+                                    </Link>
+                                </li>
+
+                             
                             </>
                         )}
                         <li>

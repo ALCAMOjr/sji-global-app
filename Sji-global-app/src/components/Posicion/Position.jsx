@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import useExpedientesSial from "../../hooks/expedientesial/useExpedienteSial.jsx";
+import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner, Tooltip, Button } from "@nextui-org/react";
 import Error from "./Error.jsx";
 import { toast } from 'react-toastify';
@@ -11,10 +11,14 @@ import Context from '../../context/abogados.context.jsx';
 import getExpedienteByNumeroSial from '../../views/expedientesial/getExpedientebyNumero.js';
 import { IoMdCheckmark } from "react-icons/io";
 import masicon from "../../assets/mas.png"
-
-
-const ExpedientesSial = () => {
-    const { expedientes, loading, error, uploadFile } = useExpedientesSial();
+import {Textarea} from "@nextui-org/react";
+import {DateInput} from "@nextui-org/react";
+import {CalendarDate} from "@internationalized/date";
+import {Select, SelectItem} from "@nextui-org/react";
+import useAbogados from '../../hooks/abogados/useAbogados.jsx';
+const Position = () => {
+    const { expedientes, loading, error } = usePosition();
+    const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -24,22 +28,21 @@ const ExpedientesSial = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
-    const [selectedFile, setSelectedFile] = useState(null);
     const [errors, setErrors] = useState({});
-    const inputFileRef = useRef(null);
     const { jwt } = useContext(Context);
-
-
-
+    const [ selectExpedientetoTask, setSelectExpedientetoTask ] = useState(null)
 
     useEffect(() => {
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-
+        if (expedientes) {
+            setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = currentPage * itemsPerPage;
+            setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+        }
     }, [expedientes, currentPage, itemsPerPage]);
+    
 
 
     const handleChangePage = (event, newPage) => {
@@ -54,60 +57,20 @@ const ExpedientesSial = () => {
 
 
 
+
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(+event.target.value);
         setCurrentPage(1);
     };
-
-    const openModal = () => {
-        setIsModalOpen(true);
+    const openModalTarea = (expediente) => {
+        setSelectExpedientetoTask(expediente)
+        setIsOpenModal(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedFile(null)
+    const closeModalTarea = () => {
+        setSelectExpedientetoTask(null)
+        setIsOpenModal(null)
     };
-
-    const handleFileChange = (e) => {
-        if (e.target.files.length > 0) {
-            setSelectedFile(e.target.files[0]);
-            setErrors((prevErrors) => ({ ...prevErrors, uploadFile: '' }));
-        }
-    };
-
-
-    const handleUploadFile = async () => {
-        if (!selectedFile) {
-            setErrors((prevErrors) => ({ ...prevErrors, uploadFile: 'Por favor, seleccione un archivo antes de subir.' }));
-            return;
-        }
-
-        setIsLoading(true);
-
-        try {
-            const { success, error } = await uploadFile(selectedFile);
-            if (success) {
-                toast.info('Se subio correctamente el archivo', {
-                    icon: () => <img src={check} alt="Success Icon" />,
-                    progressStyle: {
-                        background: '#1D4ED8',
-                    }
-                });
-            } else {
-                toast.error('Algo mal sucedió al subir el archivo: ' + error);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Algo mal sucedió al subir el archivo');
-
-        } finally {
-            setIsLoading(false);
-            setIsModalOpen(false);
-            setSelectedFile(null)
-            setErrors({})
-        }
-    };
-
 
 
     const toggleDropdown = () => setIsSearchOpen(!isSearchOpen);
@@ -200,97 +163,100 @@ const ExpedientesSial = () => {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <div className="relative">
-                <Tooltip showArrow={true} content="Subir Archivo">
-                    <Button
-                        color='primary'
-                        className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
-                        isIconOnly
-                        aria-label="Mas"
-                        onClick={openModal}
-                    >
-                        <img src={masicon} alt="Mas" className='w-4 h-4' />
-                    </Button>
-                </Tooltip>
+
+{isOpenModal && (
+    <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+        <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
+            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Crear Nuevo Expediente
+                </h3>
+                <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span className="sr-only">Close modal</span>
+                </button>
             </div>
+            <form  className="p-4 md:p-5">
+            <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="number"
+                            name="numero"
+                            id="floating_numero"
+                            value={formData.numero}
+                            onChange={handleChange}
+                            onBlur={handleNumeroBlur}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
+                            placeholder=" "
+                            required
+                        />
+                        <label
+                            htmlFor="floating_numero"
+                            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                            Numero de Expediente
+                        </label>
+                        {errorMsg && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMsg}
+                            </p>
+                        )}
+                    </div>
 
-            {isModalOpen && (
-                <div id="verification-modal" tabIndex="-1" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50">
-                    <div className="relative  w-auto max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
-                        <div className="relative rounded-lg shadow bg-white max-w-md w-full mx-auto">
-                            <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-white bg-gray-200">
-                                <h3 className="text-xl font-semibold text-primary/80">
-                                    Subir Archivo
-                                </h3>
-                                <button
-                                    type="button"
-                                    className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                    onClick={closeModal}
-                                >
-                                    <svg
-                                        className="w-3 h-3"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 14 14"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Close modal</span>
-                                </button>
-                            </div>
-                            <div className="p-6 space-y-6 flex flex-col items-center">
-                                <div className="flex flex-col items-center w-full max-w-xs">
-                                    <button
-                                        className="relative mb-2 w-full h-auto flex items-center justify-center bg-gray-200 rounded-xl border-2 border-dashed border-black text-white"
-                                        onClick={() => inputFileRef.current.click()}
-                                    >
-                                        <div className="flex flex-col items-center">
-                                            {isLoading ? (
-                                                <Spinner className='text-center mt-6 mb-8 text-sm' label="Loading..." color="primary" size='lg' labelColor="primary" />
-                                            ) : (
-                                                <>
-                                                    <img src={agregar} className="absolute h-8 w-8 mb-8 z-10" style={{ top: '30%', transform: 'translateY(-50%)' }} alt="Circulo Icon" />
-                                                    <span className='text-sm text-black text-center mt-24 mb-4 z-30'>
-                                                        {selectedFile ? `Archivo seleccionado: ${selectedFile.name}` : 'Click para subir el archivo'}
-                                                    </span>
-                                                    {errors.uploadFile && <p className="text-[#E16060] text-xs">{errors.uploadFile}</p>}
-                                                </>
-                                            )}
-                                        </div>
-                                    </button>
-
-                                    <input
-                                        type="file"
-                                        ref={inputFileRef}
-                                        style={{ display: 'none' }}
-                                        onChange={handleFileChange}
-                                    />
-                                </div>
-                                <div className="flex justify-end mt-4 w-full">
-
-                                    <button
-                                        disabled={isLoading}
-                                        onClick={handleUploadFile}
-                                        className="bg-primary text-white text-lg px-4 py-1 rounded-lg flex items-center justify-center mt-4"
-                                    >
-                                        Subir Archivo
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="text"
+                            name="nombre"
+                            id="floating_nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:border-primary"
+                            placeholder=" "
+                            readOnly
+                        />
+                        <label htmlFor="floating_nombre" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre del expediente</label>
                     </div>
                 </div>
-            )}
+                <div className="grid gap-4 mb-4 grid-cols-1">
+                    <div className="relative z-0 w-full mb-5 group">
+                        <input
+                            type="text"
+                            name="url"
+                            id="floating_url"
+                            value={formData.url}
+                            onChange={handleChange}
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
+                            placeholder=" "
+                   
+                        />
+                        <label htmlFor="floating_url" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL del expediente ( Opcional )</label>
+                    </div>
+                </div>
+                <button
+                    type="submit"
+                   
+                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                >
+                    {isLoading ? (
+                        <div role="status">
+                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7234 75.2124 7.55338C69.5422 4.38335 63.2754 2.51539 56.7663 2.05081C51.7668 1.68134 46.7392 2.05829 41.8592 3.16224C39.3322 3.76176 37.8618 6.25956 38.4989 8.68497C39.1359 11.1104 41.6143 12.5452 44.1373 11.9457C47.8203 11.0764 51.6026 10.8296 55.3196 11.2228C60.8785 11.7913 66.1942 13.543 70.9048 16.3926C75.6155 19.2423 79.6142 23.1216 82.6685 27.793C84.9175 31.0338 86.6015 34.6088 87.6735 38.3892C88.4295 40.7753 91.5423 41.6631 93.9676 39.0409Z" fill="currentFill" />
+                            </svg>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    ) : (
+                        "Crear Expediente"
+                    )}
+                </button>
+            </form>
+        </div>
+    </div>
+)}
 
-
-            <>
+            {/* <>
                 {isDesktopOrLaptop ? (
                     <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
                         <div className="flex">
@@ -450,7 +416,7 @@ const ExpedientesSial = () => {
                         </div>
                     </form>
                 )}
-            </>
+            </> */}
 
 
             {currentExpedientes.length === 0 ? (
@@ -462,8 +428,8 @@ const ExpedientesSial = () => {
                                 <path fillRule="evenodd" clipRule="evenodd" d="M32 27.7402C32 23.322 35.5817 19.7402 40 19.7402H79.1717C83.59 19.7402 87.1717 23.322 87.1717 27.7402V74.3389C87.1717 78.7572 83.59 82.3389 79.1717 82.3389H40C35.5817 82.3389 32 78.7572 32 74.3389V27.7402ZM57.1717 42.7402C57.1717 46.6062 53.8138 49.7402 49.6717 49.7402C45.5296 49.7402 42.1717 46.6062 42.1717 42.7402C42.1717 38.8742 45.5296 35.7402 49.6717 35.7402C53.8138 35.7402 57.1717 38.8742 57.1717 42.7402ZM36.1717 60.8153C37.2808 58.3975 40.7688 54.8201 45.7381 54.3677C51.977 53.7997 55.3044 57.8295 56.5522 60.0094C59.8797 55.4423 67.0336 46.8724 72.3575 45.9053C77.6814 44.9381 81.7853 48.4574 83.1717 50.338V72.6975C83.1717 75.4825 80.914 77.7402 78.1289 77.7402H41.2144C38.4294 77.7402 36.1717 75.4825 36.1717 72.6975V60.8153Z" fill="#D2D9EE"></path>
                             </svg>
                         </div>
-                        <p className="text-gray-500">No hay expedientes todavía</p>
-                        <p className="text-gray-400 text-sm mb-4 text-center">Sube un nuevo archivo para comenzar.</p>
+                        <p className="text-gray-500">No hay posiciones todavía</p>
+                        <p className="text-gray-400 text-sm mb-4 text-center">Crea Expedientes para comenzar.</p>
                     </div>
 
                 </div>
@@ -474,19 +440,20 @@ const ExpedientesSial = () => {
             ) : (
 
                 <TableConditional
-                    currentExpedientes={currentExpedientes}
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    handleChangePage={handleChangePage}
-                    handleChangeRowsPerPage={handleChangeRowsPerPage}
-                    onPageChange={onPageChange}
+                   currentExpedientes={currentExpedientes}
+                   currentPage={currentPage}
+                   totalPages={totalPages}
+                  handleChangePage={handleChangePage}
+                  handleChangeRowsPerPage={handleChangeRowsPerPage}
+                onPageChange={onPageChange}
+                 openModalTarea={openModalTarea}
 
 
-                />
-            )}
+           />
+            )}  
         </div>
     )
 
 }
 
-export default ExpedientesSial;
+export default Position;

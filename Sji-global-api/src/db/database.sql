@@ -22,7 +22,7 @@ CREATE TABLE abogados (
 -- Crear la tabla 'expTribunalA'
 CREATE TABLE expTribunalA (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numero INT NOT NULL,
+    numero BIGINT NOT NULL,
     nombre VARCHAR(255),
     url VARCHAR(255),
     expediente VARCHAR(255),
@@ -35,7 +35,7 @@ CREATE TABLE expTribunalA (
 -- Crear la tabla 'expTribunalDetA'
 CREATE TABLE expTribunalDetA (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numeroexp INT NOT NULL,
+    numeroexp BIGINT NOT NULL,
     ver_acuerdo VARCHAR(50) NULL,
     fecha VARCHAR(20) NULL,
     etapa VARCHAR(50) NULL,
@@ -49,7 +49,7 @@ CREATE TABLE expTribunalDetA (
 
 CREATE TABLE Tareas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    exptribunalA_id INT NOT NULL,
+    exptribunalA_id BIGINT NOT NULL,
     url VARCHAR(255) NULL,
     abogado_id INT,
     tarea TEXT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE Tareas (
 
 CREATE TABLE CreditosSIAL (
   id BIGINT,
-  num_credito VARCHAR(250),
+  num_credito BIGINT NOT NULL,
   estatus VARCHAR(250),
   acreditado VARCHAR(250),
   omisos INT,
@@ -104,38 +104,3 @@ CREATE TABLE EtapasSial (
     etapa VARCHAR(250) NULL,
     secuencia VARCHAR(5)
 );
-
-        e.secuencia AS secuencia_etapa_aprobada
-    FROM CreditosSIAL c
-    LEFT JOIN EtapasSial e ON c.ultima_etapa_aprobada = e.etapa
-),
-
--- Consulta 2: Tomar datos de expTribunalDetA y EtapasTv, y obtener registros con la fecha más reciente
-ExpTribunalEtapas AS (
-    SELECT 
-        etd.numeroexp,
-        etd.fecha,
-        etd.etapa,
-        etd.termino,
-        etv.secuencia AS secuencia_etapa_tv,
-        ROW_NUMBER() OVER (PARTITION BY etd.numeroexp ORDER BY STR_TO_DATE(etd.fecha, '%d/%b./%Y') DESC) AS row_num
-    FROM expTribunalDetA etd
-    LEFT JOIN EtapasTv etv ON etd.etapa = etv.etapa AND etd.termino = etv.termino
-)
-
--- Seleccionar registros con la fecha más reciente para cada numeroexp
-SELECT 
-    ce.num_credito,
-    ce.ultima_etapa_aprobada,
-    ce.fecha_ultima_etapa_aprobada,
-    ce.secuencia_etapa_aprobada,
-    ete.numeroexp,
-    ete.fecha,
-    ete.etapa,
-    ete.termino,
-    ete.secuencia_etapa_tv
-FROM CreditosEtapas ce
-JOIN ExpTribunalEtapas ete ON ce.num_credito = ete.numeroexp
-WHERE ete.row_num = 1;
-
-describe expTribunalA;

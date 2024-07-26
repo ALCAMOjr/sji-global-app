@@ -2,8 +2,6 @@ CREATE DATABASE Tribunal;
 
 USE Tribunal;
 
-
-
 -- Crear la tabla 'abogados'
 CREATE TABLE abogados (
     id INT NOT NULL AUTO_INCREMENT,
@@ -17,7 +15,6 @@ CREATE TABLE abogados (
     user_type ENUM('coordinador', 'abogado') NOT NULL,
     PRIMARY KEY (id)
 );
-
 
 -- Crear la tabla 'expTribunalA'
 CREATE TABLE expTribunalA (
@@ -46,10 +43,10 @@ CREATE TABLE expTribunalDetA (
     FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
 );
 
-
+-- Crear la tabla 'Tareas'
 CREATE TABLE Tareas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    exptribunalA_id BIGINT NOT NULL,
+    exptribunalA_id INT NOT NULL,
     url VARCHAR(255) NULL,
     abogado_id INT,
     tarea TEXT NULL,
@@ -64,9 +61,9 @@ CREATE TABLE Tareas (
     FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
 );
 
-
+-- Crear la tabla 'CreditosSIAL'
 CREATE TABLE CreditosSIAL (
-  id BIGINT,
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   num_credito BIGINT NOT NULL,
   estatus VARCHAR(250),
   acreditado VARCHAR(250),
@@ -77,11 +74,11 @@ CREATE TABLE CreditosSIAL (
   fraccionamiento_o_colonia VARCHAR(250),
   codigo_postal VARCHAR(250),
   ultima_etapa_reportada VARCHAR(250),
-  fecha_ultima_etapa_reportada DATE,
+  fecha_ultima_etapa_reportada VARCHAR(250),
   estatus_ultima_etapa VARCHAR(250),
   macroetapa_aprobada VARCHAR(250),
   ultima_etapa_aprobada VARCHAR(250),
-  fecha_ultima_etapa_aprobada VARCHAR(20),
+  fecha_ultima_etapa_aprobada VARCHAR(250),
   etapa_construida VARCHAR(250),
   siguiente_etapa VARCHAR(250),
   despacho VARCHAR(250),
@@ -92,14 +89,14 @@ CREATE TABLE CreditosSIAL (
   juzgado VARCHAR(250)
 );
 
-
+-- Crear la tabla 'EtapasTv'
 CREATE TABLE EtapasTv (
     etapa VARCHAR(50) NULL,
     termino VARCHAR(250) NULL,
     secuencia VARCHAR(5)
 );
 
-
+-- Crear la tabla 'EtapasSial'
 CREATE TABLE EtapasSial (
     etapa VARCHAR(250) NULL,
     secuencia VARCHAR(5)

@@ -99,3 +99,12 @@ CREATE TABLE EtapasSial (
     etapa VARCHAR(250) NULL,
     secuencia VARCHAR(5)
 );
+
+
+LOAD DATA INFILE '/var/lib/mysql-files/etapasTV.csv'
+INTO TABLE EtapasTv
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"' 
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(etapa, termino, secuencia);

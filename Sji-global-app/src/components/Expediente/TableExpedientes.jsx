@@ -59,15 +59,34 @@ const TableExpedientes = ({
                     <TableHead className='bg-gray-100'>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Nombre</TableCell>
-                            <TableCell>Numero</TableCell>
-                            <TableCell>Url</TableCell>
-                            <TableCell>Expediente</TableCell>
-                            <TableCell>Juicio</TableCell>
-                            <TableCell>Ubicacion</TableCell>
-                            <TableCell>Juzgado</TableCell>
-                            <TableCell>Partes</TableCell>
-                            <TableCell>Opciones</TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Nombre</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Numero</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Url</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Expediente</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Juicio</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Ubicacion</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Juzgado</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Partes</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Opciones</span>
+                            </TableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>

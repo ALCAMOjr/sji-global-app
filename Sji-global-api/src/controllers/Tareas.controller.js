@@ -7,11 +7,11 @@ dotenv.config();
 
 export const createTask = async (req, res) => {
     try {
-        const { exptribunalA_id, abogado_id, tarea, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, observaciones, url } = req.body;
+        const { exptribunalA_numero, abogado_id, tarea, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, observaciones, url } = req.body;
         const { userId } = req;
 
-        if (!exptribunalA_id || !abogado_id || !fecha_estimada_entrega || !tarea) {
-            return res.status(400).send({ error: 'Missing required fields: exptribunalA_id, abogado_id, fecha_estimada_entrega, and tarea are required.' });
+        if (!exptribunalA_numero || !abogado_id || !fecha_estimada_entrega || !tarea) {
+            return res.status(400).send({ error: 'Missing required fields: exptribunalA_numero, abogado_id, fecha_estimada_entrega, and tarea are required.' });
         }
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
@@ -26,15 +26,15 @@ export const createTask = async (req, res) => {
             return res.status(400).send({ error: 'Invalid abogado id' });
         }
         const abogado = abogados[0];
-        const [expTribunalA] = await pool.query('SELECT * FROM expTribunalA WHERE id = ?', [exptribunalA_id]);
+        const [expTribunalA] = await pool.query('SELECT * FROM expTribunalA WHERE numero = ?', [exptribunalA_numero]);
         if (expTribunalA.length <= 0) {
             return res.status(400).send({ error: 'Cannot assign a task to a non-existent expediente.' });
         }
 
         const fecha_registro = format(new Date(), 'yyyy-MM-dd');
         const [result] = await pool.query(
-            'INSERT INTO Tareas (exptribunalA_id, url, abogado_id, tarea, fecha_registro, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, estado_tarea, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [exptribunalA_id, url, abogado_id, tarea, fecha_registro, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, 'Asignada', observaciones]
+            'INSERT INTO Tareas (exptribunalA_numero, url, abogado_id, tarea, fecha_registro, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, estado_tarea, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [exptribunalA_numero, url, abogado_id, tarea, fecha_registro, fecha_estimada_entrega, fecha_real_entrega, fecha_estimada_respuesta, 'Asignada', observaciones]
         );
 
         const newTareaId = result.insertId;
@@ -54,6 +54,7 @@ export const createTask = async (req, res) => {
         res.status(500).send({ error: 'An error occurred while creating the tarea', error });
     }
 };
+
 
 export const getTareasUser = async (req, res) => {
     try {

@@ -179,61 +179,7 @@ const Position = () => {
                 </button>
             </div>
             <form  className="p-4 md:p-5">
-            <div className="grid gap-4 mb-4 grid-cols-2">
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="number"
-                            name="numero"
-                            id="floating_numero"
-                            value={formData.numero}
-                            onChange={handleChange}
-                            onBlur={handleNumeroBlur}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
-                            placeholder=" "
-                            required
-                        />
-                        <label
-                            htmlFor="floating_numero"
-                            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                            Numero de Expediente
-                        </label>
-                        {errorMsg && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errorMsg}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="text"
-                            name="nombre"
-                            id="floating_nombre"
-                            value={formData.nombre}
-                            onChange={handleChange}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:border-primary"
-                            placeholder=" "
-                            readOnly
-                        />
-                        <label htmlFor="floating_nombre" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre del expediente</label>
-                    </div>
-                </div>
-                <div className="grid gap-4 mb-4 grid-cols-1">
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="text"
-                            name="url"
-                            id="floating_url"
-                            value={formData.url}
-                            onChange={handleChange}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
-                            placeholder=" "
-                   
-                        />
-                        <label htmlFor="floating_url" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL del expediente ( Opcional )</label>
-                    </div>
-                </div>
+        
                 <button
                     type="submit"
                    

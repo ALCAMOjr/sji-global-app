@@ -139,11 +139,9 @@ export const updateAbogado = async (req, res) => {
     }
 }
 
-
 export const deleteAbogado = async (req, res) => {
     try {
-        const { userId } = req
-
+        const { userId } = req;
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
@@ -153,17 +151,25 @@ export const deleteAbogado = async (req, res) => {
         if (user.user_type !== 'coordinador') {
             return res.status(403).send({ error: 'Unauthorized' });
         }
+        const [pendingTasks] = await pool.query('SELECT * FROM Tareas WHERE abogado_id = ? AND estado_tarea IN ("Asignada", "Iniciada")', [req.params.id]);
+        if (pendingTasks.length > 0) {
+            return res.status(400).send({ error: 'Cannot delete abogado with pending tasks' });
+        }
+
+        await pool.query('UPDATE Tareas SET abogado_id = NULL WHERE abogado_id = ? AND estado_tarea = "Terminada"', [req.params.id]);
         const [result] = await pool.query('DELETE FROM abogados WHERE id = ?', [req.params.id]);
 
-        if (result.affectedRows <= 0) return res.status(404).json({
-            message: 'Abogado not found'
-        });
+        if (result.affectedRows <= 0) {
+            return res.status(404).json({ message: 'Abogado not found' });
+        }
 
         res.sendStatus(204);
     } catch (error) {
+        console.error(error);
         res.status(500).send({ error: 'An error occurred while deleting the abogado' });
     }
-}
+};
+
 
 export const verify = async (req, res) => {
     const token = req.body.token;

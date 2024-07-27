@@ -14,7 +14,7 @@ import masicon from "../../assets/mas.png"
 import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
 
 const Expedientes = () => {
-    const { expedientes, loading, error, registerNewExpediente, deleteExpediente, updateExpediente } = useExpedientes();
+    const { expedientes, loading, error, registerNewExpediente, deleteExpediente, updateExpediente, UpdateAllExpedientes } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
@@ -22,7 +22,7 @@ const Expedientes = () => {
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+    const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
@@ -36,7 +36,7 @@ const Expedientes = () => {
     const { jwt } = useContext(Context);
     const [errorMsg, setErrorMsg] = useState('');
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-
+    const [ IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
 
 
     useEffect(() => {
@@ -65,7 +65,6 @@ const Expedientes = () => {
 
 
     const [formData, setFormData] = useState({
-        id: '',
         numero: '',
         nombre: '',
         url: '',
@@ -126,7 +125,6 @@ const Expedientes = () => {
 
     const openModal = () => {
         setFormData({
-            id: '',
             numero: '',
             nombre: '',
             url: '',
@@ -143,6 +141,35 @@ const Expedientes = () => {
         setIsModalOpen(false);
         setErrorMsg('');
     };
+
+
+    const handleUpdateAllExpedientes = async (e) => {
+        e.preventDefault();
+        setIsLoadingUpdateAllExpedientes(true);
+
+
+        try {
+            const { success, error } = await UpdateAllExpedientes();
+
+            if (success) {
+                toast.info('Se Actualizaron correctamente los expedientes', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+            } else {
+                    toast.error('Algo mal sucedió al crear el expediente: ' + error);
+              
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al crear el expediente');
+        } finally {
+            setIsLoadingUpdateAllExpedientes(false);
+        }
+    };
+
 
     const handleCreate = async (e) => {
         e.preventDefault();
@@ -181,7 +208,6 @@ const Expedientes = () => {
 
     const openModalUpdate = (expediente) => {
         setFormData({
-            id: expediente.id,
             numero: expediente.numero,
             nombre: expediente.nombre,
             url: expediente.url,
@@ -208,7 +234,6 @@ const Expedientes = () => {
 
         try {
             const { success, error } = await updateExpediente({
-                id: formData.id,
                 numero: formData.numero,
                 nombre: formData.nombre,
                 url: formData.url,
@@ -241,7 +266,6 @@ const Expedientes = () => {
 
     const openModalDelete = (expediente) => {
         setFormData({
-            id: expediente.id,
             numero: expediente.numero,
             nombre: expediente.nombre,
             url: expediente.url,
@@ -264,8 +288,9 @@ const Expedientes = () => {
         setIsDeleting(true);
 
         try {
+
             const { success, error } = await deleteExpediente({
-                id: formData.id,
+                numero: formData.numero,
             });
 
             if (success) {
@@ -409,7 +434,7 @@ const Expedientes = () => {
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
                         <DropdownItem onClick={openModal} key="new">Crear Expediente</DropdownItem>
-                        <DropdownItem key="copy">Actualizar Expedientes</DropdownItem>
+                        <DropdownItem onClick={handleUpdateAllExpedientes} key="copy">Actualizar Expedientes</DropdownItem>
 
                     </DropdownMenu>
                 </Dropdown>
@@ -417,7 +442,14 @@ const Expedientes = () => {
 
             </div>
 
-
+            {IsLoadingUpdateAllExpedientes && (
+                <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+                    <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                    <Spinner className='text-center mt-16 mr-24 ml-24 mb-16  text-sm' label="Cargando..." color="primary" size='lg' labelColor="primary" />
+                                        
+                    </div>
+                </div>
+            )}
 
             {isModalOpen && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">

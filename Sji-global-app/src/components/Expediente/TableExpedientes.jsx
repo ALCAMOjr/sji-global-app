@@ -73,7 +73,7 @@ const TableExpedientes = ({
                     <TableBody>
                         {currentExpedientes.map((expediente, index) => (
                             <Row
-                                key={expediente.id}
+                                key={expediente.numero}
                                 currentExpedientes={currentExpedientes}
                                 expediente={expediente}
                                 index={index}
@@ -90,7 +90,7 @@ const TableExpedientes = ({
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[6, 16, 30]}
+                rowsPerPageOptions={[200, 400, 600]}
                 component="div"
                 count={currentExpedientes.length}
                 rowsPerPage={totalPages}

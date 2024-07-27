@@ -2,7 +2,7 @@ import { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../../context/abogados.context.jsx';
 import createExpediente from '../../views/expedientes/createExpediente.js';
 import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
-import { updateExpedientes, deleteExpedientes } from '../../views/expedientes/optional.js';
+import { updateExpedientes, deleteExpedientes, updateAllExpedientes } from '../../views/expedientes/optional.js';
 
 export default function useExpedientes() {
     const { jwt } = useContext(Context);
@@ -24,11 +24,12 @@ export default function useExpedientes() {
         }
     }, [jwt]);
 
-    const deleteExpediente = useCallback(async (id) => {
+    const deleteExpediente = useCallback(async (numero) => {
         try {
-            const responseStatus = await deleteExpedientes({ id, token: jwt });
+            const responseStatus = await deleteExpedientes({ numero: numero, token: jwt });
+    
             if (responseStatus === 204) {
-                setExpedientes(prevExpedientes => prevExpedientes.filter(expediente => expediente.id !== id.id));
+                setExpedientes(prevExpedientes => prevExpedientes.filter(expediente => expediente.numero !== numero.numero));
             }
             return { success: responseStatus === 204 };
         } catch (err) {
@@ -37,10 +38,10 @@ export default function useExpedientes() {
         }
     }, [jwt]);
 
-    const updateExpediente = useCallback(async ({ id, numero, nombre, url }) => {
+    const updateExpediente = useCallback(async ({ numero, nombre, url }) => {
         try {
-            const updatedExpediente = await updateExpedientes({ id, numero, nombre, url, token: jwt });
-            setExpedientes(prevExpedientes => prevExpedientes.map(expediente => expediente.id === id ? updatedExpediente : expediente));
+            const updatedExpediente = await updateExpedientes({ numero, nombre, url, token: jwt });
+            setExpedientes(prevExpedientes => prevExpedientes.map(expediente => expediente.numero === numero ? updatedExpediente : expediente));
             return { success: true, data: updatedExpediente };
         } catch (error) {
             if (error.response && error.response.status === 500 && error.response.data.error === 'Scraping failed for the provided URL.') {
@@ -51,6 +52,29 @@ export default function useExpedientes() {
             }
         }
     }, [jwt]);
+
+
+const UpdateAllExpedientes = useCallback(async () => {
+    try {
+        const response = await updateAllExpedientes({ token: jwt });
+
+        setExpedientes(response);
+        return { success: true, data: response };
+
+    } catch (error) {
+        console.error('Error updating all expedientes:', error);
+        let errorMessage = 'Error updating all expedientes';
+        
+        if (error.response && error.response.data) {
+            errorMessage = error.response.data.error || errorMessage;
+        }
+        
+        return { success: false, error: errorMessage };
+    }
+}, [jwt]);
+
+    
+    
     
     const registerNewExpediente = useCallback(async ({ numero, nombre, url }) => {
         try {
@@ -76,6 +100,6 @@ export default function useExpedientes() {
         }
     }, [jwt]);
     
-    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente };
+    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes };
     
 }

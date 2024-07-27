@@ -29,31 +29,32 @@ export const getPositionExpedientes = async (req, res) => {
         -- Consulta 2: Tomar datos de expTribunalDetA y EtapasTv, y obtener registros con la fecha más reciente
         ExpTribunalEtapas AS (
             SELECT 
-                etd.numeroexp,
+                etd.expTribunalA_numero,
                 etd.fecha,
                 etd.etapa,
                 etd.termino,
                 etv.secuencia AS secuencia_etapa_tv,
-                ROW_NUMBER() OVER (PARTITION BY etd.numeroexp ORDER BY STR_TO_DATE(etd.fecha, '%d/%b./%Y') DESC) AS row_num
+                ROW_NUMBER() OVER (PARTITION BY etd.expTribunalA_numero ORDER BY STR_TO_DATE(etd.fecha, '%d/%b./%Y') DESC) AS row_num
             FROM expTribunalDetA etd
             LEFT JOIN EtapasTv etv ON etd.etapa = etv.etapa AND etd.termino = etv.termino
         ),
         
         -- Seleccionar registros con la fecha más reciente para cada numeroexp
         Coincidentes AS (
-        SELECT 
-            ce.num_credito,
-            ce.ultima_etapa_aprobada,
-            ce.fecha_ultima_etapa_aprobada,
-            ce.secuencia_etapa_aprobada,
-            ete.numeroexp,
-            ete.fecha,
-            ete.etapa,
-            ete.termino,
-            ete.secuencia_etapa_tv
-        FROM CreditosEtapas ce
-        JOIN ExpTribunalEtapas ete ON ce.num_credito = ete.numeroexp
-        WHERE ete.row_num = 1),
+            SELECT 
+                ce.num_credito,
+                ce.ultima_etapa_aprobada,
+                ce.fecha_ultima_etapa_aprobada,
+                ce.secuencia_etapa_aprobada,
+                ete.expTribunalA_numero,
+                ete.fecha,
+                ete.etapa,
+                ete.termino,
+                ete.secuencia_etapa_tv
+            FROM CreditosEtapas ce
+            JOIN ExpTribunalEtapas ete ON ce.num_credito = ete.expTribunalA_numero
+            WHERE ete.row_num = 1
+        ),
         
         NoCoincidentes AS (
             SELECT 
@@ -61,15 +62,14 @@ export const getPositionExpedientes = async (req, res) => {
                 c.ultima_etapa_aprobada,
                 c.fecha_ultima_etapa_aprobada,
                 NULL AS secuencia_etapa_aprobada,
-                NULL AS numeroexp,
+                NULL AS expTribunalA_numero,
                 NULL AS fecha,
                 NULL AS etapa,
                 NULL AS termino,
                 NULL AS secuencia_etapa_tv
             FROM CreditosSIAL c
-            LEFT JOIN expTribunalDetA etd ON c.num_credito = etd.numeroexp
-            WHERE etd.numeroexp IS NULL
-        
+            LEFT JOIN expTribunalDetA etd ON c.num_credito = etd.expTribunalA_numero
+            WHERE etd.expTribunalA_numero IS NULL
         )
         
         -- Combinar ambos resultados
@@ -78,7 +78,7 @@ export const getPositionExpedientes = async (req, res) => {
             ultima_etapa_aprobada,
             fecha_ultima_etapa_aprobada,
             secuencia_etapa_aprobada,
-            numeroexp,
+            expTribunalA_numero,
             fecha,
             etapa,
             termino,
@@ -92,13 +92,12 @@ export const getPositionExpedientes = async (req, res) => {
             ultima_etapa_aprobada,
             fecha_ultima_etapa_aprobada,
             secuencia_etapa_aprobada,
-            numeroexp,
+            expTribunalA_numero,
             fecha,
             etapa,
             termino,
             secuencia_etapa_tv
         FROM NoCoincidentes;
-            
         `);
 
         res.status(200).json(results);

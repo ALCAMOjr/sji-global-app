@@ -16,10 +16,9 @@ CREATE TABLE abogados (
     PRIMARY KEY (id)
 );
 
--- Crear la tabla 'expTribunalA'
+-- Crear la tabla 'expTribunalA' con 'numero' como clave primaria
 CREATE TABLE expTribunalA (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    numero BIGINT NOT NULL,
+    numero BIGINT NOT NULL PRIMARY KEY,
     nombre VARCHAR(255),
     url VARCHAR(255),
     expediente VARCHAR(255),
@@ -29,24 +28,23 @@ CREATE TABLE expTribunalA (
     partes TEXT
 );
 
--- Crear la tabla 'expTribunalDetA'
+-- Crear la tabla 'expTribunalDetA' con referencia a 'expTribunalA'
 CREATE TABLE expTribunalDetA (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numeroexp BIGINT NOT NULL,
     ver_acuerdo VARCHAR(50) NULL,
     fecha VARCHAR(20) NULL,
     etapa VARCHAR(50) NULL,
     termino VARCHAR(250) NULL,
     notificacion VARCHAR(250) NULL,
     expediente VARCHAR(50) NULL,
-    expTribunalA_id INT,
-    FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
+    expTribunalA_numero BIGINT,
+    FOREIGN KEY (expTribunalA_numero) REFERENCES expTribunalA(numero)
 );
 
--- Crear la tabla 'Tareas'
+-- Crear la tabla 'Tareas' con referencia a 'expTribunalA'
 CREATE TABLE Tareas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    exptribunalA_id INT NOT NULL,
+    exptribunalA_numero BIGINT NOT NULL,
     url VARCHAR(255) NULL,
     abogado_id INT,
     tarea TEXT NULL,
@@ -54,11 +52,11 @@ CREATE TABLE Tareas (
     fecha_estimada_entrega DATE NULL,
     fecha_real_entrega DATE NULL,
     fecha_estimada_respuesta DATE NULL,
-    estado_tarea ENUM('Asignada', 'Iniciada', 'Terminada') NULL,
+    estado_tarea  ENUM('Asignada', 'Iniciada', 'Terminada', 'Cancelada') NULL,
     fecha_inicio DATE NULL,  
     observaciones TEXT NULL,
     FOREIGN KEY (abogado_id) REFERENCES abogados(id),
-    FOREIGN KEY (expTribunalA_id) REFERENCES expTribunalA(id)
+    FOREIGN KEY (exptribunalA_numero) REFERENCES expTribunalA(numero)
 );
 
 -- Crear la tabla 'CreditosSIAL'

@@ -26,14 +26,18 @@ const Abogados = () => {
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1200);
     const [showModal, setShowModal] = useState(false);
     const [selectedAbogado, setSelectedAbogado] = useState(null);
+    const [showModalInfo, setShowModalInfo] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-    const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     const [usertypeError, setusertypeError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [nombreActive, setNombreActive] = useState(false);
+    const [apellidoActive, setApellidoActive] = useState(false);
+    const [cedulaActive, setCedulaActive] = useState(false);
+    const [emailActive, setEmailActive] = useState(false);
+    const [telefonoActive, setTelefonoActive] = useState(false);
 
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -51,7 +55,6 @@ const Abogados = () => {
         telefono: ''
 
     });
-
 
     const handleChange = (e) => {
         let value = e.target.value;
@@ -104,14 +107,14 @@ const Abogados = () => {
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
+                toast.error(`Algo mal sucedió al crear el abogado: ${error}`);
             }
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al eliminar el abogado');
         } finally {
             setIsDeleting(false);
-            setShowModal(false);
+            closeModal();
         }
     };
 
@@ -120,6 +123,83 @@ const Abogados = () => {
         setSelectedAbogado(abogado);
         setShowModal(true);
     }
+
+    const closeModal = () => {
+        setSelectedAbogado(null);
+        setShowModal(false);
+    }
+
+
+
+    const openModalInfo = (abogado) => {
+        setFormData({
+            id: abogado.id,
+            username: abogado.username,
+            password: abogado.nombre,
+            user_type: abogado.user_type,
+            nombre: abogado.nombre,
+            apellido: abogado.apellido,
+            cedula: abogado.cedula,
+            email: abogado.email,
+            telefono: abogado.telefono,
+        });
+        setShowModalInfo(true);
+    }
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+    
+        if (formData.user_type === '') {
+            setusertypeError('Este campo es obligatorio');
+            setIsLoading(false);
+            return;
+        } else {
+            setusertypeError(null);
+        }
+    
+        try {
+            const { success, error } = await updateAbogado({
+                id: formData.id, 
+                username: formData.username,
+                password: formData.password,
+                nombre: formData.nombre,
+                apellido: formData.apellido,
+                cedula: formData.cedula,
+                email: formData.email,
+                telefono: formData.telefono,
+                userType: formData.user_type,
+            });
+    
+            if (success) {
+                toast.info('Se actualizó correctamente el abogado', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+    
+            } else {
+                toast.error(`Algo salió mal al actualizar el abogado: ${error.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo salió mal al actualizar el abogado');
+        } finally {
+            setIsLoading(false); 
+            closeModalInfo()
+        }
+    
+      
+    };
+    
+
+    const closeModalInfo = () => {
+        setShowModalInfo(false);
+    }
+
+
+   
 
     const handleCreate = async (e) => {
         e.preventDefault();
@@ -156,7 +236,7 @@ const Abogados = () => {
                     }
                 });
 
-                setIsModalOpenCreate(false);
+   
             } else {
 
                 if (error === 'El nombre de usuario ya existe') {
@@ -166,16 +246,19 @@ const Abogados = () => {
                     toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
 
                 }
-                setIsModalOpenCreate(false);
+              
             }
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al crear el abogado');
-            setIsModalOpenCreate(false);
+       
+        }     finally {
+            setIsLoading(false);
+           closeModalCreate()
         }
-
-        setIsLoading(false);
     };
+
+    
 
 
 
@@ -199,10 +282,6 @@ const Abogados = () => {
 
     const closeModalCreate = () => {
         setIsModalOpenCreate(false)
-    }
-    const closeModal = () => {
-        setSelectedAbogado(null);
-        setShowModal(false);
     }
 
 
@@ -451,6 +530,315 @@ const Abogados = () => {
 
 
 
+{showModalInfo && (
+                <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+                    <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                        <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                Actualizar Abogado
+                            </h3>
+                            <button onClick={closeModalInfo} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span className="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <form onSubmit={handleUpdate} className="p-4 md:p-5">
+                        <div className="grid gap-4 mb-4 grid-cols-2">
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="text"
+                                        name="username"
+                                        id="floating_username"
+                                        value={formData.username}
+                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer pointer-events-none"
+                                        placeholder=" "
+                                        readOnly
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_username"
+                                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Usuario
+                                    </label>
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        id="floating_password"
+                                        value={formData.password}                        
+                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer pointer-events-none"
+                                        placeholder=" "
+                                        readOnly
+                                      
+                                    />
+                                    <label
+                                        htmlFor="floating_password"
+                                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Contraseña
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={handleShowPassword}
+                                        className="absolute right-0 top-0 mt-3 mr-3"
+                                    >
+                                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                                    </button>
+                                
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="text"
+                                        name="nombre"
+                                        id="floating_nombre"
+                                        value={formData.nombre}
+                                        onChange={handleChange}
+                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${nombreActive ? '' : 'pointer-events-none'}`}
+                                        placeholder=" "
+                                        readOnly={!nombreActive}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_nombre"
+                                        className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Nombre
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            checked={nombreActive}
+                                            onChange={() => setNombreActive(!nombreActive)}
+                                            id="nombre-checkbox"
+                                            type="checkbox"
+                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label
+                                            htmlFor="nombre-checkbox"
+                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Editar
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="text"
+                                        name="apellido"
+                                        id="floating_apellido"
+                                        value={formData.apellido}
+                                        onChange={handleChange}
+                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${apellidoActive ? '' : 'pointer-events-none'}`}
+                                        placeholder=" "
+                                        readOnly={!apellidoActive}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_apellido"
+                                        className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Apellido
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            checked={apellidoActive}
+                                            onChange={() => setApellidoActive(!apellidoActive)}
+                                            id="apellido-checkbox"
+                                            type="checkbox"
+                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label
+                                            htmlFor="apellido-checkbox"
+                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Editar
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="text"
+                                        name="cedula"
+                                        id="floating_cedula"
+                                        value={formData.cedula}
+                                        onChange={handleChange}
+                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${cedulaActive ? '' : 'pointer-events-none'}`}
+                                        placeholder=" "
+                                        readOnly={!cedulaActive}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_cedula"
+                                        className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Cédula
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            checked={cedulaActive}
+                                            onChange={() => setCedulaActive(!cedulaActive)}
+                                            id="cedula-checkbox"
+                                            type="checkbox"
+                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label
+                                            htmlFor="cedula-checkbox"
+                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Editar
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="floating_email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${emailActive ? '' : 'pointer-events-none'}`}
+                                        placeholder=" "
+                                        readOnly={!emailActive}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_email"
+                                        className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Email
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            checked={emailActive}
+                                            onChange={() => setEmailActive(!emailActive)}
+                                            id="email-checkbox"
+                                            type="checkbox"
+                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label
+                                            htmlFor="email-checkbox"
+                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Editar
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="relative z-0 w-full mb-5 group">
+                                    <input
+                                        type="tel"
+                                        name="telefono"
+                                        id="floating_telefono"
+                                        value={formData.telefono}
+                                        onChange={handleChange}
+                                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${telefonoActive ? '' : 'pointer-events-none'}`}
+                                        placeholder=" "
+                                        readOnly={!telefonoActive}
+                                        required
+                                    />
+                                    <label
+                                        htmlFor="floating_telefono"
+                                        className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                                    >
+                                        Teléfono
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            checked={telefonoActive}
+                                            onChange={() => setTelefonoActive(!telefonoActive)}
+                                            id="telefono-checkbox"
+                                            type="checkbox"
+                                            className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label
+                                            htmlFor="telefono-checkbox"
+                                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        >
+                                            Editar
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="relative z-20 mb-8">
+                                <Listbox disabled value={formData.user_type} onChange={handleTypeChange}>
+                                    <Listbox.Button   className="relative z-20 w-full appearance-none rounded-lg border border-stroke bg-transparent px-5 py-[10px] text-dark-6 outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-200 dark:border-dark-3">
+                                        <span className={`block truncate ${usertypeError ? 'text-red-500' : ''}`}>
+                                            {usertypeError || formData.user_type || 'Selecciona el tipo de usuario'}
+                                        </span>
+                                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                            <ChevronUpDownIcon
+                                                className="h-5 w-5 text-gray-400"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </Listbox.Button>
+
+                                    <Transition
+                                        as={Fragment}
+                                        leave="transition ease-in duration-100"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+                                            {options.map((type, typeIdx) => (
+                                                <Listbox.Option
+                                                    key={typeIdx}
+                                                    className={({ active }) =>
+                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'text-white bg-primary' : 'text-gray-900'
+                                                        }`
+                                                    }
+                                                    value={type.value}
+                                                >
+                                                    {({ selected }) => (
+                                                        <>
+                                                            <span
+                                                                className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                                                    }`}
+                                                            >
+                                                                {type.name}
+                                                            </span>
+                                                            {selected ? (
+                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                                    <CheckIcon className="h-5 w-5 text-black" aria-hidden="true" />
+                                                                </span>
+                                                            ) : null}
+
+                                                        </>
+                                                    )}
+                                                </Listbox.Option>
+                                            ))}
+                                        </Listbox.Options>
+                                    </Transition>
+                                </Listbox>
+                            </div>
+                            <div>
+                                <button
+                                    type="submit"
+                                    
+                                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                                >
+                                    {isLoading ? (
+                                        <div role="status">
+                                            <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="white" />
+                                            </svg>
+                                            <span class="sr-only">Actualizando...</span>
+                                        </div>
+                                    ) : (
+                                        'Actualizar'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+
+
             {showModal && (
                 <div id="popup-modal" tabindex="-1" class={`'hidden' fixed top-0 right-0 left-0 bottom-0 flex justify-center items-center bg-black bg-opacity-50 z-50`}>
                     <div class="bg-white rounded-lg shadow w-full max-w-md">
@@ -477,9 +865,12 @@ const Abogados = () => {
           <img className="w-40 h-40 mb-3 rounded-full shadow-lg" src={abogado.user_type === 'coordinador' ? logo_admin : logo_advisor} alt="abogado image" />
           <h5 className="mb-2 text-xl font-medium text-gray-900 dark:text-white">{abogado.username}</h5>
           <span className="text-sm text-gray-500 dark:text-gray-400">{abogado.user_type}</span>
-          <div className="flex mt-4 md:mt-6">
-            <button onClick={() => openModal(abogado)} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+          <div className="flex mt-4 md:mt-6 gap-2">
+            <button onClick={() => openModal(abogado)} className="inline-flex items-center px-4 py-2 text-xs lg:text-sm xl:text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
               Eliminar
+            </button>
+            <button onClick={() => openModalInfo(abogado)} className="inline-flex items-center px-4 py-2 text-xs lg:text-sm xl:text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:bg-blue-300 dark:bg-blue-300 dark:hover:bg-blue-700 dark:focus:bg-blue-800">
+              Actualizar
             </button>
           </div>
         </div>

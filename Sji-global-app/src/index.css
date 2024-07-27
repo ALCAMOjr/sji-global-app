@@ -16,6 +16,12 @@ input[type="checkbox"] {
   border-radius: 4px;
 }
 
+.table-cell-height {
+  padding: 4px 8px;  /* Reduce el padding para disminuir la altura */
+  line-height: 1rem; /* Ajusta la altura de línea */
+}
+
+
 input[type="checkbox"]:checked {
   background-color: #d1302b;
   border-color: #d1302b;

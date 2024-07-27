@@ -5,17 +5,13 @@ import Error from "./Error.jsx";
 import { toast } from 'react-toastify';
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
-import agregar from "../../assets/agregar.png"
 import check from "../../assets/check.png";
 import Context from '../../context/abogados.context.jsx';
-import getExpedienteByNumeroSial from '../../views/expedientesial/getExpedientebyNumero.js';
+import getPositionByNumero from '../../views/position/getPositionByNumber.js';
+import useAbogados from '../../hooks/abogados/useAbogados.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 import masicon from "../../assets/mas.png"
-import {Textarea} from "@nextui-org/react";
-import {DateInput} from "@nextui-org/react";
-import {CalendarDate} from "@internationalized/date";
-import {Select, SelectItem} from "@nextui-org/react";
-import useAbogados from '../../hooks/abogados/useAbogados.jsx';
+
 const Position = () => {
     const { expedientes, loading, error } = usePosition();
     const { abogados } = useAbogados()
@@ -32,7 +28,7 @@ const Position = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [errors, setErrors] = useState({});
     const { jwt } = useContext(Context);
-    const [ selectExpedientetoTask, setSelectExpedientetoTask ] = useState(null)
+    const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null)
 
     useEffect(() => {
         if (expedientes) {
@@ -42,7 +38,6 @@ const Position = () => {
             setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
         }
     }, [expedientes, currentPage, itemsPerPage]);
-    
 
 
     const handleChangePage = (event, newPage) => {
@@ -95,10 +90,10 @@ const Position = () => {
             filteredExpedientes = expedientes.filter(expediente => expediente.acreditado.toLowerCase().includes(lowercaseSearchTerm));
         } else if (searchType === 'Numero') {
             try {
-                const expediente = await getExpedienteByNumeroSial({ numero: lowercaseSearchTerm, token: jwt });
+                const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
 
                 if (expediente) {
-                    filteredExpedientes.push(expediente);
+                    filteredExpedientes.push(expedientes[0]);
                 } else {
                     filteredExpedientes = [];
                 }
@@ -164,99 +159,101 @@ const Position = () => {
     return (
         <div className="flex flex-col min-h-screen">
 
-{isOpenModal && (
-    <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
-        <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
-            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Crear Nuevo Expediente
-                </h3>
-                <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                    <span className="sr-only">Close modal</span>
-                </button>
-            </div>
-            <form  className="p-4 md:p-5">
-            <div className="grid gap-4 mb-4 grid-cols-2">
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="number"
-                            name="numero"
-                            id="floating_numero"
-                            value={formData.numero}
-                            onChange={handleChange}
-                            onBlur={handleNumeroBlur}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
-                            placeholder=" "
-                            required
-                        />
-                        <label
-                            htmlFor="floating_numero"
-                            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                            Numero de Expediente
-                        </label>
-                        {errorMsg && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {errorMsg}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="text"
-                            name="nombre"
-                            id="floating_nombre"
-                            value={formData.nombre}
-                            onChange={handleChange}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:border-primary"
-                            placeholder=" "
-                            readOnly
-                        />
-                        <label htmlFor="floating_nombre" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre del expediente</label>
-                    </div>
-                </div>
-                <div className="grid gap-4 mb-4 grid-cols-1">
-                    <div className="relative z-0 w-full mb-5 group">
-                        <input
-                            type="text"
-                            name="url"
-                            id="floating_url"
-                            value={formData.url}
-                            onChange={handleChange}
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
-                            placeholder=" "
-                   
-                        />
-                        <label htmlFor="floating_url" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL del expediente ( Opcional )</label>
-                    </div>
-                </div>
-                <button
-                    type="submit"
-                   
-                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
-                >
-                    {isLoading ? (
-                        <div role="status">
-                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7234 75.2124 7.55338C69.5422 4.38335 63.2754 2.51539 56.7663 2.05081C51.7668 1.68134 46.7392 2.05829 41.8592 3.16224C39.3322 3.76176 37.8618 6.25956 38.4989 8.68497C39.1359 11.1104 41.6143 12.5452 44.1373 11.9457C47.8203 11.0764 51.6026 10.8296 55.3196 11.2228C60.8785 11.7913 66.1942 13.543 70.9048 16.3926C75.6155 19.2423 79.6142 23.1216 82.6685 27.793C84.9175 31.0338 86.6015 34.6088 87.6735 38.3892C88.4295 40.7753 91.5423 41.6631 93.9676 39.0409Z" fill="currentFill" />
-                            </svg>
-                            <span className="sr-only">Loading...</span>
+            {isOpenModal && (
+                <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+                    <div className="relative max-w-md w-full bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                        <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-white border-b rounded-t dark:border-gray-600">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Agendar nueva Tarea
+                                </h3>
+                                <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span className="sr-only">Close modal</span>
+                                </button>
+                            </div>
                         </div>
-                    ) : (
-                        "Crear Expediente"
-                    )}
-                </button>
-            </form>
-        </div>
-    </div>
-)}
+                        <div className="pt-16 p-4 mx-auto">
+                            <form className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Tarea</label>
+                                    <textarea
+                                        name="tarea"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                        placeholder="Ingresa la Tarea"
+                                    ></textarea>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Fecha Estimada de Entrega</label>
+                                    <input
+                                        type="date"
+                                        name="fecha_estimada_entrega"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Fecha Real de Entrega</label>
+                                    <input
+                                        type="date"
+                                        name="fecha_real_entrega"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Fecha Estimada de Respuesta</label>
+                                    <input
+                                        type="date"
+                                        name="fecha_estimada_respuesta"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Observaciones</label>
+                                    <textarea
+                                        name="observaciones"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                        placeholder="Ingrese observaciones"
+                                    ></textarea>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Abogado</label>
+                                    <select
+                                        name="abogado_id"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    >
+                                        <option value="">Seleccione un abogado</option>
+                                        {abogados.map((abogado) => (
+                                            <option key={abogado.id} value={abogado.id}>
+                                                {abogado.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                                >
+                                    {isLoading ? (
+                                        <div role="status">
+                                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7234 75.2124 7.55338C69.5422 4.38335 63.2754 2.51539 56.7663 2.05081C51.7668 1.68134 46.7392 2.05829 41.8592 3.16224C39.3322 3.76176 37.8618 6.25956 38.4989 8.68497C39.1359 11.1104 41.6143 12.5452 44.1373 11.9457C47.8203 11.0764 51.6026 10.8296 55.3196 11.2228C60.8785 11.7913 66.1942 13.543 70.9048 16.3926C75.6155 19.2423 79.6142 23.1216 82.6685 27.793C84.9175 31.0338 86.6015 34.6088 87.6735 38.3892C88.4295 40.7753 91.5423 41.6631 93.9676 39.0409Z" fill="currentFill" />
+                                            </svg>
+                                            <span className="sr-only">Loading...</span>
+                                        </div>
+                                    ) : (
+                                        "Agendar Tarea"
+                                    )}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            {/* <>
+<>
                 {isDesktopOrLaptop ? (
                     <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
                         <div className="flex">
@@ -416,8 +413,7 @@ const Position = () => {
                         </div>
                     </form>
                 )}
-            </> */}
-
+            </>
 
             {currentExpedientes.length === 0 ? (
                 <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
@@ -440,17 +436,17 @@ const Position = () => {
             ) : (
 
                 <TableConditional
-                   currentExpedientes={currentExpedientes}
-                   currentPage={currentPage}
-                   totalPages={totalPages}
-                  handleChangePage={handleChangePage}
-                  handleChangeRowsPerPage={handleChangeRowsPerPage}
-                onPageChange={onPageChange}
-                 openModalTarea={openModalTarea}
+                    currentExpedientes={currentExpedientes}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    handleChangePage={handleChangePage}
+                    handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    onPageChange={onPageChange}
+                    openModalTarea={openModalTarea}
 
 
-           />
-            )}  
+                />
+            )}
         </div>
     )
 

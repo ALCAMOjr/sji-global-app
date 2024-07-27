@@ -25,16 +25,19 @@ export default function useAbogados() {
     }, [jwt]);
   
     const deteleAbogado = useCallback(async (id) => {
-      try {
-          const responseStatus = await deleteAbogados({ id, token: jwt });
-          if (responseStatus === 204) {
-              setAbogados(prevAbogados => prevAbogados.filter(abogado => abogado.id !== id));
-          }
-          return { success: responseStatus === 204 }; 
-      } catch (err) {
-          console.error(err);
-          return { success: false, error: err }; 
-      }
+        try {
+            const responseStatus = await deleteAbogados({ id, token: jwt });
+            if (responseStatus === 204) {
+                setAbogados(prevAbogados => prevAbogados.filter(abogado => abogado.id !== id));
+            }
+            return { success: responseStatus === 204 };
+        } catch (err) {
+            console.error(err);
+            if (err.response && err.response.status === 400 && err.response.data.error === 'Cannot delete abogado with pending tasks') {
+                return { success: false, error: 'El abogado tiene tareas pendientes sin completar' };
+            }
+            return { success: false, error: err.message || err };
+        }
   }, [jwt]);
   
   

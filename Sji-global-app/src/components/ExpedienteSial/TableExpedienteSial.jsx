@@ -19,35 +19,82 @@ const TableExpedientes = ({
 
     return (
         <div>
-               
+
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
                 <Table aria-label="collapsible table">
                     <TableHead className='bg-gray-100'>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Numero de Crédito</TableCell>
-                            <TableCell>Estatus</TableCell>
-                            <TableCell>Acreditado</TableCell>
-                            <TableCell>Omisos</TableCell>
-                            <TableCell>Estado</TableCell>
-                            <TableCell>Municipio</TableCell>
-                            <TableCell>Calle y Número</TableCell>
-                            <TableCell>Fraccionamiento o Colonia</TableCell>
-                            <TableCell>Código Postal</TableCell>
-                            <TableCell>Ultima Etapa Reportada</TableCell>
-                            <TableCell>Fecha Última Etapa Reportada</TableCell>
-                            <TableCell>Estatus Última Etapa</TableCell>
-                            <TableCell>Macroetapa Aprobada</TableCell>
-                            <TableCell>Última Etapa Aprobada</TableCell>
-                            <TableCell>Fecha Última Etapa Aprobada</TableCell>
-                            <TableCell>Etapa Construida</TableCell>
-                            <TableCell>Siguiente Etapa</TableCell>
-                            <TableCell>Despacho</TableCell>
-                            <TableCell>Semaforo</TableCell>
-                            <TableCell>Descorto</TableCell>
-                            <TableCell>Abogado</TableCell>
-                            <TableCell>Expediente</TableCell>
-                            <TableCell>Juzgado</TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Numero</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Estatus</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Acreditado</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Omisos</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Estado</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Municipio</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Calle y Número</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Fraccionamiento o Colonia</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Código Postal</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Ultima Etapa Reportada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Fecha Última Etapa Reportada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Estatus Última Etapa</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Macroetapa Aprobada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Última Etapa Aprobada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Fecha Última Etapa Aprobada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Etapa Construida</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Siguiente Etapa</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Despacho</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Semaforo</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Descorto</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Abogado</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Expediente</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Juzgado</span>
+                            </TableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -55,13 +102,13 @@ const TableExpedientes = ({
                             <Row
                                 key={expediente.id}
                                 expediente={expediente}
-                            
+
                             />
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            
+
             <TablePagination
                 rowsPerPageOptions={[160, 300, 600]}
                 component="div"
@@ -73,7 +120,7 @@ const TableExpedientes = ({
                 labelRowsPerPage="Filas por página:"
             />
         </div>
-        
+
     );
 }
 

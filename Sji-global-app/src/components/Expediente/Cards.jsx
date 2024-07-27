@@ -38,8 +38,6 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
 
-    console.log(selectedExpediente)
-
     useEffect(() => {
         const handleDocumentClick = (event) => {
             if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {

@@ -9,6 +9,7 @@ import jsonwebtoken from 'jsonwebtoken'
     let token = ''
     if (authorizacion && authorizacion.toLowerCase().startsWith('bearer')) {
         token = authorizacion.substring(7)
+       
       
     }
 

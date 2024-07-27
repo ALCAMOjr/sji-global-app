@@ -1,7 +1,9 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea';
-export default async function getTareasUser({ token }) {
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea/hasTareas';
+
+export default async function HasTarea({ numero, token }) {
+
     try {
         const config = {
             headers: {
@@ -10,11 +12,12 @@ export default async function getTareasUser({ token }) {
             }
         };
 
-        const response = await axios.get(baseUrl, config);
+        const response = await axios.get(`${baseUrl}/${numero}`, config);
 
         if (response.status !== 200) {
             throw new Error('Response is NOT ok');
         }
+
 
         return response.data;
 

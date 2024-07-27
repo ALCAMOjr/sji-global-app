@@ -10,10 +10,12 @@ export const createTask = async (req, res) => {
         const { exptribunalA_numero, abogado_id, tarea, fecha_entrega, fecha_estimada_respuesta, observaciones } = req.body;
         const { userId } = req;
 
+        // Verificar campos requeridos
         if (!exptribunalA_numero || !abogado_id || !fecha_entrega || !tarea || !fecha_estimada_respuesta) {
             return res.status(400).send({ error: 'Missing required fields: exptribunalA_numero, abogado_id, fecha_entrega, fecha_estimada_respuesta, and tarea are required.' });
         }
 
+        // Verificar si el usuario es válido y es coordinador
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
@@ -24,21 +26,24 @@ export const createTask = async (req, res) => {
             return res.status(403).send({ error: 'Unauthorized' });
         }
 
+
         const [abogados] = await pool.query('SELECT * FROM abogados WHERE id = ?', [abogado_id]);
         if (abogados.length <= 0 || abogados[0].user_type !== 'abogado') {
             return res.status(400).send({ error: 'Invalid abogado id or the user is not an abogado.' });
         }
 
         const abogado = abogados[0];
-
         const [expTribunalA] = await pool.query('SELECT * FROM expTribunalA WHERE numero = ?', [exptribunalA_numero]);
         if (expTribunalA.length <= 0) {
             return res.status(400).send({ error: 'Cannot assign a task to a non-existent expediente.' });
         }
 
-        const [existingTasks] = await pool.query('SELECT * FROM Tareas WHERE exptribunalA_numero = ?', [exptribunalA_numero]);
+        const [existingTasks] = await pool.query(
+            'SELECT * FROM Tareas WHERE exptribunalA_numero = ? AND estado_tarea IN (?, ?)',
+            [exptribunalA_numero, 'Asignada', 'Iniciada']
+        );
         if (existingTasks.length > 0) {
-            return res.status(400).send({ error: 'There is already a task assigned to this expediente.' });
+            return res.status(400).send({ error: 'There is already an active task assigned to this expediente.' });
         }
 
         const fecha_registro = format(new Date(), 'yyyy-MM-dd');
@@ -64,9 +69,11 @@ export const createTask = async (req, res) => {
             res.status(404).send({ error: 'Tarea not found after creation' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).send({ error: 'An error occurred while creating the tarea', details: error.message });
     }
 };
+
 
 export const getTareasUser = async (req, res) => {
     try {
@@ -189,7 +196,7 @@ export const getExpedientesConTareas = async (req, res) => {
     }
 };
 
-export const getTareasPorAbogado = async (req, res) => {
+export const getTareasByAbogado = async (req, res) => {
     try {
         const { userId } = req;
         const { abogado_username } = req.params;
@@ -203,7 +210,7 @@ export const getTareasPorAbogado = async (req, res) => {
         }
         const [abogados] = await pool.query('SELECT * FROM abogados WHERE username = ?', [abogado_username]);
         if (abogados.length <= 0 || abogados[0].user_type !== 'abogado') {
-            return res.status(200).send([]);  // Devuelve un array vacío si el abogado no existe o no es de tipo 'abogado'
+            return res.status(200).send([]); 
         }
 
         const abogado = abogados[0];
@@ -231,5 +238,31 @@ export const getTareasPorAbogado = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'An error occurred while retrieving the tasks for the specified abogado', details: error.message });
+    }
+};
+
+
+export const hasTareasForExpediente = async (req, res) => {
+    try {
+        const { userId } = req;
+        const { exptribunalA_numero } = req.params;
+        const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
+        if (users.length <= 0) {
+            return res.status(400).send({ error: 'Invalid user id' });
+        }
+        const user = users[0];
+        if (user.user_type !== 'coordinador') {
+            return res.status(403).send({ error: 'Unauthorized' });
+        }
+        const [tasks] = await pool.query(
+            'SELECT * FROM Tareas WHERE exptribunalA_numero = ? AND estado_tarea IN (?, ?)',
+            [exptribunalA_numero, 'Asignada', 'Iniciada']
+        );
+        const hasTasks = tasks.length > 0;
+
+        res.status(200).send({ hasTasks });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred while checking tasks for the expediente', details: error.message });
     }
 };

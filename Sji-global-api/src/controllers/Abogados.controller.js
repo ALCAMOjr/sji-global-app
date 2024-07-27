@@ -7,7 +7,7 @@ dotenv.config()
 
 export const getAllAbogados = async (req, res) => {
     try {
-        const { userId } = req
+        const { userId } = req;
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
@@ -17,13 +17,14 @@ export const getAllAbogados = async (req, res) => {
         if (user.user_type !== 'coordinador') {
             return res.status(403).send({ error: 'Unauthorized' });
         }
-        const [abogados] = await pool.query('SELECT * FROM abogados');
+
+        const [abogados] = await pool.query('SELECT id, username, nombre, apellido, cedula, email, telefono, user_type FROM abogados');
 
         res.send(abogados);
     } catch (error) {
         res.status(500).send({ error: 'An error occurred while getting the abogados' });
     }
-}
+};
 
 export const login = async (req, res) => {
     try {

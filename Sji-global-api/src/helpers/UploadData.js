@@ -30,7 +30,7 @@ async function insertData(data) {
                 INSERT INTO expTribunalA (numero, nombre, url)
                 VALUES (?, ?, ?)
             `, [numero, nombre, url]);
-            console.log(`Inserted: ${numero}`);
+    
         } catch (error) {
             console.error(`Error inserting ${numero}:`, error);
         }
@@ -41,7 +41,7 @@ export const UploadFileasync = async () => {
     try {
         const jsonData = await readCSVToJson(csvFilePath);
 
-        console.log(jsonData);
+
 
         await insertData(jsonData);
 

@@ -7,10 +7,11 @@ import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
 import Error from './Error.jsx';
 import TableConditional from './TableConditional.jsx';
-
-
-
-
+import { useMediaQuery } from 'react-responsive';
+import getTareaByAbogado from '../../views/tareas/getTareabyAbogado.js';
+import getTareaByExpediente from '../../views/tareas/getTareaByExpediente.js';
+import Context from '../../context/abogados.context.jsx';
+import { IoMdCheckmark } from "react-icons/io";
 const Agenda = () => {
 
     const { expedientes, loading, error } = useTareas();
@@ -22,8 +23,13 @@ const Agenda = () => {
     const [showModal, setShowModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const [searchType, setSearchType] = useState('Numero');
+    const [isManualSearch, setIsManualSearch] = useState(false);
+    const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
+    const { jwt } = useContext(Context);
+    
     useEffect(() => {
         let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
         setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
@@ -74,6 +80,102 @@ const Agenda = () => {
     }
 
 
+
+
+    const toggleDropdown = () => setIsSearchOpen(!isSearchOpen);
+
+
+    const handleSearchTypeChange = (type) => {
+        setSearchType(type);
+        setIsSearchOpen(false);
+        setSearch('');
+        setIsManualSearch(type === 'Numero' && type === "Abogado");
+
+        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
+        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
+        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+    };
+
+
+    const searcherExpediente = async (searchTerm) => {
+        const lowercaseSearchTerm = searchTerm.toLowerCase();
+        let filteredExpedientes = [];
+        try {
+            if (searchType === "Abogado") {
+                try {
+                    const expedientes = await getTareaByAbogado({ username: lowercaseSearchTerm, token: jwt });
+          
+                    if (expedientes && expedientes.length > 0) {
+                 
+                        filteredExpedientes.push(...expedientes); // Usar el operador de propagación
+                    } else {
+                       
+                        filteredExpedientes = [];
+                    }
+                } catch (error) {
+                    console.error("Error fetching expediente by abogado:", error);
+                    filteredExpedientes = [];
+                }
+            } else if (searchType === 'Numero') {
+                try {
+                    const expediente = await getTareaByExpediente({ numero: lowercaseSearchTerm, token: jwt });
+                    if (expediente) {
+                        filteredExpedientes.push(expediente[0]);
+                    } else {
+                        filteredExpedientes = [];
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        filteredExpedientes = [];
+                    } else {
+                        console.error("Something went wrong fetching expediente by numero:", error);
+                    }
+                }
+            }
+    
+            setCurrentExpedientes(filteredExpedientes);
+            setTotalPages(Math.ceil(filteredExpedientes.length / itemsPerPage));
+            setCurrentPage(1);
+        } catch (error) {
+            console.error("Something went wrong in searcherExpediente:", error);
+        }
+    };
+    
+    
+
+
+
+    const handleSearchInputChange = (e) => {
+        const searchTerm = e.target.value;
+        setSearch(searchTerm);
+
+
+        if (searchType === 'Numero' && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
+
+        if (searchType === "Abogado" && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
+
+        if (searchTerm.trim() === '') {
+            setIsManualSearch(false);
+
+            let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
+            setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
+            setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+        }
+    }
+
+    const handleManualSearch = () => {
+        if (search.trim() !== '') {
+            searcherExpediente(search);
+        }
+    };
+
+
+
+
     if (loading) return (
         <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
@@ -103,6 +205,168 @@ const Agenda = () => {
                     </div>
                 </div>
             )}
+
+
+{isDesktopOrLaptop ? (
+                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                        <div className="flex">
+                            <button
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
+                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                type="button"
+                            >
+                                Filtrar por:
+                                <svg
+                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                            {isSearchOpen && (
+                                <div
+                                    id="dropdown"
+                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
+                                >
+                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                                Numero
+                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
+                                                Nombre
+                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            )}
+                            <div className="relative w-full">
+                                <input
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "300px" }}
+                                />
+                                <button
+                                    type="button"
+                                    disabled={!isManualSearch}
+                                    onClick={handleManualSearch}
+                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                                >
+                                    <svg
+                                        className="w-4 h-4"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                    <span className="sr-only">Buscar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                ) : (
+                    <form className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                        <div className="flex">
+                            <button
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
+                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                type="button"
+                            >
+                                Filtrar por:
+                                <svg
+                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                            {isSearchOpen && (
+                                <div
+                                    id="dropdown"
+                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
+                                >
+                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                                Numero
+                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
+                                                Nombre
+                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            )}
+                            <div className="relative w-full">
+                                <input
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "200px" }}
+                                />
+                                <button
+                                    type="button"
+                                    disabled={!isManualSearch}
+                                    onClick={handleManualSearch}
+                                    className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
+                                >
+                                    <svg
+                                        className="w-3 h-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                    <span className="sr-only">Buscar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                )}
+
 
          
 {currentExpedientes.length === 0 ? (

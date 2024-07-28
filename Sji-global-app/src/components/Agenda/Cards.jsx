@@ -58,7 +58,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                     <div key={index} className="w-full max-w-xs mb-20 m-4">
                         <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
                             <div className="mb-4 flex items-center justify-between">
-
+                          
                                 <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
                                     Expediente #{expediente.numero}
                                 </h5>
@@ -141,6 +141,15 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                                                         <td className="px-6 py-4">{tarea.observaciones}</td>
                                                         <td className="px-6 py-4">{tarea.abogadoUsername}</td>
                                                         <td className="px-6 py-4">{tarea.estado_tarea}</td>
+                                                        <td className="px-6 py-4">
+                                                        <button
+                                                            
+                                                            type="button"
+                                                            className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-4 py-1.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                                        >
+                                                            Cancelar Tarea
+                                                        </button>
+                                                        </td>
                                                     </tr>
                                                 ))}
 

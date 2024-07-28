@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== 'test') {
     initializeCoordinador();
 }
 
-// ESta funcion se ejecutara cuando serequiera subir data de forma manual. Debe ser un archivo CSV.
+// ESta funcion se ejecutara cuando se necesite subir data de forma manual. Debe ser un archivo CSV.
 // UploadFileasync()
 
 const PORT = process.env.PORT || 3001

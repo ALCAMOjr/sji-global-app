@@ -242,10 +242,61 @@ export const getTareasByAbogado = async (req, res) => {
 };
 
 
+export const getTareasByExpediente = async (req, res) => {
+    try {
+        const { userId } = req;
+        const { exptribunalA_numero } = req.params;
+
+        const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
+        if (users.length <= 0) {
+            return res.status(400).send({ error: 'Invalid user id' });
+        }
+
+        const user = users[0];
+        if (user.user_type !== 'coordinador') {
+            return res.status(403).send({ error: 'Unauthorized' });
+        }
+
+        const [expedientes] = await pool.query('SELECT * FROM expTribunalA WHERE numero = ?', [exptribunalA_numero]);
+        if (expedientes.length <= 0) {
+            return res.status(400).send({ error: 'Expediente not found' });
+        }
+
+        const [tareas] = await pool.query(
+            `SELECT Tareas.id as tareaId, Tareas.tarea, Tareas.fecha_entrega, Tareas.observaciones, 
+                    Tareas.estado_tarea, expTribunalA.numero, expTribunalA.nombre, expTribunalA.url, expTribunalA.expediente,
+                    abogados.id as abogadoId, abogados.username as abogadoUsername
+             FROM Tareas 
+             JOIN expTribunalA ON Tareas.exptribunalA_numero = expTribunalA.numero
+             JOIN abogados ON Tareas.abogado_id = abogados.id
+             WHERE Tareas.exptribunalA_numero = ?`,
+            [exptribunalA_numero]
+        );
+
+        const expedienteMap = {};
+        tareas.forEach(tarea => {
+            const { numero, nombre, url, expediente, tareaId, tarea: tareaDesc, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoUsername } = tarea;
+            if (!expedienteMap[numero]) {
+                expedienteMap[numero] = { numero, nombre, url, expediente, tareas: [] };
+            }
+            expedienteMap[numero].tareas.push({ tareaId, tarea: tareaDesc, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoUsername });
+        });
+
+        const result = Object.values(expedienteMap);
+
+        res.status(200).send(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred while retrieving the tasks for the specified expediente', details: error.message });
+    }
+};
+
 export const hasTareasForExpediente = async (req, res) => {
     try {
         const { userId } = req;
         const { exptribunalA_numero } = req.params;
+
+
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });

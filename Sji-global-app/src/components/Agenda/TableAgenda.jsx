@@ -24,7 +24,7 @@ const TableAgenda = ({
 
 }) => {
 
-   
+
 
     return (
         <div>
@@ -45,7 +45,7 @@ const TableAgenda = ({
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Expediente</span>
                             </TableCell>
-                
+
 
                         </TableRow>
                     </TableHead>
@@ -56,7 +56,7 @@ const TableAgenda = ({
                                 currentExpedientes={currentExpedientes}
                                 expediente={expediente}
                                 index={index}
-                              
+
                             />
                         ))}
                     </TableBody>
@@ -130,7 +130,7 @@ const Row = ({
                     {expediente.url}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
-               
+
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
                 <TableRow>
@@ -149,6 +149,7 @@ const Row = ({
                                             <TableCell>Abogado a realizarla</TableCell>
                                             <TableCell>Status</TableCell>
                                       
+
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -160,7 +161,16 @@ const Row = ({
                                                     <TableCell className="text-xs">{tarea.observaciones}</TableCell>
                                                     <TableCell className="text-xs">{tarea.abogadoUsername}</TableCell>
                                                     <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
-                                             
+                                                    <TableCell align='center'> 
+                                                        <button
+                                                 
+                                                            type="button"
+                                                            className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                                        >
+                                                            Cancelar Tarea
+                                                        </button>
+
+                                                    </TableCell>
                                                 </TableRow>
                                             )
                                         ))}

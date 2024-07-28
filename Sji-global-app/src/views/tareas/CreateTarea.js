@@ -3,7 +3,7 @@ import axios from "axios";
 const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea/create';
 
 export default async function createTarea({ exptribunalA_numero, abogado_id, tarea, fecha_entrega, observaciones,  token }) {
-    console.log(exptribunalA_numero, abogado_id, tarea, fecha_entrega, observaciones)
+
     try {
         const config = {
             headers: {

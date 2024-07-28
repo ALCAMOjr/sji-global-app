@@ -155,6 +155,7 @@ export const completeTask = async (req, res) => {
         res.status(500).send({ error: 'An error occurred while completing the task', details: error.message });
     }
 };
+
 export const getExpedientesConTareas = async (req, res) => {
     try {
         const { userId } = req;
@@ -170,18 +171,19 @@ export const getExpedientesConTareas = async (req, res) => {
         const [expedientes] = await pool.query(
             `SELECT expTribunalA.numero, expTribunalA.nombre, expTribunalA.url, expTribunalA.expediente, 
                     Tareas.id as tareaId, Tareas.tarea, Tareas.fecha_entrega, Tareas.observaciones, Tareas.estado_tarea,
-                    abogados.id as abogadoId, abogados.nombre as abogadoNombre
+                    abogados.id as abogadoId, abogados.username as abogadoUsername
              FROM expTribunalA 
              JOIN Tareas ON expTribunalA.numero = Tareas.exptribunalA_numero
              JOIN abogados ON Tareas.abogado_id = abogados.id`
         );
+
         const expedienteMap = {};
         expedientes.forEach(expediente => {
-            const { numero, nombre, url, expediente: expedienteDesc, tareaId, tarea, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoNombre } = expediente;
+            const { numero, nombre, url, expediente: expedienteDesc, tareaId, tarea, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoUsername } = expediente;
             if (!expedienteMap[numero]) {
                 expedienteMap[numero] = { numero, nombre, url, expediente: expedienteDesc, tareas: [] };
             }
-            expedienteMap[numero].tareas.push({ tareaId, tarea, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoNombre });
+            expedienteMap[numero].tareas.push({ tareaId, tarea, fecha_entrega, observaciones, estado_tarea, abogadoId, abogadoUsername });
         });
 
         const result = Object.values(expedienteMap);
@@ -192,6 +194,7 @@ export const getExpedientesConTareas = async (req, res) => {
         res.status(500).send({ error: 'An error occurred while retrieving the expedientes with tasks', details: error.message });
     }
 };
+
 
 export const getTareasByAbogado = async (req, res) => {
     try {

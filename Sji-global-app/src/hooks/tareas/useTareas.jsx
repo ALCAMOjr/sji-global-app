@@ -5,7 +5,7 @@ import getTareasUser from '../../views/tareas/getTareasUser.js';
 
 export default function useTareas() {
     const { jwt } = useContext(Context);
-    const [tareas, setTareas] = useState([]);
+    const [expedientes, setExpedientes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -13,7 +13,7 @@ export default function useTareas() {
         if (jwt && jwt !== "" && jwt !== "null") {
             getTareasUser({ token: jwt })
                 .then(data => {
-                    setTareas(data);
+                    setExpedientes(data);
                     setLoading(false);
                 })
                 .catch(err => {
@@ -34,7 +34,7 @@ export default function useTareas() {
                 token: jwt
             });
 
-            setTareas(prevTareas => [...prevTareas, newTarea]);
+            setExpedientes(prevTareas => [...prevTareas, newTarea]);
             return { success: true, data: newTarea };
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -53,5 +53,5 @@ export default function useTareas() {
         }
     }, [jwt]);
 
-    return { tareas, loading, error, registerNewTarea };
+    return { expedientes, loading, error, registerNewTarea };
 }

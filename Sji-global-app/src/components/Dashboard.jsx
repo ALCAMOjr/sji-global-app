@@ -10,6 +10,8 @@ import useUser from "../hooks/auth.jsx";
 import { GrHome } from "react-icons/gr";
 import user from "../assets/user.png";
 import logo2 from "../assets/sji.png";
+import agendalogo from "../assets/agenda.png";
+import reportelogo from "../assets/reporte.png";
 import expedientelogo from "../assets/expedientes.png";
 import expedienteSiallogo from "../assets/expedienteSial.png";
 import tasklogo from "../assets/task.png";
@@ -159,16 +161,30 @@ function Dashboard() {
                                         <span className="flex-1 ms-3 whitespace-nowrap">Posición Expediente</span>
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link to="/agenda" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/agenda' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <img src={agendalogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Tareas Abogados</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/reporte" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/reporte' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                                        <img src={reportelogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                                        <span className="flex-1 ms-3 whitespace-nowrap">Reporte</span>
+                                    </Link>
+                                </li>
 
                              
                             </>
                         )}
+                         {userType === 'abogado' && (
                         <li>
-                            <Link to="/tareas" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/tareas' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                            <Link to="/agenda" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/agenda' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
                                 <img src={tasklogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="ms-3">Tareas</span>
                             </Link>
                         </li>
+                           )}
                         <li>
                             <a onClick={handleLogout} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <CgLogOut className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />

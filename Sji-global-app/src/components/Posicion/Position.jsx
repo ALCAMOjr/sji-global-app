@@ -154,23 +154,27 @@ const Position = () => {
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-    };
+        setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = currentPage * itemsPerPage;
+        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+      };
 
 
     const searcherExpediente = async (searchTerm) => {
         const lowercaseSearchTerm = searchTerm.toLowerCase();
         let filteredExpedientes = [];
+    
         if (searchType === 'Nombre') {
-            filteredExpedientes = expedientes.filter(expediente => expediente.acreditado.toLowerCase().includes(lowercaseSearchTerm));
+            filteredExpedientes = expedientes.filter(expediente => 
+                expediente.acreditado.toLowerCase().includes(lowercaseSearchTerm)
+            );
         } else if (searchType === 'Numero') {
             try {
                 const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
-
-                if (expediente) {
-                    filteredExpedientes.push(expedientes[0]);
+    
+                if (expediente && expediente.length > 0) {
+                    filteredExpedientes.push(expediente[0]);
                 } else {
                     filteredExpedientes = [];
                 }
@@ -178,7 +182,7 @@ const Position = () => {
                 if (error.response && error.response.status === 404) {
                     filteredExpedientes = [];
                 } else {
-                    console.error("Somethin was wrong")
+                    console.error("Something went wrong", error);
                 }
             }
         }
@@ -205,11 +209,11 @@ const Position = () => {
 
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-
-            let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-            setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-            setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-        }
+            
+            setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = currentPage * itemsPerPage;
+            setCurrentExpedientes(expedientes.slice(startIndex, endIndex));   }
     }
 
     const handleManualSearch = () => {

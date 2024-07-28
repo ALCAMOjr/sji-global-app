@@ -47,12 +47,13 @@ CREATE TABLE Tareas (
     abogado_id INT,
     exptribunalA_numero BIGINT NOT NULL,
     tarea TEXT NULL,
+    fecha_inicio DATE NULL,  
     fecha_registro DATE NULL,
+    fecha_entrega DATE NULL,
+    fecha_real_entrega DATE NULL,
     fecha_estimada_respuesta DATE NULL,
     estado_tarea ENUM('Asignada', 'Iniciada', 'Terminada', 'Cancelada') NULL,
-    fecha_inicio DATE NULL,  
     observaciones TEXT NULL,
-    fecha_entrega DATE NULL,
     FOREIGN KEY (abogado_id) REFERENCES abogados(id),
     FOREIGN KEY (exptribunalA_numero) REFERENCES expTribunalA(numero)
 );

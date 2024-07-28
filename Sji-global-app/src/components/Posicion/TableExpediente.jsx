@@ -104,7 +104,7 @@ const Row = ({
         };
 
         fetchHasTarea();
-    }, [expediente.num_credito, jwt]);
+    }, [expediente, jwt]);
 
     const getBackgroundColor = (aprobada, tv) => {
         if ((!aprobada || aprobada === '') && (!tv || tv === '')) {

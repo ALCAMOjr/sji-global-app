@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Card } from "flowbite-react";
 import { Pagination } from "flowbite-react";
+import HasTarea from '../../views/tareas/HasTarea';
+import Context from '../../context/abogados.context';
 
 const customTheme = {
     pagination: {
@@ -32,11 +34,28 @@ const customTheme = {
 };
 
 const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea }) => {
+    const { jwt } = useContext(Context);
+    const [tasksStatus, setTasksStatus] = useState({});
+
+    useEffect(() => {
+        const fetchTaskStatuses = async () => {
+            const statuses = await Promise.all(currentExpedientes.map(async (expediente) => {
+                try {
+                    const response = await HasTarea({ numero: expediente.num_credito, token: jwt });
+                    return { [expediente.num_credito]: response.hasTasks };
+                } catch (error) {
+                    console.error('Error fetching tarea status', error);
+                    return { [expediente.num_credito]: false };
+                }
+            }));
+            setTasksStatus(Object.assign({}, ...statuses));
+        };
+
+        fetchTaskStatuses();
+    }, [currentExpedientes, jwt]);
+
     return (
-        <div>
-              <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 flex justify-center items-center flex-wrap">
-          
-           
+        <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 flex justify-center items-center flex-wrap">
             <div className="mt-24 mb-4 flex justify-center items-center flex-wrap">
                 {currentExpedientes.map((expediente, index) => (
                     <div key={index} className="w-full max-w-xs mb-20 m-4">
@@ -44,17 +63,27 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                             <div className="flex flex-col">
                                 {/* Upper section */}
                                 <div className="p-4">
-                                <div className="mb-4 flex items-center justify-between">
-                                    <h5 className="text-sm font-bold leading-none text-black">
-                                        Crédito #{expediente.num_credito}
-                                    </h5>
-                                    <a
-                                    onClick={() => openModalTarea(expediente)}
-                                    className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
-                                >
-                                    Nueva Tarea
-                                </a>
-                                </div>
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <h5 className="text-sm font-bold leading-none text-black">
+                                            Crédito #{expediente.num_credito}
+                                        </h5>
+                                        {tasksStatus[expediente.num_credito] ? (
+                                            <button
+                                                type="button"
+                                                className="text-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center"
+                                                disabled
+                                            >
+                                                Ya Asignada
+                                            </button>
+                                        ) : (
+                                            <a
+                                                onClick={() => openModalTarea(expediente)}
+                                                className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
+                                            >
+                                                Nueva Tarea
+                                            </a>
+                                        )}
+                                    </div>
                                     <p className="text-sm font-medium text-gray-700">
                                         <span className="font-bold">Ultima Etapa Aprobada:</span> {expediente.ultima_etapa_aprobada}
                                     </p>
@@ -65,7 +94,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                         <span className="font-bold">Secuencia Etapa Aprobada:</span> {expediente.secuencia_etapa_aprobada}
                                     </p>
                                 </div>
-                                <hr className="border-gray-300"/>
+                                <hr className="border-gray-300" />
                                 {/* Lower section */}
                                 <div className="p-4">
                                     <p className="text-sm text-gray-700">
@@ -98,7 +127,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                     showIcons
                 />
             </div>
-        </div>
         </div>
     );
 };

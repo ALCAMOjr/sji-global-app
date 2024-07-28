@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import Context from '../../context/abogados.context.jsx';
-import createTarea from '../../views/tareas/createTarea.js';
+import createTarea from '../../views/tareas/CreateTarea.js';
 import getTareasUser from '../../views/tareas/getTareasUser.js';
 
 export default function useTareas() {
@@ -23,14 +23,13 @@ export default function useTareas() {
         }
     }, [jwt]);
 
-    const registerNewTarea = useCallback(async ({ exptribunalA_numero, abogado_id, tarea, fecha_entrega, fecha_estimada_respuesta, observaciones }) => {
+    const registerNewTarea = useCallback(async ({ exptribunalA_numero, abogado_id, tarea, fecha_entrega, observaciones }) => {
         try {
             const newTarea = await createTarea({
                 exptribunalA_numero, 
                 abogado_id, 
                 tarea, 
                 fecha_entrega, 
-                fecha_estimada_respuesta, 
                 observaciones, 
                 token: jwt
             });

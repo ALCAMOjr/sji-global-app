@@ -25,6 +25,6 @@ export default function usePositions() {
 
 
     
-    return { expedientes, loading, error};
+    return { expedientes, loading, error, setExpedientes};
     
 }

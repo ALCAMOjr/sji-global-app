@@ -10,10 +10,11 @@ import Context from '../../context/abogados.context.jsx';
 import getPositionByNumero from '../../views/position/getPositionByNumber.js';
 import useAbogados from '../../hooks/abogados/useAbogados.jsx';
 import { IoMdCheckmark } from "react-icons/io";
-import masicon from "../../assets/mas.png"
-
+import getPositionExpedientes from '../../views/position/getPositionExpedientes.js';
+import useTareas from '../../hooks/tareas/useTareas.jsx';
 const Position = () => {
-    const { expedientes, loading, error } = usePosition();
+    const { registerNewTarea } = useTareas()
+    const { expedientes, loading, error, setExpedientes } = usePosition();
     const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -28,7 +29,78 @@ const Position = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [errors, setErrors] = useState({});
     const { jwt } = useContext(Context);
-    const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null)
+    const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
+    const [fechaError, setFechaError] = useState('');
+    const [formData, setFormData] = useState({
+        tarea: '',
+        fecha_entrega: '',
+        observaciones: '',
+        abogado_id: ''
+    });
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            [name]: value
+        }));
+    
+        if (name === 'fecha_entrega') {
+            setFechaError('');
+        }
+    };
+
+    const handleCreateTarea = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+    
+        const { tarea, fecha_entrega, observaciones, abogado_id } = formData;
+        const today = new Date().setHours(0, 0, 0, 0);
+        const selectedDate = new Date(fecha_entrega).setHours(0, 0, 0, 0);
+    
+        if (selectedDate <= today) {
+            setFechaError('La fecha debe ser después de hoy.');
+            setIsLoading(false);
+            return;
+        }
+    
+        try {
+            const { success, error } = await registerNewTarea({
+                exptribunalA_numero: selectExpedientetoTask.expTribunalA_numero,
+                abogado_id,
+                tarea,
+                fecha_entrega,
+                observaciones
+            });
+    
+            
+            if (success) {
+                toast.info('Se creó correctamente la tarea', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+                const expedientes = await getPositionExpedientes({token: jwt})
+                setExpedientes(expedientes)
+            } else {
+                if (error === 'Ya existe una tarea asignada a este expediente.') {
+                    toast.error('Ya existe una tarea asignada a este expediente.');
+                } else if (error === 'ID de abogado inválido o el usuario no es un abogado.') {
+                    toast.error('ID de abogado inválido o el usuario no es un abogado.');
+                } else {
+                    toast.error('Algo mal sucedió al crear la tarea: ' + error);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al crear la tarea');
+        } finally {
+            setIsLoading(false);
+            closeModalTarea();
+        }
+    };
 
     useEffect(() => {
         if (expedientes) {
@@ -63,8 +135,13 @@ const Position = () => {
     };
 
     const closeModalTarea = () => {
-        setSelectExpedientetoTask(null)
-        setIsOpenModal(null)
+        setIsOpenModal(false);
+        setFormData({
+            tarea: '',
+            fecha_entrega: '',
+            observaciones: '',
+            abogado_id: ''
+        });
     };
 
 
@@ -158,100 +235,104 @@ const Position = () => {
 
     return (
         <div className="flex flex-col min-h-screen">
-
-            {isOpenModal && (
-                <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
-                    <div className="relative max-w-md w-full bg-white rounded-lg shadow-lg dark:bg-gray-700">
-                        <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-white border-b rounded-t dark:border-gray-600">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Agendar nueva Tarea
-                                </h3>
-                                <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
-                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                    </svg>
-                                    <span className="sr-only">Close modal</span>
-                                </button>
-                            </div>
+   {isOpenModal && (
+            <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
+                <div className="relative max-w-md w-full bg-white rounded-lg shadow-lg dark:bg-gray-700">
+                    <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-white border-b rounded-t dark:border-gray-600">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                Agendar nueva Tarea
+                            </h3>
+                            <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                                <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span className="sr-only">Close modal</span>
+                            </button>
                         </div>
-                        <div className="pt-16 p-4 mx-auto">
-                            <form className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Tarea</label>
-                                    <textarea
-                                        name="tarea"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                        placeholder="Ingresa la Tarea"
-                                    ></textarea>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Fecha Estimada de Entrega</label>
-                                    <input
-                                        type="date"
-                                        name="fecha_estimada_entrega"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Fecha Real de Entrega</label>
-                                    <input
-                                        type="date"
-                                        name="fecha_real_entrega"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Fecha Estimada de Respuesta</label>
-                                    <input
-                                        type="date"
-                                        name="fecha_estimada_respuesta"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Observaciones</label>
-                                    <textarea
-                                        name="observaciones"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                        placeholder="Ingrese observaciones"
-                                    ></textarea>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Abogado</label>
-                                    <select
-                                        name="abogado_id"
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="">Seleccione un abogado</option>
-                                        {abogados.map((abogado) => (
+                    </div>
+                    <div className="pt-16 p-4 mx-auto">
+                        <form className="space-y-4" onSubmit={handleCreateTarea}>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Tarea</label>
+                                <textarea
+                                    name="tarea"
+                                    value={formData.tarea}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    placeholder="Ingresa la Tarea"
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Fecha de Entrega</label>
+                                <input
+                                    type="date"
+                                    name="fecha_entrega"
+                                    value={formData.fecha_entrega}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                />
+                                {fechaError && (
+                                    <p className="mt-2 text-sm text-red-600">{fechaError}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Observaciones</label>
+                                <textarea
+                                    name="observaciones"
+                                    value={formData.observaciones}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                    placeholder="Ingrese observaciones"
+                                ></textarea>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Abogado</label>
+                                <select
+                                    name="abogado_id"
+                                    value={formData.abogado_id}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                                >
+                                    <option value="">Seleccione un abogado</option>
+                                    {abogados
+                                        .filter(abogado => abogado.user_type === 'abogado')
+                                        .map((abogado) => (
                                             <option key={abogado.id} value={abogado.id}>
                                                 {abogado.nombre}
                                             </option>
                                         ))}
-                                    </select>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
-                                >
-                                    {isLoading ? (
-                                        <div role="status">
-                                            <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7234 75.2124 7.55338C69.5422 4.38335 63.2754 2.51539 56.7663 2.05081C51.7668 1.68134 46.7392 2.05829 41.8592 3.16224C39.3322 3.76176 37.8618 6.25956 38.4989 8.68497C39.1359 11.1104 41.6143 12.5452 44.1373 11.9457C47.8203 11.0764 51.6026 10.8296 55.3196 11.2228C60.8785 11.7913 66.1942 13.543 70.9048 16.3926C75.6155 19.2423 79.6142 23.1216 82.6685 27.793C84.9175 31.0338 86.6015 34.6088 87.6735 38.3892C88.4295 40.7753 91.5423 41.6631 93.9676 39.0409Z" fill="currentFill" />
-                                            </svg>
-                                            <span className="sr-only">Loading...</span>
-                                        </div>
-                                    ) : (
-                                        "Agendar Tarea"
-                                    )}
-                                </button>
-                            </form>
-                        </div>
+                                </select>
+                            </div>
+                            
+                            <button
+                                type="submit"
+                                className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
+                            >
+                                {isLoading ? (
+                                    <div role="status">
+                                        <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8435 15.1192 80.8826 10.7237 75.2124 7.55338C69.5422 4.38303 63.2754 2.51562 56.7226 2.05191C51.7666 1.72076 46.7749 2.10213 41.8886 3.17641C39.3706 3.75162 37.9242 6.26221 38.5606 8.6879C39.197 11.1136 41.678 12.5285 44.2091 12.1372C47.9794 11.5281 51.8462 11.5135 55.6292 12.0928C60.8787 12.8773 65.8552 14.7495 70.2053 17.5733C74.5555 20.3972 78.178 24.1219 80.841 28.4807C83.1378 32.1457 84.9054 36.1701 86.0992 40.4294C86.7861 42.7992 89.5422 43.9002 91.9676 43.2631Z" fill="currentFill" />
+                                        </svg>
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                ) : (
+                                    'Crear Tarea'
+                                )}
+                            </button>
+                        </form>
                     </div>
                 </div>
-            )}
+            </div>
+        )}
 
 <>
                 {isDesktopOrLaptop ? (

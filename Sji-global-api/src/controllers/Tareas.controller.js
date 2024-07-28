@@ -5,17 +5,16 @@ import { sendEmail } from '../helpers/Mailer.js';
 
 dotenv.config();
 
+
 export const createTask = async (req, res) => {
     try {
-        const { exptribunalA_numero, abogado_id, tarea, fecha_entrega, fecha_estimada_respuesta, observaciones } = req.body;
+        const { exptribunalA_numero, abogado_id, tarea, fecha_entrega, observaciones } = req.body;
         const { userId } = req;
 
-        // Verificar campos requeridos
-        if (!exptribunalA_numero || !abogado_id || !fecha_entrega || !tarea || !fecha_estimada_respuesta) {
-            return res.status(400).send({ error: 'Missing required fields: exptribunalA_numero, abogado_id, fecha_entrega, fecha_estimada_respuesta, and tarea are required.' });
+        if (!exptribunalA_numero || !abogado_id || !fecha_entrega || !tarea) {
+            return res.status(400).send({ error: 'Missing required fields: exptribunalA_numero, abogado_id, fecha_entrega and tarea are required.' });
         }
 
-        // Verificar si el usuario es válido y es coordinador
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
@@ -25,7 +24,6 @@ export const createTask = async (req, res) => {
         if (user.user_type !== 'coordinador') {
             return res.status(403).send({ error: 'Unauthorized' });
         }
-
 
         const [abogados] = await pool.query('SELECT * FROM abogados WHERE id = ?', [abogado_id]);
         if (abogados.length <= 0 || abogados[0].user_type !== 'abogado') {
@@ -48,11 +46,10 @@ export const createTask = async (req, res) => {
 
         const fecha_registro = format(new Date(), 'yyyy-MM-dd');
         const fecha_entrega_formatted = format(new Date(fecha_entrega), 'yyyy-MM-dd');
-        const fecha_estimada_respuesta_formatted = format(new Date(fecha_estimada_respuesta), 'yyyy-MM-dd');
 
         const [result] = await pool.query(
-            'INSERT INTO Tareas (exptribunalA_numero, abogado_id, tarea, fecha_registro, fecha_entrega, fecha_estimada_respuesta, estado_tarea, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [exptribunalA_numero, abogado_id, tarea, fecha_registro, fecha_entrega_formatted, fecha_estimada_respuesta_formatted, 'Asignada', observaciones]
+            'INSERT INTO Tareas (exptribunalA_numero, abogado_id, tarea, fecha_registro, fecha_entrega, estado_tarea, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [exptribunalA_numero, abogado_id, tarea, fecha_registro, fecha_entrega_formatted, 'Asignada', observaciones]
         );
 
         const newTareaId = result.insertId;
@@ -64,7 +61,7 @@ export const createTask = async (req, res) => {
 
             await sendEmail(abogado.email, subject, text);
 
-            res.status(201).send(tarea);
+            res.status(200).send(tarea);
         } else {
             res.status(404).send({ error: 'Tarea not found after creation' });
         }

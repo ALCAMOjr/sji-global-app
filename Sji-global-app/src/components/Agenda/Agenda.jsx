@@ -1,8 +1,6 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react';
 import useTareas from '../../hooks/tareas/useTareas.jsx';
 import { Spinner } from "@nextui-org/react";
-import logo_admin from "../../assets/admin.jpg"
-import logo_advisor from "../../assets/advisor.jpg"
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
 import Error from './Error.jsx';

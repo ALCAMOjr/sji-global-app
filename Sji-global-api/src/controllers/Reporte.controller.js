@@ -115,8 +115,6 @@ export const getReporte = async (req, res) => {
     }
 };
 
-
-
 export const getReporteDetalle = async (req, res) => {
     try {
         const { userId } = req;
@@ -216,13 +214,13 @@ export const getReporteDetalle = async (req, res) => {
                 WHEN (secuencia_etapa_aprobada IS NULL OR secuencia_etapa_aprobada = '') AND (secuencia_etapa_tv IS NULL OR secuencia_etapa_tv = '') 
                 THEN 1 
                 ELSE NULL 
-            END) AS Asignación,
+            END) AS Asignacion,
             
             COUNT(CASE 
                 WHEN secuencia_etapa_aprobada = '1' AND (secuencia_etapa_tv IS NULL OR secuencia_etapa_tv = '') 
                 THEN 1 
                 ELSE NULL 
-            END) AS Presentación,
+            END) AS Presentacion,
             
             COUNT(CASE 
                 WHEN secuencia_etapa_aprobada = secuencia_etapa_tv AND secuencia_etapa_aprobada != '1' AND secuencia_etapa_aprobada IS NOT NULL AND secuencia_etapa_aprobada != '' 
@@ -235,16 +233,16 @@ export const getReporteDetalle = async (req, res) => {
                      AND ABS(CAST(secuencia_etapa_aprobada AS SIGNED) - CAST(secuencia_etapa_tv AS SIGNED)) IN (1, 2)
                 THEN 1 
                 ELSE NULL 
-            END) AS 'Empuje 1 o 2 niveles',
+            END) AS Empuje1o2niveles,
             
             COUNT(CASE 
                 WHEN secuencia_etapa_aprobada != secuencia_etapa_tv AND secuencia_etapa_aprobada != '1' AND secuencia_etapa_tv != '1' AND secuencia_etapa_aprobada IS NOT NULL AND secuencia_etapa_aprobada != '' AND secuencia_etapa_tv IS NOT NULL AND secuencia_etapa_tv != '' 
                      AND ABS(CAST(secuencia_etapa_aprobada AS SIGNED) - CAST(secuencia_etapa_tv AS SIGNED)) > 2
                 THEN 1 
                 ELSE NULL 
-            END) AS 'Empuje 3 o más niveles',
+            END) AS Empuje3omasniveles,
 
-            COUNT(*) AS Total_Registros
+            COUNT(*) AS TotalRegistros
         FROM 
             posicionExpediente;
         `);

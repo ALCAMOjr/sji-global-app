@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext, useEffect } from 'react';
+import React, { useRef, useState, useContext, useEffect } from 'react';
 import useExpedientes from "../../hooks/expedientes/useExpedientes.jsx";
 import { Spinner } from "@nextui-org/react";
 import Error from "./Error.jsx";
@@ -19,6 +19,7 @@ const Expedientes = () => {
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const menuRef = useRef(null);
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
@@ -330,8 +331,25 @@ const Expedientes = () => {
 
 
 
-    const toggleDropdown = () => setIsSearchOpen(!isSearchOpen);
+    const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsSearchOpen(false);
+            }
+        };
+
+        if (isSearchOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSearchOpen]);
 
     const handleSearchTypeChange = (type) => {
         setSearchType(type);
@@ -408,7 +426,7 @@ const Expedientes = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -701,7 +719,8 @@ const Expedientes = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                    id="dropdown"
+                                ref={menuRef}
+                                id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -711,12 +730,12 @@ const Expedientes = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                                 Nombre
                                                 {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
-                                        </li>
+                                        </li> */}
 
                                     </ul>
                                 </div>
@@ -762,8 +781,8 @@ const Expedientes = () => {
                     <form className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                         <div className="flex">
                             <button
-                                id="dropdown-button"
-                                onClick={toggleDropdown}
+                                    id="dropdown-button"
+                                    onClick={toggleDropdown}
                                 className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                 type="button"
                             >
@@ -780,7 +799,8 @@ const Expedientes = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                    id="dropdown"
+                                ref={menuRef}
+                                id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -790,12 +810,12 @@ const Expedientes = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                                 Nombre
                                                 {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
-                                        </li>
+                                        </li> */}
 
                                     </ul>
                                 </div>

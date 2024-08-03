@@ -23,16 +23,17 @@ export default function useExpedientesSial() {
         }
     }, [jwt]);
 
-    const uploadFile = useCallback(async (file) => {
+    const uploadFile = useCallback(async (files) => {
         try {
-            const response = await UploadFile({ file, token: jwt });
-            setExpedientes(response.data); 
-            return { success: true, data: response.data };
+          const response = await UploadFile({ files, token: jwt }); 
+          setExpedientes(response.data); 
+          return { success: true, data: response.data };
         } catch (error) {
-            console.error(error);
-            return { success: false, error: error.response?.data?.message || 'Error al cargar el archivo' };
+          console.error(error);
+          return { success: false, error: error.response?.data?.message || 'Error al cargar los archivos' };
         }
-    }, [jwt]);
+      }, [jwt]);
+      
 
     return { expedientes, loading, error, uploadFile };
 }

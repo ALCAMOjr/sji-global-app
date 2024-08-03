@@ -147,7 +147,6 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{expediente.macroetapa_aprobada}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.ultima_etapa_aprobada}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.fecha_ultima_etapa_aprobada}</TableCell>
-                <TableCell className="max-w-xs truncate">{expediente.etapa_construida}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.siguiente_etapa}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.despacho}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.semaforo}</TableCell>

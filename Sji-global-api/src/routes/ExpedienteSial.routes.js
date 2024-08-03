@@ -8,7 +8,7 @@ const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post('/expedientesSial/upload-csv', abogadoExtractor, upload.single('file'), uploadAndConvertCsv);
+router.post('/expedientesSial/upload-csv', abogadoExtractor, upload.array('files'), uploadAndConvertCsv);
 router.get('/expedientesSial/', abogadoExtractor, getAllCreditsSial);
 router.get('/expedientesSial/nombre/:number', abogadoExtractor, getNombrebyNumero);
 router.get('/expedientesSial/number/:number', abogadoExtractor, getExpedientesByNumero);

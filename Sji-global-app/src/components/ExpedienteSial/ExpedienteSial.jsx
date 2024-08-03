@@ -17,6 +17,7 @@ const ExpedientesSial = () => {
     const { expedientes, loading, error, uploadFile } = useExpedientesSial();
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const menuRef = useRef(null);
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
@@ -26,11 +27,11 @@ const ExpedientesSial = () => {
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [errors, setErrors] = useState({});
     const inputFileRef = useRef(null);
     const { jwt } = useContext(Context);
-
+    const [areFilesValid, setAreFilesValid] = useState(true);
 
 
 
@@ -65,52 +66,95 @@ const ExpedientesSial = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedFile(null)
+        setSelectedFiles([]);
     };
 
-    const handleFileChange = (e) => {
-        if (e.target.files.length > 0) {
-            setSelectedFile(e.target.files[0]);
-            setErrors((prevErrors) => ({ ...prevErrors, uploadFile: '' }));
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        const validFiles = [];
+        let hasInvalidFile = false;
+
+        files.forEach(file => {
+            if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                validFiles.push(file);
+            } else {
+                hasInvalidFile = true;
+            }
+        });
+        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
+        if (hasInvalidFile) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: 'Uno o más archivos no son de tipo CSV. Por favor, seleccione solo archivos CSV.',
+            }));
+            setAreFilesValid(false);
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: '',
+            }));
+            setAreFilesValid(true);
         }
     };
 
+    const handleRemoveFile = (fileToRemove) => {
+        setSelectedFiles(prevSelectedFiles =>
+            prevSelectedFiles.filter(file => file !== fileToRemove)
+        );
+    };
 
     const handleUploadFile = async () => {
-        if (!selectedFile) {
-            setErrors((prevErrors) => ({ ...prevErrors, uploadFile: 'Por favor, seleccione un archivo antes de subir.' }));
+        if (selectedFiles.length === 0 || !areFilesValid) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: 'Por favor, seleccione solo archivos CSV válidos antes de subir.',
+            }));
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const { success, error } = await uploadFile(selectedFile);
+            const { success, error } = await uploadFile(selectedFiles);
             if (success) {
-                toast.info('Se subio correctamente el archivo', {
+                toast.info('Archivos subidos correctamente.', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
-                    }
+                    },
                 });
             } else {
-                toast.error('Algo mal sucedió al subir el archivo: ' + error);
+                toast.error(`Algo mal sucedió al subir los archivos: ${error}`);
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al subir el archivo');
-
+            toast.error('Algo mal sucedió al subir los archivos');
         } finally {
             setIsLoading(false);
             setIsModalOpen(false);
-            setSelectedFile(null)
-            setErrors({})
+            setSelectedFiles([]);
+            setErrors({});
         }
     };
+    const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsSearchOpen(false);
+            }
+        };
 
+        if (isSearchOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
 
-    const toggleDropdown = () => setIsSearchOpen(!isSearchOpen);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSearchOpen]);
 
 
     const handleSearchTypeChange = (type) => {
@@ -189,7 +233,7 @@ const ExpedientesSial = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -214,14 +258,17 @@ const ExpedientesSial = () => {
                 </Tooltip>
             </div>
 
+
             {isModalOpen && (
-                <div id="verification-modal" tabIndex="-1" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50">
-                    <div className="relative  w-auto max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
+                <div
+                    id="verification-modal"
+                    tabIndex="-1"
+                    className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50"
+                >
+                    <div className="relative w-auto max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
                         <div className="relative rounded-lg shadow bg-white max-w-md w-full mx-auto">
                             <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-white bg-gray-200">
-                                <h3 className="text-xl font-semibold text-primary/80">
-                                    Subir Archivo
-                                </h3>
+                                <h3 className="text-xl font-semibold text-primary/80">Subir Archivo</h3>
                                 <button
                                     type="button"
                                     className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -253,34 +300,72 @@ const ExpedientesSial = () => {
                                     >
                                         <div className="flex flex-col items-center">
                                             {isLoading ? (
-                                                <Spinner className='text-center mt-6 mb-8 text-sm' label="Loading..." color="primary" size='lg' labelColor="primary" />
+                                                <Spinner
+                                                    className="text-center mt-6 mb-8 text-sm"
+                                                    label="Loading..."
+                                                    color="primary"
+                                                    size="lg"
+                                                    labelColor="primary"
+                                                />
                                             ) : (
                                                 <>
-                                                    <img src={agregar} className="absolute h-8 w-8 mb-8 z-10" style={{ top: '30%', transform: 'translateY(-50%)' }} alt="Circulo Icon" />
-                                                    <span className='text-sm text-black text-center mt-24 mb-4 z-30'>
-                                                        {selectedFile ? `Archivo seleccionado: ${selectedFile.name}` : 'Click para subir el archivo'}
+                                                    <img
+                                                        src={agregar}
+                                                        className="absolute h-8 w-8 mb-8 z-10"
+                                                        style={{ top: '30%', transform: 'translateY(-50%)' }}
+                                                        alt="Circulo Icon"
+                                                    />
+                                                    <span className="text-sm text-black text-center mt-24 mb-4 z-30">
+                                                        {selectedFiles.length > 0 ? (
+                                                            selectedFiles.map((file, index) => (
+                                                                <div key={index} className="flex justify-between items-center w-full">
+                                                                    <span>{file.name}</span>
+                                                                    <button
+                                                                        onClick={() => handleRemoveFile(file)}
+                                                                        className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-6 h-6 inline-flex justify-center items-center"
+                                                                    >
+                                                                        <svg
+                                                                            className="w-3 h-3"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 14 14"
+                                                                        >
+                                                                            <path
+                                                                                stroke="currentColor"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth="2"
+                                                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            'Click para subir archivos'
+                                                        )}
                                                     </span>
                                                     {errors.uploadFile && <p className="text-[#E16060] text-xs">{errors.uploadFile}</p>}
                                                 </>
                                             )}
                                         </div>
                                     </button>
-
                                     <input
                                         type="file"
                                         ref={inputFileRef}
                                         style={{ display: 'none' }}
                                         onChange={handleFileChange}
+                                        multiple
                                     />
                                 </div>
                                 <div className="flex justify-end mt-4 w-full">
-
                                     <button
-                                        disabled={isLoading}
+                                        disabled={isLoading || !areFilesValid}
                                         onClick={handleUploadFile}
                                         className="bg-primary text-white text-lg px-4 py-1 rounded-lg flex items-center justify-center mt-4"
                                     >
-                                        Subir Archivo
+                                        Subir Archivos
                                     </button>
                                 </div>
                             </div>
@@ -289,7 +374,6 @@ const ExpedientesSial = () => {
                 </div>
             )}
 
-
             <>
                 {isDesktopOrLaptop ? (
                     <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
@@ -297,6 +381,7 @@ const ExpedientesSial = () => {
                             <button
                                 id="dropdown-button"
                                 onClick={toggleDropdown}
+
                                 className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                 type="button"
                             >
@@ -313,6 +398,7 @@ const ExpedientesSial = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
+                                    ref={menuRef}
                                     id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
                                 >
@@ -323,12 +409,12 @@ const ExpedientesSial = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                                 Nombre
                                                 {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
-                                        </li>
+                                        </li> */}
 
                                     </ul>
                                 </div>
@@ -392,6 +478,7 @@ const ExpedientesSial = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
+                                    ref={menuRef}
                                     id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
                                 >
@@ -402,12 +489,12 @@ const ExpedientesSial = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
                                                 Nombre
                                                 {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
-                                        </li>
+                                        </li> */}
 
                                     </ul>
                                 </div>

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext, useEffect } from 'react';
+import React, { useRef, useState, useContext, useEffect } from 'react';
 import useTareas from '../../hooks/tareas/useTareas.jsx';
 import { Spinner } from "@nextui-org/react";
 import { toast } from 'react-toastify';
@@ -22,6 +22,7 @@ const Agenda = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const menuRef = useRef(null);
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
@@ -80,7 +81,25 @@ const Agenda = () => {
 
 
 
-    const toggleDropdown = () => setIsSearchOpen(!isSearchOpen);
+    const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsSearchOpen(false);
+            }
+        };
+
+        if (isSearchOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isSearchOpen]);
 
 
     const handleSearchTypeChange = (type) => {
@@ -105,7 +124,7 @@ const Agenda = () => {
           
                     if (expedientes && expedientes.length > 0) {
                  
-                        filteredExpedientes.push(...expedientes); // Usar el operador de propagación
+                        filteredExpedientes.push(...expedientes); 
                     } else {
                        
                         filteredExpedientes = [];
@@ -175,7 +194,7 @@ const Agenda = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     )
@@ -227,7 +246,8 @@ const Agenda = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                    id="dropdown"
+                                ref={menuRef}
+                                id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -239,7 +259,7 @@ const Agenda = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
-                                                Nombre
+                                            Abogado
                                                 {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -306,7 +326,8 @@ const Agenda = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                    id="dropdown"
+                                ref={menuRef}
+                                id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -318,7 +339,7 @@ const Agenda = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
-                                                Nombre
+                                                Abogado
                                                 {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

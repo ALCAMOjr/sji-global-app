@@ -27,37 +27,37 @@ const Row = ({ reporte }) => {
                 <TableCell>
                     <span className="text-sm font-bold text-black">Asignación</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.Asignacion}</TableCell>
+                <TableCell  align='center' className="max-w-xs truncate">{reporte.Asignacion}</TableCell>
             </TableRow>
             <TableRow className='bg-gray-200'>
                 <TableCell className='bg-gray-200'>
                     <span className="text-sm font-bold text-black">Presentación</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.Presentacion}</TableCell>
+                <TableCell  align='center' className="max-w-xs truncate">{reporte.Presentacion}</TableCell>
             </TableRow>
             <TableRow className='bg-green-200'>
                 <TableCell>
                     <span className="text-sm font-bold text-black">Nivelado</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.Nivelado}</TableCell>
+                <TableCell  align='center' className="max-w-xs truncate">{reporte.Nivelado}</TableCell>
             </TableRow>
             <TableRow className='bg-orange-200'>
                 <TableCell>
                     <span className="text-sm font-bold text-black">Empuje 1 o 2 niveles</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.Empuje1o2niveles}</TableCell>
+                <TableCell align='center' className="max-w-xs truncate">{reporte.Empuje1o2niveles}</TableCell>
             </TableRow>
             <TableRow className='bg-red-200'>
                 <TableCell>
                     <span className="text-sm font-bold text-black">Empuje 3 o más niveles</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.Empuje3omasniveles}</TableCell>
+                <TableCell  align='center' className="max-w-xs truncate">{reporte.Empuje3omasniveles}</TableCell>
             </TableRow>
             <TableRow className='bg-white'>
                 <TableCell>
                     <span className="text-sm font-bold text-black">Total de registros</span>
                 </TableCell>
-                <TableCell className="max-w-xs truncate">{reporte.TotalRegistros}</TableCell>
+                <TableCell  align='center' className="max-w-xs truncate">{reporte.TotalRegistros}</TableCell>
             </TableRow>
         </Fragment>
     );

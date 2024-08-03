@@ -1,16 +1,16 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react';
 import useAbogados from "../../hooks/abogados/useAbogados.jsx";
-import { Spinner } from "@nextui-org/react";
 import logo_admin from "../../assets/admin.jpg"
 import logo_advisor from "../../assets/advisor.jpg"
 import Error from "./Error.jsx";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
-import { useMediaQuery } from 'react-responsive';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 import { RiChatNewLine } from "react-icons/ri";
 import { Listbox, Transition } from '@headlessui/react'
 import { FiEye, FiEyeOff } from 'react-icons/fi';
+import masicon from "../../assets/mas.png"
+import { Spinner, Tooltip, Button } from "@nextui-org/react";
 
 const options = [
     { name: 'Selecciona el tipo de usuario:', value: '' },
@@ -286,7 +286,7 @@ const Abogados = () => {
 
 
     if (loading) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:ml-44 xl:-ml-48 justify-center h-screen w-screen">
+        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
@@ -296,34 +296,20 @@ const Abogados = () => {
 
     return (
         <div>
-            {!showModal && !isModalOpenCreate && (
-                <div className="fixed right-1/4 top-24 z-50">
-                    <div className="relative">
-                        <button
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                            type="button"
-                            onClick={openModalCreate}
-                            className="text-white bg-primary hover:bg-primary/80 focus:ring-4 focus:ring-primary font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary focus:outline-none dark:focus:ring-primary"
-                        >
-                            <RiChatNewLine />
-                            <span className="sr-only">Open modal</span>
-                        </button>
-
-                        {isTooltipVisible && (
-                            <div
-                                id="tooltip-share"
-                                role="tooltip"
-                                className="absolute z-10 w-auto px-2 py-1 text-xs font-medium text-gray-900 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm -top-10 left-1/2 transform -translate-x-1/2"
-                            >
-                                Nuevo Abogado
-                                <div className="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
+               <div>
+                <Tooltip showArrow={true} content="Nuevo Abogado">
+                    <Button
+                        color='primary'
+                        className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
+                        isIconOnly
+                        aria-label="Mas"
+                        onClick={openModalCreate}
+                    >
+                        <img src={masicon} alt="Mas" className='w-4 h-4' />
+                    </Button>
+                </Tooltip>
+            </div>
+        
             {isModalOpenCreate && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
                     <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">

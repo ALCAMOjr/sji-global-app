@@ -90,9 +90,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
                                                     <span className="text-black font-bold">Fecha Última Etapa Aprobada:</span> {expediente.fecha_ultima_etapa_aprobada}
                                                 </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Etapa Construida:</span> {expediente.etapa_construida}
-                                                </p>
+                                            
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
                                                     <span className="text-black font-bold">Siguiente Etapa:</span> {expediente.siguiente_etapa}
                                                 </p>

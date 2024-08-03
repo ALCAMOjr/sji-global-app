@@ -77,7 +77,6 @@ CREATE TABLE CreditosSIAL (
   macroetapa_aprobada VARCHAR(250),
   ultima_etapa_aprobada VARCHAR(250),
   fecha_ultima_etapa_aprobada VARCHAR(250),
-  etapa_construida VARCHAR(250),
   siguiente_etapa VARCHAR(250),
   despacho VARCHAR(250),
   semaforo VARCHAR(250),
@@ -108,3 +107,13 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (etapa, termino, secuencia);
+
+
+
+LOAD DATA INFILE '/var/lib/mysql-files/etapasSial.csv'
+INTO TABLE EtapasSial
+FIELDS TERMINATED BY ',' 
+ENCLOSED BY '"' 
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(etapa, secuencia);

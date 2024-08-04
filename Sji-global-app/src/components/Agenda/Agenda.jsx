@@ -1,5 +1,5 @@
 import React, { useRef, useState, useContext, useEffect } from 'react';
-import useTareas from '../../hooks/tareas/useTareas.jsx';
+import useAgenda from '../../hooks/tareas/useAgenda.jsx';
 import { Spinner } from "@nextui-org/react";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
@@ -12,7 +12,7 @@ import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 const Agenda = () => {
 
-    const { expedientes, loading, error } = useTareas();
+    const { expedientes, loading, error } = useAgenda();
     const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);

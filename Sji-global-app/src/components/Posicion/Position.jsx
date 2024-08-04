@@ -11,11 +11,11 @@ import getPositionByNumero from '../../views/position/getPositionByNumber.js';
 import useAbogados from '../../hooks/abogados/useAbogados.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 import getPositionExpedientes from '../../views/position/getPositionExpedientes.js';
-import useTareas from '../../hooks/tareas/useTareas.jsx';
+import useAgenda from '../../hooks/tareas/useAgenda.jsx';
 
 
 const Position = () => {
-    const { registerNewTarea } = useTareas()
+    const { registerNewTarea } = useAgenda()
     const { expedientes, loading, error, setExpedientes } = usePosition();
     const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);

@@ -16,6 +16,7 @@ import Agenda from './components/Agenda/Agenda.jsx';
 import ExpedientesSial from './components/ExpedienteSial/ExpedienteSial.jsx';
 import Position from './components/Posicion/Position.jsx';
 import Reporte from './components/Reportes/Reportes.jsx';
+import Tarea from './components/Tareas.jsx/Tarea.jsx';
 function App() {
   return (
     <NextUIProvider>
@@ -31,6 +32,7 @@ function App() {
             <Route path="/positions" element={<Position />} />
             <Route path="/agenda" element={<Agenda />} />
             <Route path="/reporte" element={<Reporte />} />
+            <Route path="/tareas" element={<Tarea />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -302,7 +302,7 @@ const ExpedientesSial = () => {
                                             {isLoading ? (
                                                 <Spinner
                                                     className="text-center mt-6 mb-8 text-sm"
-                                                    label="Loading..."
+                                                    label="Cargando..."
                                                     color="primary"
                                                     size="lg"
                                                     labelColor="primary"

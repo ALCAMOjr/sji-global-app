@@ -52,6 +52,7 @@ CREATE TABLE Tareas (
     fecha_entrega DATE NULL,
     fecha_real_entrega DATE NULL,
     fecha_estimada_respuesta DATE NULL,
+     fecha_cancelacion DATE NULL,
     estado_tarea ENUM('Asignada', 'Iniciada', 'Terminada', 'Cancelada') NULL,
     observaciones TEXT NULL,
     FOREIGN KEY (abogado_id) REFERENCES abogados(id),
@@ -90,15 +91,9 @@ CREATE TABLE CreditosSIAL (
 CREATE TABLE EtapasTv (
     etapa VARCHAR(50) NULL,
     termino VARCHAR(250) NULL,
-    secuencia VARCHAR(5)
+    notificacion VARCHAR(250) NULL,
+    macroetapa VARCHAR(250) NULL
 );
-
--- Crear la tabla 'EtapasSial'
-CREATE TABLE EtapasSial (
-    etapa VARCHAR(250) NULL,
-    secuencia VARCHAR(5)
-);
-
 
 LOAD DATA INFILE '/var/lib/mysql-files/etapasTV.csv'
 INTO TABLE EtapasTv
@@ -106,14 +101,5 @@ FIELDS TERMINATED BY ','
 ENCLOSED BY '"' 
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(etapa, termino, secuencia);
+(etapa, termino, notificacion, macroetapa);
 
-
-
-LOAD DATA INFILE '/var/lib/mysql-files/etapasSial.csv'
-INTO TABLE EtapasSial
-FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"' 
-LINES TERMINATED BY '\n'
-IGNORE 1 LINES
-(etapa, secuencia);

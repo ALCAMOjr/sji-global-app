@@ -137,7 +137,11 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                                                 {selectedExpediente.tareas.map((tarea, index) => (
                                                     <tr key={index}>
                                                         <td className="px-6 py-4">{tarea.tarea}</td>
-                                                        <td className="px-6 py-4">{new Date(tarea.fecha_entrega).toLocaleDateString('en-CA')}</td>
+                                                        <td className="px-6 py-4">{new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric'
+                                                    })}</td>
                                                         <td className="px-6 py-4">{tarea.observaciones}</td>
                                                         <td className="px-6 py-4">{tarea.abogadoUsername}</td>
                                                         <td className="px-6 py-4">{tarea.estado_tarea}</td>

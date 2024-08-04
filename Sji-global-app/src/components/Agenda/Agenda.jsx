@@ -12,6 +12,7 @@ import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 const Agenda = () => {
 
+
     const { expedientes, loading, error } = useAgenda();
     const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +30,7 @@ const Agenda = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
     
+    console.log(currentExpedientes)
     useEffect(() => {
         let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
         setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));

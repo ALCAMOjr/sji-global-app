@@ -14,18 +14,15 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
-import copiaricon from "../../assets/copiaricon.png"
+import copiaricon from "../../assets/copiaricon.png";
+
 const TableAgenda = ({
     currentExpedientes,
     currentPage,
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
-
 }) => {
-
-
-
     return (
         <div>
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
@@ -45,8 +42,6 @@ const TableAgenda = ({
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Expediente</span>
                             </TableCell>
-
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -56,7 +51,6 @@ const TableAgenda = ({
                                 currentExpedientes={currentExpedientes}
                                 expediente={expediente}
                                 index={index}
-
                             />
                         ))}
                     </TableBody>
@@ -77,10 +71,7 @@ const TableAgenda = ({
 }
 
 const Row = ({
-    currentExpedientes,
     expediente,
-    index,
-
 }) => {
     const [open, setOpen] = React.useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -130,7 +121,6 @@ const Row = ({
                     {expediente.url}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
-
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
                 <TableRow>
@@ -138,43 +128,97 @@ const Row = ({
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                                 <Typography variant="h6" gutterBottom component="div">
-                                    Tarea del Espediente
+                                    Tarea del Expediente
                                 </Typography>
                                 <Table size="small" aria-label="details">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Tarea</TableCell>
-                                            <TableCell>Fecha de Entrega</TableCell>
+                                            <TableCell>Fecha de Asignación</TableCell>
+                                            {expediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
+                                                <>
+                                                    <TableCell>Fecha de Inicio</TableCell>
+                                                    <TableCell>Fecha de Entrega</TableCell>
+                                                </>
+                                            ) : (
+                                                <TableCell>Fecha Estimada de Entrega</TableCell>
+                                            )}
                                             <TableCell>Observaciones</TableCell>
                                             <TableCell>Abogado a realizarla</TableCell>
                                             <TableCell>Status</TableCell>
-                                      
-
+                                            <TableCell>Acciones</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {expediente.tareas.map((tarea, idx) => (
-                                            tarea && (
-                                                <TableRow key={idx}>
-                                                    <TableCell className="text-xs">{tarea.tarea}</TableCell>
-                                                    <TableCell className="text-xs">{new Date(tarea.fecha_entrega).toLocaleDateString('en-CA')}</TableCell>
-                                                    <TableCell className="text-xs">{tarea.observaciones}</TableCell>
-                                                    <TableCell className="text-xs">{tarea.abogadoUsername}</TableCell>
-                                                    <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
-                                                    <TableCell align='center'> 
+                                            <TableRow key={idx}>
+                                                <TableCell className="text-xs">{tarea.tarea}</TableCell>
+                                                <TableCell className="text-xs">
+                                                    {new Date(tarea.fecha_registro).toLocaleDateString('es-ES', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric'
+                                                    })}
+                                                </TableCell>
+                                                {tarea.estado_tarea === "Finalizada" ? (
+                                                    <>
+                                                        <TableCell className="text-xs">
+                                                            {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </TableCell>
+                                                        <TableCell className="text-xs">
+                                                            {new Date(tarea.fecha_real_entrega).toLocaleDateString('es-ES', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </TableCell>
+                                                    </>
+                                                ) : tarea.estado_tarea === "Cancelada" ? (
+                                                    <TableCell className="text-xs">
+                                                        {new Date(tarea.fecha_cancelacion).toLocaleDateString('es-ES', {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </TableCell>
+                                                ) : tarea.estado_tarea === "Iniciada" ? (
+                                                    <TableCell className="text-xs">
+                                                        {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </TableCell>
+                                                ) : (
+                                                    <TableCell className="text-xs">
+                                                        {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </TableCell>
+                                                )}
+                                                <TableCell className="text-xs">{tarea.observaciones}</TableCell>
+                                                <TableCell className="text-xs">{tarea.abogadoUsername}</TableCell>
+                                                <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
+                                                <TableCell align='center'>
+                                                    {(tarea.estado_tarea === "Asignada" || tarea.estado_tarea === "Iniciada") && (
                                                         <button
-                                                 
                                                             type="button"
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                                         >
                                                             Cancelar Tarea
                                                         </button>
-
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
                                         ))}
                                     </TableBody>
+
                                 </Table>
                             </Box>
                         </Collapse>

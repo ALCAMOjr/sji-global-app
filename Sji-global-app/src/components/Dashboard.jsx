@@ -179,7 +179,7 @@ function Dashboard() {
                         )}
                          {userType === 'abogado' && (
                         <li>
-                            <Link to="/agenda" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/agenda' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
+                            <Link to="/tareas" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/tareas' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
                                 <img src={tasklogo} className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                                 <span className="ms-3">Tareas</span>
                             </Link>

@@ -59,14 +59,18 @@ const Position = () => {
         setIsLoading(true);
 
         const { tarea, fecha_entrega, observaciones, abogado_id } = formData;
-        const today = new Date().setHours(0, 0, 0, 0);
-        const selectedDate = new Date(fecha_entrega).setHours(0, 0, 0, 0);
-
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+    
+        const selectedDate = new Date(fecha_entrega);
+        selectedDate.setHours(0, 0, 0, 0);
+    
         if (selectedDate <= today) {
-            setFechaError('La fecha debe ser después de hoy.');
+            setFechaError('La fecha debe ser después de hoy y mañana.');
             setIsLoading(false);
             return;
         }
+    
 
         try {
             const { success, error } = await registerNewTarea({
@@ -350,7 +354,7 @@ const Position = () => {
                                                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                                                 <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5533C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8435 15.1192 80.8826 10.7237 75.2124 7.55338C69.5422 4.38303 63.2754 2.51562 56.7226 2.05191C51.7666 1.72076 46.7749 2.10213 41.8886 3.17641C39.3706 3.75162 37.9242 6.26221 38.5606 8.6879C39.197 11.1136 41.678 12.5285 44.2091 12.1372C47.9794 11.5281 51.8462 11.5135 55.6292 12.0928C60.8787 12.8773 65.8552 14.7495 70.2053 17.5733C74.5555 20.3972 78.178 24.1219 80.841 28.4807C83.1378 32.1457 84.9054 36.1701 86.0992 40.4294C86.7861 42.7992 89.5422 43.9002 91.9676 43.2631Z" fill="currentFill" />
                                             </svg>
-                                            <span className="sr-only">Loading...</span>
+                                            <span className="sr-only">Cargando...</span>
                                         </div>
                                     ) : (
                                         'Crear Tarea'

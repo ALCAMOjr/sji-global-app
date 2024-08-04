@@ -112,12 +112,12 @@ export const startTask = async (req, res) => {
     try {
         const { userId } = req;
         const { taskId } = req.params;
-
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
         }
 
+        const user = users[0];
         const [tasks] = await pool.query('SELECT * FROM Tareas WHERE id = ? AND abogado_id = ?', [taskId, userId]);
         if (tasks.length <= 0) {
             return res.status(400).send({ error: 'Task not found or you are not authorized to start this task' });
@@ -125,6 +125,13 @@ export const startTask = async (req, res) => {
 
         const fecha_inicio = format(new Date(), 'yyyy-MM-dd');
         await pool.query('UPDATE Tareas SET estado_tarea = ?, fecha_inicio = ? WHERE id = ?', ['Iniciada', fecha_inicio, taskId]);
+        const [coordinadores] = await pool.query('SELECT * FROM abogados WHERE user_type = "coordinador"');
+    
+        const subject = 'Tarea iniciada';
+        const text = `Hola,\n\nEl abogado ${user.nombre} ${user.apellido} ha iniciado la tarea con ID ${taskId}.\n\nSaludos,\nEquipo de Gestión de Tareas`;
+        for (const coordinador of coordinadores) {
+            await sendEmail(coordinador.email, subject, text);
+        }
 
         res.status(200).send({ message: 'Task started successfully' });
     } catch (error) {
@@ -136,12 +143,12 @@ export const completeTask = async (req, res) => {
     try {
         const { userId } = req;
         const { taskId } = req.params;
-
         const [users] = await pool.query('SELECT * FROM abogados WHERE id = ?', [userId]);
         if (users.length <= 0) {
             return res.status(400).send({ error: 'Invalid user id' });
         }
 
+        const user = users[0];
         const [tasks] = await pool.query('SELECT * FROM Tareas WHERE id = ? AND abogado_id = ?', [taskId, userId]);
         if (tasks.length <= 0) {
             return res.status(400).send({ error: 'Task not found or you are not authorized to complete this task' });
@@ -149,6 +156,12 @@ export const completeTask = async (req, res) => {
 
         const fecha_real_entrega = format(new Date(), 'yyyy-MM-dd');
         await pool.query('UPDATE Tareas SET estado_tarea = ?, fecha_real_entrega = ? WHERE id = ?', ['Terminada', fecha_real_entrega, taskId]);
+        const [coordinadores] = await pool.query('SELECT * FROM abogados WHERE user_type = "coordinador"');
+        const subject = 'Tarea completada';
+        const text = `Hola,\n\nEl abogado ${user.nombre} ${user.apellido} ha completado la tarea con ID ${taskId}.\n\nSaludos,\nEquipo de Gestión de Tareas`;
+        for (const coordinador of coordinadores) {
+            await sendEmail(coordinador.email, subject, text);
+        }
 
         res.status(200).send({ message: 'Task completed successfully' });
     } catch (error) {

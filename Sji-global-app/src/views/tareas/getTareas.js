@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea/user';
-export default async function getTareasUser({ token }) {
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea';
+export default async function getTareas({ token }) {
     try {
         const config = {
             headers: {

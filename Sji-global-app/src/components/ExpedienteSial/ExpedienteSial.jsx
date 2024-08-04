@@ -104,10 +104,10 @@ const ExpedientesSial = () => {
     };
 
     const handleUploadFile = async () => {
-        if (selectedFiles.length === 0 || !areFilesValid) {
+        if (selectedFiles.length === 0) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                uploadFile: 'Por favor, seleccione solo archivos CSV válidos antes de subir.',
+                uploadFile: 'No ha seleccionado ningún archivo aún.',
             }));
             return;
         }
@@ -322,7 +322,7 @@ const ExpedientesSial = () => {
                                                                     <span>{file.name}</span>
                                                                     <button
                                                                         onClick={() => handleRemoveFile(file)}
-                                                                        className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-6 h-6 inline-flex justify-center items-center"
+                                                                        className="text-black bg-transparent hover:bg-gray-300 hover:text-gray-900 rounded-lg text-sm w-6 h-6 inline-flex justify-center items-center"
                                                                     >
                                                                         <svg
                                                                             className="w-3 h-3"

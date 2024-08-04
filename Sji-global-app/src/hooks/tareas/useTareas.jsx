@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import Context from '../../context/abogados.context.jsx';
 import createTarea from '../../views/tareas/CreateTarea.js';
-import getTareasUser from '../../views/tareas/getTareasUser.js';
+import getTareas from '../../views/tareas/getTareas.js';
 
 export default function useTareas() {
     const { jwt } = useContext(Context);
@@ -11,7 +11,7 @@ export default function useTareas() {
 
     useEffect(() => {
         if (jwt && jwt !== "" && jwt !== "null") {
-            getTareasUser({ token: jwt })
+            getTareas({ token: jwt })
                 .then(data => {
                     setExpedientes(data);
                     setLoading(false);

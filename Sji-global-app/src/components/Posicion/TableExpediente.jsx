@@ -9,6 +9,25 @@ import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import HasTarea from '../../views/tareas/HasTarea';
 import Context from '../../context/abogados.context';
+import igualicon from "../../assets/igual.png";
+import sprinticon from "../../assets/sprint.png";
+
+const colorMapping = {
+    '01': '#F5F5F5', // Asignación
+    '02': '#D3D3D3', // Convenios previos a demanda
+    '03': '#FFFFE0', // Demanda sin emplazamiento
+    '04': '#FFA07A', // Emplazamiento sin sentencia
+    '06': '#D8BFD8', // Convenio Judicial
+    '07': '#FFA07A', // Juicio con sentencia
+    '08': '#FFB6C1', // Proceso de ejecución
+    '09': '#FFD700', // Adjudicación
+    '10': '#87CEEB', // Escrituración en proceso
+    '15': '#90EE90', // Autoseguros
+    '16': '#20B2AA', // Liquidación
+    '17': '#AFEEEE', // Entrega por Poder Notarial
+    '18': '#778899'  // Irrecuperabilidad
+};
+
 const TableExpedientes = ({
     currentExpedientes,
     currentPage,
@@ -20,14 +39,16 @@ const TableExpedientes = ({
 
     return (
         <div>
-
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-
+                            {/* Encabezados de la tabla */}
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Numero</span>
+                            </TableCell>
+                            <TableCell className='bg-green-200'>
+                                <span className='text-xs font-bold text-black'>MacroEtapa</span>
                             </TableCell>
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Ultima E A</span>
@@ -35,9 +56,7 @@ const TableExpedientes = ({
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Fecha</span>
                             </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Sec</span>
-                            </TableCell>
+                        
                             <TableCell className='bg-blue-200'>
                                 <span className='text-xs font-bold text-black'>Fecha</span>
                             </TableCell>
@@ -48,21 +67,25 @@ const TableExpedientes = ({
                                 <span className='text-xs font-bold text-black'>Termino</span>
                             </TableCell>
                             <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Sec</span>
+                                <span className='text-xs font-bold text-black'>Notification</span>
+                            </TableCell>
+                            <TableCell className='bg-blue-200'>
+                                <span className='text-xs font-bold text-black'>MacroEtapa</span>
+                            </TableCell>
+                            <TableCell className='bg-white'>
+                                <span className='text-xs font-bold text-black'>Sprints</span>
                             </TableCell>
                             <TableCell align="center" className=''>
                                 <span className='text-xs font-bold text-black'>Tareas</span>
                             </TableCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {currentExpedientes.map((expediente, index) => (
+                        {currentExpedientes.map((expediente) => (
                             <Row
                                 key={expediente.id}
                                 expediente={expediente}
                                 openModalTarea={openModalTarea}
-
                             />
                         ))}
                     </TableBody>
@@ -80,7 +103,6 @@ const TableExpedientes = ({
                 labelRowsPerPage="Filas por página:"
             />
         </div>
-
     );
 }
 
@@ -88,7 +110,6 @@ const Row = ({
     expediente,
     openModalTarea
 }) => {
-
 
     const [hasTarea, setHasTarea] = useState(false);
     const { jwt } = useContext(Context);
@@ -106,46 +127,57 @@ const Row = ({
         fetchHasTarea();
     }, [expediente, jwt]);
 
-    const getBackgroundColor = (aprobada, tv) => {
-        if ((!aprobada || aprobada === '') && (!tv || tv === '')) {
-            return 'bg-white';
+    const getBackgroundColor = (macroetapa) => {
+        switch (macroetapa) {
+            case '01. Asignación':
+                return 'bg-[#F5F5F5]'; // Blanco suave
+            case '02. Convenios previos a demanda':
+                return 'bg-[#D3D3D3]'; // Gris Claro
+            case '03. Demanda sin emplazamiento':
+                return 'bg-[#FFFFE0]'; // Amarillo Claro
+            case '04. Emplazamiento sin sentencia':
+                return 'bg-[#FFA07A]'; // Naranja Claro
+            case '06. Convenio Judicial':
+                return 'bg-[#D8BFD8]'; // Morado Claro
+            case '07. Juicio con sentencia':
+                return 'bg-[#FFA07A]'; // Rojo Claro
+            case '08. Proceso de ejecución':
+                return 'bg-[#FFB6C1]'; // Rosa Claro
+            case '09. Adjudicación':
+                return 'bg-[#FFD700]'; // Dorado Claro
+            case '10. Escrituración en proceso':
+                return 'bg-[#87CEEB]'; // Azul Claro
+            case '15. Autoseguros':
+                return 'bg-[#90EE90]'; // Verde Claro
+            case '16. Liquidación':
+                return 'bg-[#20B2AA]'; // Aqua Claro
+            case '17. Entrega por Poder Notarial':
+                return 'bg-[#AFEEEE]'; // Turquesa Claro
+            case '18. Irrecuperabilidad':
+                return 'bg-[#778899]'; // Gris Azul Claro
+            default:
+                return 'bg-white'; // Por defecto blanco
         }
-        if (aprobada === '1' && (!tv || tv === '')) {
-            return 'bg-gray-200';
-        }
-        if (aprobada === tv && aprobada !== '1' && aprobada !== '') {
-            return 'bg-green-200';
-        }
-        if (aprobada !== tv && aprobada !== '1' && aprobada !== '' && tv !== '1' && tv !== '') {
-            const diff = Math.abs(aprobada - tv);
-            if (diff === 1 || diff === 2) {
-                return 'bg-orange-200';
-            }
-            if (diff > 2) {
-                return 'bg-red-200';
-            }
-        }
-        return 'bg-white';
     };
 
-    const bgColorClass = getBackgroundColor(expediente.secuencia_etapa_aprobada, expediente.secuencia_etapa_tv);
+    const bgColorClass = getBackgroundColor(expediente.macroetapa_aprobada);
 
+    const isEqual = expediente.macroetapa && expediente.macroetapa_aprobada === expediente.macroetapa;
 
-    
     return (
         <Fragment>
-             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.num_credito}</span>
+                </TableCell>
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.macroetapa_aprobada}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.ultima_etapa_aprobada}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.fecha_ultima_etapa_aprobada}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.secuencia_etapa_aprobada}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.fecha}</span>
@@ -157,9 +189,22 @@ const Row = ({
                     <span className="text-xs">{expediente.termino}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.secuencia_etapa_tv}</span>
+                    <span className="text-xs">{expediente.notificacion}</span>
                 </TableCell>
-
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.macroetapa}</span>
+                </TableCell>
+                <TableCell className={`max-w-xs truncate`}>
+                    <span className="text-xs">
+                        {expediente.macroetapa ? (
+                            isEqual ? (
+                                <img src={igualicon} alt="Igual" className="w-6 h-6" />
+                            ) : (
+                                <img src={sprinticon} alt="Sprint" className="w-6 h-6" />
+                            )
+                        ) : null}
+                    </span>
+                </TableCell>
                 <TableCell align="center">
                     {hasTarea ? (
                         <button
@@ -179,7 +224,6 @@ const Row = ({
                         </button>
                     )}
                 </TableCell>
-
             </TableRow>
         </Fragment>
     );

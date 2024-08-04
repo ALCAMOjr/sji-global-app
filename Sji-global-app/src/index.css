@@ -16,6 +16,14 @@ input[type="checkbox"] {
   border-radius: 4px;
 }
 
+.color-bubble {
+  width: 12px; /* Tamaño de la bolita */
+  height: 12px;
+  border-radius: 50%; /* Hace que sea circular */
+  display: inline-block; /* Asegura que esté en línea con el texto */
+  margin-left: 5px; /* Espacio entre el texto y la bolita */
+}
+
 .table-cell-height {
   padding: 4px 8px;  /* Reduce el padding para disminuir la altura */
   line-height: 1rem; /* Ajusta la altura de línea */

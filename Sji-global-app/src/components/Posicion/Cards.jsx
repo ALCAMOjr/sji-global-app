@@ -3,6 +3,8 @@ import { Card } from "flowbite-react";
 import { Pagination } from "flowbite-react";
 import HasTarea from '../../views/tareas/HasTarea';
 import Context from '../../context/abogados.context';
+import igualicon from "../../assets/igual.png";
+import sprinticon from "../../assets/sprint.png";
 
 const customTheme = {
     pagination: {
@@ -32,6 +34,21 @@ const customTheme = {
         }
     }
 };
+const colorMapping = {
+    '01': '#F5F5F5', // Asignación
+    '02': '#D3D3D3', // Convenios previos a demanda
+    '03': '#FFFFE0', // Demanda sin emplazamiento
+    '04': '#FFA07A', // Emplazamiento sin sentencia
+    '06': '#D8BFD8', // Convenio Judicial
+    '07': '#FFA07A', // Juicio con sentencia
+    '08': '#FFB6C1', // Proceso de ejecución
+    '09': '#FFD700', // Adjudicación
+    '10': '#87CEEB', // Escrituración en proceso
+    '15': '#90EE90', // Autoseguros
+    '16': '#20B2AA', // Liquidación
+    '17': '#AFEEEE', // Entrega por Poder Notarial
+    '18': '#778899'  // Irrecuperabilidad
+};
 
 const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea }) => {
     const { jwt } = useContext(Context);
@@ -54,66 +71,131 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
         fetchTaskStatuses();
     }, [currentExpedientes, jwt]);
 
+    const getBackgroundColor = (macroetapa) => {
+        switch (macroetapa) {
+            case '01. Asignación':
+                return 'bg-[#F5F5F5]'; // Blanco suave
+            case '02. Convenios previos a demanda':
+                return 'bg-[#D3D3D3]'; // Gris Claro
+            case '03. Demanda sin emplazamiento':
+                return 'bg-[#FFFFE0]'; // Amarillo Claro
+            case '04. Emplazamiento sin sentencia':
+                return 'bg-[#FFA07A]'; // Naranja Claro
+            case '06. Convenio Judicial':
+                return 'bg-[#D8BFD8]'; // Morado Claro
+            case '07. Juicio con sentencia':
+                return 'bg-[#FFA07A]'; // Rojo Claro
+            case '08. Proceso de ejecución':
+                return 'bg-[#FFB6C1]'; // Rosa Claro
+            case '09. Adjudicación':
+                return 'bg-[#FFD700]'; // Dorado Claro
+            case '10. Escrituración en proceso':
+                return 'bg-[#87CEEB]'; // Azul Claro
+            case '15. Autoseguros':
+                return 'bg-[#90EE90]'; // Verde Claro
+            case '16. Liquidación':
+                return 'bg-[#20B2AA]'; // Aqua Claro
+            case '17. Entrega por Poder Notarial':
+                return 'bg-[#AFEEEE]'; // Turquesa Claro
+            case '18. Irrecuperabilidad':
+                return 'bg-[#778899]'; // Gris Azul Claro
+            default:
+                return 'bg-white'; // Por defecto blanco
+        }
+    };
+
     return (
         <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 flex justify-center items-center flex-wrap">
             <div className="mt-24 mb-4 flex justify-center items-center flex-wrap">
-                {currentExpedientes.map((expediente, index) => (
-                    <div key={index} className="w-full max-w-xs mb-20 m-4">
-                        <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
-                            <div className="flex flex-col">
-                                {/* Upper section */}
-                                <div className="p-4">
-                                    <div className="mb-4 flex items-center justify-between">
-                                        <h5 className="text-sm font-bold leading-none text-black">
-                                            Crédito #{expediente.num_credito}
-                                        </h5>
-                                        {tasksStatus[expediente.num_credito] ? (
-                                            <button
-                                                type="button"
-                                                className="text-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center"
-                                                disabled
-                                            >
-                                                Ya Asignada
-                                            </button>
-                                        ) : (
-                                            <a
-                                                onClick={() => openModalTarea(expediente)}
-                                                className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
-                                            >
-                                                Nueva Tarea
-                                            </a>
-                                        )}
+                {currentExpedientes.map((expediente, index) => {
+
+                    const isEqual = expediente.macroetapa && expediente.macroetapa_aprobada === expediente.macroetapa;
+                    const color = getBackgroundColor(expediente.macroetapa_aprobada);
+
+                    return (
+                        <div key={index} className="w-full max-w-xs mb-20 m-4">
+                            <Card className={`bg-white text-black transform transition duration-500 ease-in-out hover:scale-105`}>
+                                <div className="flex flex-col">
+                                    {/* Upper section */}
+                                    <div className="p-4">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <h5 className="text-sm font-bold leading-none text-black">
+                                                Crédito #{expediente.num_credito}
+                                            </h5>
+                                            {tasksStatus[expediente.num_credito] ? (
+                                                <button
+                                                    type="button"
+                                                    className="text-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center"
+                                                    disabled
+                                                >
+                                                    Ya Asignada
+                                                </button>
+                                            ) : (
+                                                <a
+                                                    onClick={() => openModalTarea(expediente)}
+                                                    className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
+                                                >
+                                                    Nueva Tarea
+                                                </a>
+                                            )}
+                                        </div>
+                                        <p className="text-sm font-medium text-gray-700">
+                                            <span className="font-bold">MacroEtapa</span> {expediente.macroetapa_aprobada}
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-700">
+                                            <span className="font-bold">Ultima Etapa Aprobada:</span> {expediente.ultima_etapa_aprobada}
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-700">
+                                            <span className="font-bold">Fecha Etapa Aprobada:</span> {expediente.fecha_ultima_etapa_aprobada}
+                                        </p>
                                     </div>
-                                    <p className="text-sm font-medium text-gray-700">
-                                        <span className="font-bold">Ultima Etapa Aprobada:</span> {expediente.ultima_etapa_aprobada}
-                                    </p>
-                                    <p className="text-sm font-medium text-gray-700">
-                                        <span className="font-bold">Fecha Etapa Aprobada:</span> {expediente.fecha_ultima_etapa_aprobada}
-                                    </p>
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Secuencia Etapa Aprobada:</span> {expediente.secuencia_etapa_aprobada}
-                                    </p>
+                                    <hr className="border-gray-300" />
+                                    {/* Lower section */}
+                                    <div className="p-4">
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Fecha:</span> {expediente.fecha}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Etapa:</span> {expediente.etapa}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Termino:</span> {expediente.termino}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Notificación:</span> {expediente.notificacion}
+                                        </p>
+                                        {/* Sprint Icons */}
+                                        <div>
+                                            <span className="text-xs"> <span className="text-sm text-gray-700 font-bold">Sprints:</span>
+                                                {expediente.macroetapa ? (
+                                                    isEqual ? (
+                                                        <img src={igualicon} alt="Igual" className="w-6 h-6" />
+                                                    ) : (
+                                                        <img src={sprinticon} alt="Sprint" className="w-6 h-6" />
+                                                    )
+                                                ) : null}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">MacroEtapa:</span> {expediente.macroetapa}
+                                        </p>
+
+                                        <p className="text-sm text-gray-700 flex items-center">
+                                            <span className="font-bold">Color MacroEtapa:</span>
+                                            <span
+                                                className={`inline-block ml-2 w-3 h-3 rounded-full ${color}`}
+                                            />
+
+                                        </p>
+
+
+                                    </div>
+
                                 </div>
-                                <hr className="border-gray-300" />
-                                {/* Lower section */}
-                                <div className="p-4">
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Fecha:</span> {expediente.fecha}
-                                    </p>
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Etapa:</span> {expediente.etapa}
-                                    </p>
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Termino:</span> {expediente.termino}
-                                    </p>
-                                    <p className="text-sm text-gray-700">
-                                        <span className="font-bold">Secuencia Etapa Tv:</span> {expediente.secuencia_etapa_tv}
-                                    </p>
-                                </div>
-                            </div>
-                        </Card>
-                    </div>
-                ))}
+                            </Card>
+                        </div>
+                    );
+                })}
             </div>
             <div className="mt-24 mb-4 items-center flex-wrap flex overflow-x-auto justify-center">
                 <Pagination

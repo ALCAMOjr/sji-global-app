@@ -2,8 +2,8 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { pool } from "../db.js";
 
-// const csvFilePath = 'RUTA DE EJEMPLO: /home/alfredo/Documentos/sji-global-app/Sji-global-api/src/expTribunalF.csv';
-// const csvFilePathEtapas = 'RUTA_DE_TU_ARCHIVO/etapasTV.csv';
+// const csvFilePath = '/home/alfredo/Documentos/sji-global-app/Sji-global-api/expTribunalF.csv';
+// const csvFilePathEtapas = '/home/alfredo/Documentos/sji-global-app/Sji-global-api/etapasTV.csv';
 
 async function readCSVToJson(filePath) {
     const results = [];

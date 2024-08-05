@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { app } from "./app.js"
 import { initializeCoordinador } from './init.js'
-import { UploadFileasync } from './helpers/UploadData.js'
+import { UploadFileasync, uploadCSVToEtapasTv } from './helpers/UploadData.js'
 dotenv.config()
 
 
@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 // ESta funcion se ejecutara cuando se necesite subir data de forma manual. Debe ser un archivo CSV.
 // UploadFileasync()
+// uploadCSVToEtapasTv()
 
 const PORT = process.env.PORT || 3001
 

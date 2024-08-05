@@ -20,6 +20,8 @@ const databaseString = NODE_ENV === 'test' ? DATABASE_TEST : DATABASE;
 
 let pool;
 
+console.log(DB_PORT, HOST_DATABASE, USER_DATABASE, PASSWORD_DATABASE, databaseString)
+
 try {
   pool = createPool({
     port: DB_PORT,
@@ -27,6 +29,7 @@ try {
     user: USER_DATABASE,
     password: PASSWORD_DATABASE,
     database: databaseString,
+     connectTimeout: 10000,
   });
 } catch (error) {
   console.error("Failed to create a database connection pool:", error);

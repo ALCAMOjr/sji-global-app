@@ -22,7 +22,8 @@ const TableAgenda = ({
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
-    openModal
+    openModal,
+    openModalDelete
 }) => {
     return (
         <div>
@@ -53,6 +54,7 @@ const TableAgenda = ({
                                 expediente={expediente}
                                 index={index}
                                 openModal={openModal}
+                                openModalDelete={openModalDelete}
                             />
                         ))}
                     </TableBody>
@@ -72,7 +74,7 @@ const TableAgenda = ({
     );
 }
 
-const Row = ({ expediente, openModal }) => {
+const Row = ({ expediente, openModal, openModalDelete }) => {
     const [open, setOpen] = React.useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
 
@@ -149,7 +151,15 @@ const Row = ({ expediente, openModal }) => {
                                                 <TableCell>Fecha Estimada de Entrega</TableCell>
                                             )}
                                             <TableCell>Observaciones</TableCell>
-                                            <TableCell>Abogado a realizarla</TableCell>
+                                            <TableCell>
+                                                {expediente.tareas.some(t => t.estado_tarea === "Iniciada" || t.estado_tarea === "Asignada")
+                                                    ? "Abogado a realizarla"
+                                                    : expediente.tareas.some(t => t.estado_tarea === "Finalizada")
+                                                        ? "Abogado quien la realizó"
+                                                        : expediente.tareas.some(t => t.estado_tarea === "Cancelada")
+                                                            ? "Abogado quien debía realizarla"
+                                                            : "Abogado"}
+                                            </TableCell>
                                             <TableCell>Status</TableCell>
                                             <TableCell>Acciones</TableCell>
                                         </TableRow>
@@ -223,7 +233,7 @@ const Row = ({ expediente, openModal }) => {
                                                         <button
                                                             type="button"
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                                        // onClick={handleDeleteTask}
+                                                            onClick={() => openModalDelete(tarea.tareaId)}
                                                         >
                                                             Eliminar Tarea
                                                         </button>

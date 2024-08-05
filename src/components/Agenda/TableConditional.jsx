@@ -11,7 +11,9 @@ const TableConditional = ({
     handleChangePage,
     handleChangeRowsPerPage,
     onPageChange,
-    openModal
+    openModal,
+    openModalDelete
+
 
 }) => {
     const [shouldRenderTable, setShouldRenderTable] = useState(false);
@@ -39,6 +41,7 @@ const TableConditional = ({
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             openModal={openModal}
+            openModalDelete={openModalDelete}
  
         />
     ) : (
@@ -50,6 +53,7 @@ const TableConditional = ({
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             onPageChange={onPageChange}
             openModal={openModal}
+            openModalDelete={openModalDelete}
         />
     );
 };

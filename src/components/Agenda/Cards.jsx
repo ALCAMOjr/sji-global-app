@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "flowbite-react";
-import { IoTrash } from "react-icons/io5";
-import { GrUpdate } from "react-icons/gr";
-import { RxHamburgerMenu } from "react-icons/rx";
 import { Pagination } from "flowbite-react";
 
 const customTheme = {
@@ -34,12 +31,19 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModal, openModalDelete }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
 
 
-
+    const openModalDeleteEdit = (id) => {
+        setShowModal(false)
+        openModalDelete(id)
+    }
+    const openModalEdit = (id) => {
+        setShowModal(false)
+        openModal(id)
+    }
 
     const CloseModal = () => {
         setShowModal(false);
@@ -58,7 +62,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                     <div key={index} className="w-full max-w-xs mb-20 m-4">
                         <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
                             <div className="mb-4 flex items-center justify-between">
-                          
+
                                 <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
                                     Expediente #{expediente.numero}
                                 </h5>
@@ -123,42 +127,119 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                             <div className="p-4 md:p-5">
                                 <div className="overflow-x-auto">
                                     <div className="max-h-96 overflow-y-auto">
+
                                         <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                             <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-600 sticky top-0">
                                                 <tr>
                                                     <th scope="col" className="px-6 py-3">Tarea</th>
-                                                    <th scope="col" className="px-6 py-3">Fecha de Entrega</th>
+                                                    <th scope="col" className="px-6 py-3">Fecha de Asignación</th>
+                                                    {selectedExpediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
+                                                        <>
+                                                            <th scope="col" className="px-6 py-3">Fecha de Inicio</th>
+                                                            <th scope="col" className="px-6 py-3">Fecha de Entrega</th>
+                                                        </>
+                                                    ) : selectedExpediente.tareas.some(t => t.estado_tarea === "Cancelada") ? (
+                                                        <th scope="col" className="px-6 py-3">Fecha de Cancelación</th>
+                                                    ) : selectedExpediente.tareas.some(t => t.estado_tarea === "Iniciada") ? (
+                                                        <th scope="col" className="px-6 py-3">Fecha de Inicio</th>
+                                                    ) : (
+                                                        <th scope="col" className="px-6 py-3">Fecha Estimada de Entrega</th>
+                                                    )}
                                                     <th scope="col" className="px-6 py-3">Observaciones</th>
-                                                    <th scope="col" className="px-6 py-3">Abogado a realizarla</th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        {selectedExpediente.tareas.some(t => t.estado_tarea === "Iniciada" || t.estado_tarea === "Asignada")
+                                                            ? "Abogado a realizarla"
+                                                            : selectedExpediente.tareas.some(t => t.estado_tarea === "Finalizada")
+                                                                ? "Abogado quien la realizó"
+                                                                : selectedExpediente.tareas.some(t => t.estado_tarea === "Cancelada")
+                                                                    ? "Abogado quien debía realizarla"
+                                                                    : "Abogado"}
+                                                    </th>
                                                     <th scope="col" className="px-6 py-3">Status</th>
                                                 </tr>
+
                                             </thead>
                                             <tbody>
                                                 {selectedExpediente.tareas.map((tarea, index) => (
                                                     <tr key={index}>
                                                         <td className="px-6 py-4">{tarea.tarea}</td>
-                                                        <td className="px-6 py-4">{new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric'
-                                                    })}</td>
+                                                        <td className="px-6 py-4">
+                                                            {new Date(tarea.fecha_registro).toLocaleDateString('es-ES', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </td>
+                                                        {tarea.estado_tarea === "Finalizada" ? (
+                                                            <>
+                                                                <td className="px-6 py-4">
+                                                                    {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
+                                                                        day: '2-digit',
+                                                                        month: '2-digit',
+                                                                        year: 'numeric'
+                                                                    })}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {new Date(tarea.fecha_real_entrega).toLocaleDateString('es-ES', {
+                                                                        day: '2-digit',
+                                                                        month: '2-digit',
+                                                                        year: 'numeric'
+                                                                    })}
+                                                                </td>
+                                                            </>
+                                                        ) : tarea.estado_tarea === "Cancelada" ? (
+                                                            <td className="px-6 py-4">
+                                                                {new Date(tarea.fecha_cancelacion).toLocaleDateString('es-ES', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </td>
+                                                        ) : tarea.estado_tarea === "Iniciada" ? (
+                                                            <td className="px-6 py-4">
+                                                                {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </td>
+                                                        ) : (
+                                                            <td className="px-6 py-4">
+                                                                {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
+                                                                    day: '2-digit',
+                                                                    month: '2-digit',
+                                                                    year: 'numeric'
+                                                                })}
+                                                            </td>
+                                                        )}
                                                         <td className="px-6 py-4">{tarea.observaciones}</td>
                                                         <td className="px-6 py-4">{tarea.abogadoUsername}</td>
                                                         <td className="px-6 py-4">{tarea.estado_tarea}</td>
                                                         <td className="px-6 py-4">
-                                                        <button
-                                                            
-                                                            type="button"
-                                                            className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-4 py-1.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                                        >
-                                                            Cancelar Tarea
-                                                        </button>
+                                                            {tarea.estado_tarea === "Asignada" || tarea.estado_tarea === "Iniciada" ? (
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                                                    onClick={() => openModalEdit(tarea.tareaId)}
+                                                                >
+                                                                    Cancelar Tarea
+                                                                </button>
+                                                            ) : tarea.estado_tarea === "Terminada" || tarea.estado_tarea === "Cancelada" ? (
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                                                    onClick={() => openModalDeleteEdit(tarea.tareaId)}
+                                                                >
+                                                                    Eliminar Tarea
+                                                                </button>
+                                                            ) : null}
                                                         </td>
                                                     </tr>
                                                 ))}
 
                                             </tbody>
                                         </table>
+
                                     </div>
                                 </div>
 

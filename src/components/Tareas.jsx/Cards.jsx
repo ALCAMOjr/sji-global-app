@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "flowbite-react";
-import { IoTrash } from "react-icons/io5";
-import { GrUpdate } from "react-icons/gr";
-import { RxHamburgerMenu } from "react-icons/rx";
+import { Spinner } from "@nextui-org/react"
 import { Pagination } from "flowbite-react";
 
 const customTheme = {
@@ -34,12 +32,14 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, handleInitTarea, isLoading, handleCompleteTarea }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
 
-
-
+    const handleCompleteTareaEdit = (id) => {
+        CloseModal()
+        handleCompleteTarea(id)
+    }
 
     const CloseModal = () => {
         setShowModal(false);
@@ -58,7 +58,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                     <div key={index} className="w-full max-w-xs mb-20 m-4">
                         <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
                             <div className="mb-4 flex items-center justify-between">
-                          
+
                                 <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
                                     Expediente #{expediente.numero}
                                 </h5>
@@ -138,34 +138,36 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                                                     <tr key={index}>
                                                         <td className="px-6 py-4">{tarea.tarea}</td>
                                                         <td className="px-6 py-4">{new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric'
-                                                    })}</td>
+                                                            day: '2-digit',
+                                                            month: '2-digit',
+                                                            year: 'numeric'
+                                                        })}</td>
                                                         <td className="px-6 py-4">{tarea.observaciones}</td>
                                                         <td className="px-6 py-4">{tarea.abogadoUsername}</td>
                                                         <td className="px-6 py-4">{tarea.estado_tarea}</td>
                                                         <td className="px-6 py-4">
-
-                                                        {tarea.estado_tarea === 'Asignada' && (
-                                                        <button
-                                                            
-                                                            type="button"
-                                                            className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-xs px-4 py-1.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                                        >
-                                                            Iniciar Tarea
-                                                        </button>
-                                                        )}
-                                                        {tarea.estado_tarea === 'Iniciada' && (
-                                                            <button
-                                                                type="button"
-                                                                className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-4 py-1.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                                   
-                                                            >
-                                                                Finalizar Tarea
-                                                            </button>
-                                                        )}
+                                                            {tarea.estado_tarea === 'Asignada' && (
+                                                                <button
+                                                                    onClick={() => handleInitTarea(tarea.tareaId)}
+                                                                    type="button"
+                                                                    className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                                >
+                                                                    {isLoading ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                </button>
+                                                            )}
+                                                            {tarea.estado_tarea === 'Iniciada' && (
+                                                                <button
+                                                                    onClick={() => handleCompleteTareaEdit(tarea.tareaId)}
+                                                                    type="button"
+                                                                    className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                                >
+                                                                   {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                             
+                                                                </button>
+                                                            )}
+                                                          
                                                         </td>
+
                                                     </tr>
                                                 ))}
 

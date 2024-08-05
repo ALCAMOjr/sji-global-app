@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea/cancel';
+const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/tarea/start';
 
 
-export default async function CancelTarea({ id, token }) {
+export default async function StartTarea({ id, token }) {
+
 
     try {
         const config = {

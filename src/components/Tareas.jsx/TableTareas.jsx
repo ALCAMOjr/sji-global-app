@@ -15,13 +15,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import copiaricon from "../../assets/copiaricon.png"
+import { Spinner } from "@nextui-org/react";
 const TableTarea = ({
     currentExpedientes,
     currentPage,
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
-
+    handleInitTarea,
+    isLoading,
+    handleCompleteTarea
 }) => {
 
 
@@ -56,6 +59,9 @@ const TableTarea = ({
                                 currentExpedientes={currentExpedientes}
                                 expediente={expediente}
                                 index={index}
+                                handleInitTarea={handleInitTarea}
+                                isLoading={isLoading}
+                                handleCompleteTarea={handleCompleteTarea}
 
                             />
                         ))}
@@ -78,7 +84,9 @@ const TableTarea = ({
 
 const Row = ({
     expediente,
-
+    handleInitTarea,
+    isLoading,
+    handleCompleteTarea
 
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -95,11 +103,6 @@ const Row = ({
             });
     };
 
-
-
-    const handleActionClick = (estadoTarea) => {
-        console.log(`Acción para el estado de tarea: ${estadoTarea}`);
-    };
 
     return (
         <Fragment>
@@ -169,23 +172,26 @@ const Row = ({
                                                     <TableCell className="text-xs">{tarea.observaciones}</TableCell>
                                                     <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
                                                     <TableCell align='center'>
-                                                        {tarea.estado_tarea === 'Asignada' && (
-                                                            <button
-                                                                type="button"
-                                                                className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                                                            >
-                                                                Iniciar Tarea
-                                                            </button>
-                                                        )}
-                                                        {tarea.estado_tarea === 'Iniciada' && (
-                                                            <button
-                                                                type="button"
-                                                                className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-
-                                                            >
-                                                                Finalizar Tarea
-                                                            </button>
-                                                        )}
+                                                    {tarea.estado_tarea === 'Asignada' && (
+                                                                <button
+                                                                    onClick={() => handleInitTarea(tarea.tareaId)}
+                                                                    type="button"
+                                                                    className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                                >
+                                                                    {isLoading ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                </button>
+                                                            )}
+                                                            {tarea.estado_tarea === 'Iniciada' && (
+                                                                <button
+                                                                onClick={() => handleCompleteTarea(tarea.tareaId)}
+                                                                    type="button"
+                                                                    className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                                >
+                                                                   {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                             
+                                                                </button>
+                                                            )}
+                                                        
                                                     </TableCell>
                                                 </TableRow>
                                             )

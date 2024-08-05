@@ -10,16 +10,17 @@ import getTareaByAbogado from '../../views/tareas/getTareabyAbogado.js';
 import getTareaByExpediente from '../../views/tareas/getTareaByExpediente.js';
 import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
+import getTareasUser from '../../views/tareas/getTareasUser.js';
+import StartTarea from "../../views/tareas/StartTarea.js"
+import CompleteTarea from "../../views/tareas/CompleteTarea.js"
+
 const Tarea = () => {
 
-    const { expedientes, loading, error } = useTareas();
+    const { expedientes, loading, error, setExpedientes } = useTareas();
     const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
-    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1200);
-    const [showModal, setShowModal] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const menuRef = useRef(null);
@@ -46,39 +47,65 @@ const Tarea = () => {
         setCurrentPage(page);
     };
 
+    const handleInitTarea = async (id) => {
+        setIsLoading(true);
+        try {
+            const response = await StartTarea({
+                id: id,
+                token: jwt
+            });
+            if (response == 200) {
+                toast.info('Se inicio correctamente la tarea', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+                const expedientes = await getTareasUser({ token: jwt });
+                setExpedientes(expedientes);
+            } else {
+                toast.error('Algo mal sucedió al iniciar la tarea:');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al iniciar la tarea');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
 
+    const handleCompleteTarea = async (id) => {
+        setIsLoading(true);
+        try {
+            const response = await CompleteTarea({
+                id: id,
+                token: jwt
+            });
+            if (response == 200) {
+                toast.info('Se completo correctamente la tarea', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+                const expedientes = await getTareasUser({ token: jwt });
+                setExpedientes(expedientes);
+            } else {
+                toast.error('Algo mal sucedió al completar la tarea:');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al completar la tarea');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(+event.target.value);
         setCurrentPage(1);
     };
-   
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsLargeScreen(window.innerWidth >= 1200);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-
-
-    const openModal = (abogado) => {
-        setSelectedAbogado(abogado);
-        setShowModal(true);
-    }
-
-
-    const closeModal = () => {
-        setSelectedAbogado(null);
-        setShowModal(false);
-    }
-
-
 
 
     const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
@@ -205,23 +232,6 @@ const Tarea = () => {
         <div>
 
 
-
-            {showModal && (
-                <div id="popup-modal" tabindex="-1" class={`'hidden' fixed top-0 right-0 left-0 bottom-0 flex justify-center items-center bg-black bg-opacity-50 z-50`}>
-                    <div class="bg-white rounded-lg shadow w-full max-w-md">
-                        <div class="p-4 md:p-5 text-center">
-                            <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                            <h3 class="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres eliminar este Abogado??</h3>
-                            <button  type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
-                                {isDeleting ? <Spinner size='sm' color="default" /> : 'Si, estoy seguro'}
-                            </button>
-                            <button  type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100">No, cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
 
 {isDesktopOrLaptop ? (
@@ -415,7 +425,9 @@ const Tarea = () => {
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     onPageChange={onPageChange}
-
+                    handleInitTarea={handleInitTarea}
+                    isLoading={isLoading}
+                    handleCompleteTarea={handleCompleteTarea}
                 />
             )}
         </div>

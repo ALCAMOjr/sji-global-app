@@ -11,6 +11,9 @@ const TableConditional = ({
     handleChangePage,
     handleChangeRowsPerPage,
     onPageChange,
+    handleInitTarea,
+    isLoading,
+    handleCompleteTarea
 
 
 }) => {
@@ -38,6 +41,9 @@ const TableConditional = ({
             totalPages={totalPages}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
+            handleInitTarea={handleInitTarea}
+            isLoading={isLoading}
+            handleCompleteTarea={handleCompleteTarea}
  
         />
     ) : (
@@ -48,6 +54,9 @@ const TableConditional = ({
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             onPageChange={onPageChange}
+            handleInitTarea={handleInitTarea}
+            isLoading={isLoading}
+            handleCompleteTarea={handleCompleteTarea}
         />
     );
 };

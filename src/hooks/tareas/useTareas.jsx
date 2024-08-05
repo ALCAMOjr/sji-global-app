@@ -23,5 +23,5 @@ export default function useTareas() {
     }, [jwt]);
 
 
-    return { expedientes, loading, error };
+    return { expedientes, loading, error, setExpedientes };
 }

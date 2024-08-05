@@ -3,6 +3,7 @@ import csv from 'csv-parser';
 import { pool } from "../db.js";
 
 // const csvFilePath = 'RUTA DE EJEMPLO: /home/alfredo/Documentos/sji-global-app/Sji-global-api/src/expTribunalF.csv';
+// const csvFilePathEtapas = 'RUTA_DE_TU_ARCHIVO/etapasTV.csv';
 
 async function readCSVToJson(filePath) {
     const results = [];
@@ -52,3 +53,31 @@ export const UploadFileasync = async () => {
 }
 
 
+async function insertEtapas(data) {
+    for (const row of data) {
+        const etapa = Object.values(row)[0];
+        const termino = Object.values(row)[1];
+        const notificacion = Object.values(row)[2];
+        const macroetapa = Object.values(row)[3];
+
+        try {
+            await pool.query(`
+                INSERT INTO EtapasTv (etapa, termino, notificacion, macroetapa)
+                VALUES (?, ?, ?, ?)
+            `, [etapa, termino, notificacion, macroetapa]);
+    
+        } catch (error) {
+            console.error(`Error inserting ${etapa}:`, error);
+        }
+    }
+}
+
+export const uploadCSVToEtapasTv = async () => {
+    try {
+        const jsonData = await readCSVToJson(csvFilePathEtapas);
+        await insertEtapas(jsonData);
+        console.log('All data inserted successfully.');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}

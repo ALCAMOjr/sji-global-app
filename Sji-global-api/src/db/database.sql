@@ -52,7 +52,7 @@ CREATE TABLE Tareas (
     fecha_entrega DATE NULL,
     fecha_real_entrega DATE NULL,
     fecha_estimada_respuesta DATE NULL,
-     fecha_cancelacion DATE NULL,
+    fecha_cancelacion DATE NULL,
     estado_tarea ENUM('Asignada', 'Iniciada', 'Terminada', 'Cancelada') NULL,
     observaciones TEXT NULL,
     FOREIGN KEY (abogado_id) REFERENCES abogados(id),

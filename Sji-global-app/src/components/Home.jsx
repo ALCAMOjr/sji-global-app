@@ -55,7 +55,7 @@ function Home() {
           </svg>
         </button>
 
-        <h1 className="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 dark:text-white sm:text-2xl md:text-4xl md:text-5xl lg:text-6xl">¡Confía en los expertos en cobranza!</h1>
+        <h1 className="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 dark:text-white sm:text-2xl md:text-5xl lg:text-6xl">¡Confía en los expertos en cobranza!</h1>
         <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-12 lg:px-44 dark:text-gray-200 sm:text-sm md:text-base">{motivationalPhrase}</p>
         <form className="w-full max-w-md mx-auto sm:w-full md:w-3/4 lg:w-1/2">
           <div className="relative">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import useUser from "../hooks/auth.jsx";
-import logo from "../assets/sji.png";
+import logo from "../assets/logoGde.png"
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { Spinner } from "@nextui-org/react";
 import FooterPageLogin from './Footer_Login.jsx';
@@ -21,7 +21,7 @@ function Login({ onLogin }) {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerHeight < 750) {
+            if (window.innerHeight < 700) {
                 setShouldRenderFooter(false);
             } else {
                 setShouldRenderFooter(true);
@@ -107,9 +107,9 @@ function Login({ onLogin }) {
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 z-99">
             <div className="max-w-lg mb-auto relative " style={{ width: '100%', maxWidth: '500px', marginTop: '80px' }}>
                 <div className="flex justify-center mb-8">
-                    <img src={logo} className="h-32 w-44 me-3" />
+                    <img src={logo} className="h-24 w-44 me-3" />
                 </div>
-                <div className="bg-white w-full rounded-lg p-8 mb-8 relative flex flex-col items-center bg-[#ececec]">
+                <div className="bg-white w-full rounded-lg p-8 mb-8 relative flex flex-col items-center">
                     <div className="flex flex-col items-center gap-1 mb-8">
                         <h1 className="text-xl text-gray-900">Bienvenido</h1>
                         <p className="text-gray-400 text-sm">

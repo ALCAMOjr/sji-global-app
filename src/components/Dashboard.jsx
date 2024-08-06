@@ -9,7 +9,7 @@ import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import useUser from "../hooks/auth.jsx";
 import { GrHome } from "react-icons/gr";
 import user from "../assets/user.png";
-import logo2 from "../assets/sji.png";
+import logo2 from "../assets/logoGde.png";
 import agendalogo from "../assets/agenda.png";
 import reportelogo from "../assets/reporte.png";
 import expedientelogo from "../assets/expedientes.png";
@@ -77,9 +77,8 @@ function Dashboard() {
                             </button>
 
                             <a className="flex ms-2 md:me-24">
-                                <img src={logo2} className="h-8 me-3 rounded-full" alt="FlowBite Logo" />
-                                <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">SJI Global</span>
-                            </a>
+                                <img src={logo2} className="me-3 rounded-full h-14 w-32" alt="FlowBite Logo" />
+                                   </a>
                         </div>
                         <div className="flex items-center">
                             <div className="flex items-center ms-3 relative">

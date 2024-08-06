@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Footer, FooterCopyright, FooterDivider, FooterLink, FooterLinkGroup } from "flowbite-react";
-import logo2 from "../assets/sji.png";
+import logo2 from "../assets/logoGde.png";
 
 
 function FooterPageLogin() {
@@ -9,8 +9,8 @@ function FooterPageLogin() {
  <Footer container className="fixed bottom-0 w-full z-50 bg-white">
           <div className="w-full text-center">
             <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
-              <a href="https://flowbite.com" className="flex items-center">
-                <img src={logo2} className="h-16 w-24 me-3" alt="Sji Global Logo" />
+              <a  className="flex items-center">
+                <img src={logo2} className="h-16 w-32 me-3" alt="Sji Global Logo" />
            
               </a>
               <FooterLinkGroup>

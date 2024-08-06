@@ -12,21 +12,6 @@ import Context from '../../context/abogados.context';
 import igualicon from "../../assets/igual.png";
 import sprinticon from "../../assets/sprint.png";
 
-const colorMapping = {
-    '01': '#F5F5F5', // Asignación
-    '02': '#D3D3D3', // Convenios previos a demanda
-    '03': '#FFFFE0', // Demanda sin emplazamiento
-    '04': '#FFA07A', // Emplazamiento sin sentencia
-    '06': '#D8BFD8', // Convenio Judicial
-    '07': '#FFA07A', // Juicio con sentencia
-    '08': '#FFB6C1', // Proceso de ejecución
-    '09': '#FFD700', // Adjudicación
-    '10': '#87CEEB', // Escrituración en proceso
-    '15': '#90EE90', // Autoseguros
-    '16': '#20B2AA', // Liquidación
-    '17': '#AFEEEE', // Entrega por Poder Notarial
-    '18': '#778899'  // Irrecuperabilidad
-};
 
 const TableExpedientes = ({
     currentExpedientes,
@@ -130,33 +115,33 @@ const Row = ({
     const getBackgroundColor = (macroetapa) => {
         switch (macroetapa) {
             case '01. Asignación':
-                return 'bg-[#F5F5F5]'; // Blanco suave
+                return 'bg-[#F5F5F5]'; 
             case '02. Convenios previos a demanda':
-                return 'bg-[#D3D3D3]'; // Gris Claro
+                return 'bg-[#D3D3D3]'; 
             case '03. Demanda sin emplazamiento':
-                return 'bg-[#FFFFE0]'; // Amarillo Claro
+                return 'bg-[#FFDEAD]'; 
             case '04. Emplazamiento sin sentencia':
-                return 'bg-[#FFA07A]'; // Naranja Claro
+                return 'bg-[#FFA07A]'; 
             case '06. Convenio Judicial':
-                return 'bg-[#D8BFD8]'; // Morado Claro
+                return 'bg-[#D8BFD8]'; 
             case '07. Juicio con sentencia':
-                return 'bg-[#FFA07A]'; // Rojo Claro
+                return 'bg-[#FFA07A]'; 
             case '08. Proceso de ejecución':
-                return 'bg-[#FFB6C1]'; // Rosa Claro
+                return 'bg-[#FFB6C1]';
             case '09. Adjudicación':
-                return 'bg-[#FFD700]'; // Dorado Claro
+                return 'bg-[#FFD700]';
             case '10. Escrituración en proceso':
-                return 'bg-[#87CEEB]'; // Azul Claro
+                return 'bg-[#87CEEB]'; 
             case '15. Autoseguros':
-                return 'bg-[#90EE90]'; // Verde Claro
+                return 'bg-[#90EE90]';
             case '16. Liquidación':
-                return 'bg-[#20B2AA]'; // Aqua Claro
+                return 'bg-[#20B2AA]'; 
             case '17. Entrega por Poder Notarial':
-                return 'bg-[#AFEEEE]'; // Turquesa Claro
+                return 'bg-[#AFEEEE]';
             case '18. Irrecuperabilidad':
-                return 'bg-[#778899]'; // Gris Azul Claro
+                return 'bg-[#778899]'; 
             default:
-                return 'bg-white'; // Por defecto blanco
+                return 'bg-white'; 
         }
     };
 

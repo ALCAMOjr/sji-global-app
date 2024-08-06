@@ -38,8 +38,8 @@ const Reporte = () => {
                 <div className="w-full  mt-8 bg-white border top-24 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 {reportes.map((reporte, index) => (
                     <div key={index} id="fullWidthTabContent" className="border-t border-gray-200 dark:border-gray-600">
-                        <div className="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-                            <dl className="grid max-w-screen-xl grid-cols-2 gap-0 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-2 dark:text-white sm:p-8">
+                        <div className="p-4 ml-64 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
+                            <dl className="grid max-w-screen-xl grid-cols-2 gap-32 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-2 dark:text-white sm:p-8">
                                 {Object.entries(reporte).map(([key, value]) => (
                                     key !== "Total_Registros" && (
                                         <div className="flex flex-col items-center justify-center" key={key}>

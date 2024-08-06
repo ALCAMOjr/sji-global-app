@@ -78,7 +78,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
             case '02. Convenios previos a demanda':
                 return 'bg-[#D3D3D3]'; // Gris Claro
             case '03. Demanda sin emplazamiento':
-                return 'bg-[#FFFFE0]'; // Amarillo Claro
+                return 'bg-[#FFDEAD]'; // Amarillo Claro
             case '04. Emplazamiento sin sentencia':
                 return 'bg-[#FFA07A]'; // Naranja Claro
             case '06. Convenio Judicial':

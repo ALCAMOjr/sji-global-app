@@ -42,7 +42,6 @@ const Position = () => {
     });
 
 
-    console.log(currentExpedientes)
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

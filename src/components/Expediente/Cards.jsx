@@ -81,7 +81,7 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                                 >
                                     <RxHamburgerMenu />
                                 </button>
-                                <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
+                                <h5 className="text-sm ml-4 font-bold leading-none text-gray-900 dark:text-white">
                                     Expediente #{expediente.numero}
                                 </h5>
                                 <a

@@ -15,13 +15,13 @@ const Cards = ({ reportesDetalles }) => {
           <div className="flow-root">
             <ul className="divide-y divide-gray-200 dark:divide-gray-700">
               <li className="py-3 sm:py-4 flex justify-between font-bold text-gray-900 dark:text-white">
-                <div className="w-1/3 flex items-center">
+                <div className="w-1/3 text-xs flex items-center">
                   <span>Color</span>
                 </div>
-                <div className="w-1/3 flex justify-center">
+                <div className="w-1/3 text-xs flex justify-start">
                   <span>Etapa</span>
                 </div>
-                <div className="w-1/3 flex justify-end">
+                <div className="w-1/3 text-xs flex justify-end">
                   <span>Total de Créditos</span>
                 </div>
               </li>

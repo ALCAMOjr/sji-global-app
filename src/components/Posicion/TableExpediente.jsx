@@ -78,7 +78,7 @@ const TableExpedientes = ({
             </TableContainer>
 
             <TablePagination
-                rowsPerPageOptions={[160, 300, 600]}
+                rowsPerPageOptions={[2000, 4000, 6000]}
                 component="div"
                 count={currentExpedientes.length}
                 rowsPerPage={totalPages}

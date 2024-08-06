@@ -35,22 +35,27 @@ const Reporte = () => {
                     </div>
                 </div>
             ) : (
-                <div className="w-full  mt-8 bg-white border top-24 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div className="w-auto mt-8 -ml-64 lg:-ml-0 xl:-ml-0  bg-white border top-24 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 {reportes.map((reporte, index) => (
-                    <div key={index} id="fullWidthTabContent" className="border-t border-gray-200 dark:border-gray-600">
-                        <div className="p-4 ml-64 bg-white rounded-lg md:p-8 dark:bg-gray-800" id="stats" role="tabpanel" aria-labelledby="stats-tab">
-                            <dl className="grid max-w-screen-xl grid-cols-2 gap-32 p-4 mx-auto text-gray-900 sm:grid-cols-3 xl:grid-cols-2 dark:text-white sm:p-8">
-                                {Object.entries(reporte).map(([key, value]) => (
-                                    key !== "Total_Registros" && (
-                                        <div className="flex flex-col items-center justify-center" key={key}>
-                                            <dt className="mb-2 text-5xl font-extrabold">{value}</dt>
-                                            <dd className="text-gray-500 dark:text-gray-400">{key}</dd>
-                                        </div>
-                                    )
-                                ))}
-                            </dl>
-                        </div>
+                  <div key={index} id="fullWidthTabContent" className="border-t border-gray-200 dark:border-gray-600">
+                    <div
+                      className="p-4 lg:ml-54 xl:ml-54 bg-white rounded-lg md:p-8 dark:bg-gray-800"
+                      id="stats"
+                      role="tabpanel"
+                      aria-labelledby="stats-tab"
+                    >
+                      <dl className="grid max-w-screen-xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-2 p-4 mx-auto text-gray-900 dark:text-white">
+                        {Object.entries(reporte).map(([key, value]) => (
+                          key !== "Total_Registros" && (
+                            <div className="flex flex-col items-center justify-center text-center" key={key}>
+                              <dt className="mb-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold">{value}</dt>
+                              <dd className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-500 dark:text-gray-400">{key}</dd>
+                            </div>
+                          )
+                        ))}
+                      </dl>
                     </div>
+                  </div>
                 ))}
                     <TableConditional
                         reportesDetalles={reportesDetalles}

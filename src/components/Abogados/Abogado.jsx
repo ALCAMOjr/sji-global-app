@@ -818,7 +818,7 @@ const Abogados = () => {
             )}
 
 
-<div className="mt-24 mb-4 -ml-44 mr-20 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0  flex justify-center items-center flex-wrap">
+<div className="mt-24 mb-4 -ml-56 mr-6 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0  flex justify-center items-center flex-wrap">
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full justify-center items-center">
     {abogados.map((abogado) => (
       <div key={abogado.id} className="bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 p-6 transform transition duration-500 ease-in-out hover:scale-105 mb-8 mx-auto w-full md:w-11/12">

@@ -200,7 +200,11 @@ const Row = ({
                         </div>
                     </button>
                     {openMenuIndex === index && (
-                        <div className={`absolute right-0 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options ${menuDirection}`} style={{ zIndex: 9999, bottom: menuDirection === 'up' ? (index === currentExpedientes.length - 1 ? '2cm' : index === currentExpedientes.length - 2 ? '4cm' : 'initial') : 'initial' }}>
+                        <div className={`absolute right-0 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options`} style={{
+                            zIndex: 9999,
+                            marginTop: index === 0 || index === currentExpedientes.length - 1 ? -120 : 0,
+                            marginRight: index === 0 || index === currentExpedientes.length - 1 ? 90 : 0,
+                                  }}>
                             <ul>
                                 <li className="flex items-center">
                                     <GrUpdate className="inline-block ml-8 w-4 h-4" />

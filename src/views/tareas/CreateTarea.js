@@ -19,7 +19,7 @@ export default async function createTarea({ exptribunalA_numero, abogado_id, tar
             observaciones,
         }, config);
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             throw new Error('Response is NOT ok');
         }
 

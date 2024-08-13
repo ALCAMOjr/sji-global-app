@@ -131,7 +131,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                                 <Typography variant="h6" gutterBottom component="div">
-                                    Tarea del Expediente
+                                    Tareas del Expediente
                                 </Typography>
                                 <Table size="small" aria-label="details">
                                     <TableHead>

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
 import TableTarea from './TableTareas.jsx';
 
-
-
 const TableConditional = ({
     currentExpedientes,
     currentPage,
@@ -14,10 +12,8 @@ const TableConditional = ({
     handleInitTarea,
     isLoading,
     handleCompleteTarea
-
-
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(false);
+    const [shouldRenderTable, setShouldRenderTable] = useState(true); // Set to true by default
 
     useEffect(() => {
         const handleResize = () => {
@@ -36,7 +32,7 @@ const TableConditional = ({
 
     return shouldRenderTable ? (
         <TableTarea
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
@@ -44,11 +40,10 @@ const TableConditional = ({
             handleInitTarea={handleInitTarea}
             isLoading={isLoading}
             handleCompleteTarea={handleCompleteTarea}
- 
         />
     ) : (
         <Cards
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}

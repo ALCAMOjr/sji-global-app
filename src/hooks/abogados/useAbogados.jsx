@@ -60,6 +60,10 @@ export default function useAbogados() {
     } catch (error) {
         if (error.response && error.response.status === 400 && error.response.data.error === 'Username already exists') {
             return { success: false, error: 'El nombre de usuario ya existe' };
+        
+        } else if  (error.response && error.response.status === 400 && error.response.data.error === 'Email is already registered') {
+            return { success: false, error: 'El correo ya esta en uso' };
+        
         } else {
             console.error(error);
             return { success: false, error: error };

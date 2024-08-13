@@ -242,7 +242,12 @@ const Abogados = () => {
                 if (error === 'El nombre de usuario ya existe') {
 
                     toast.error('El nombre de usuario ya existe. Por favor, elige otro.');
-                } else {
+                } else if (error === 'El correo ya esta en uso') {
+                    toast.error('El correo ya esta en uso con otro usuario. Por favor, elige otro.');
+
+                }
+                
+                else {
                     toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
 
                 }

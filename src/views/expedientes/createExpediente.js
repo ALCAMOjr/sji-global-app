@@ -17,7 +17,7 @@ export default async function createExpediente({ numero, nombre, url,  token }) 
             url,
         }, config);
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             throw new Error('Response is NOT ok');
         }
 

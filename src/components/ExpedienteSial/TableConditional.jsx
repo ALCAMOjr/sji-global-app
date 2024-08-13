@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
-import TableExpedientes from './TableExpedienteSial.jsx';
-
-
+import TableExpedientes from './TableExpedienteSial.jsx'; // Cambiado a TableExpedientes
 
 const TableConditional = ({
     currentExpedientes,
@@ -11,9 +9,8 @@ const TableConditional = ({
     handleChangePage,
     handleChangeRowsPerPage,
     onPageChange,
-
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(false);
+    const [shouldRenderTable, setShouldRenderTable] = useState(true); // Inicialmente renderiza la tabla
 
     useEffect(() => {
         const handleResize = () => {
@@ -32,7 +29,7 @@ const TableConditional = ({
 
     return shouldRenderTable ? (
         <TableExpedientes
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
@@ -41,13 +38,12 @@ const TableConditional = ({
         />
     ) : (
         <Cards
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             onPageChange={onPageChange}
-    
         />
     );
 };

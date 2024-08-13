@@ -192,7 +192,7 @@ const Expedientes = () => {
                 if (error === 'El expediente con este número ya existe.') {
                     toast.error('El número de expediente ya existe. Intente con otro número.');
                 } else if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
-                    toast.error('No se pudo obtener la información de la URL proporcionada. Intente de nuevo.');
+                    toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
                 } else {
                     toast.error('Algo mal sucedió al crear el expediente: ' + error);
                 }
@@ -249,7 +249,7 @@ const Expedientes = () => {
                 });
             } else {
                 if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
-                    toast.error('No se pudo obtener la información de la URL proporcionada. Intente de nuevo.');
+                    toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
                 } else {
                     toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
                 }

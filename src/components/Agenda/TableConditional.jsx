@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
 import TableAgenda from './TableAgenda.jsx';
 
-
-
 const TableConditional = ({
     currentExpedientes,
     currentPage,
@@ -13,10 +11,8 @@ const TableConditional = ({
     onPageChange,
     openModal,
     openModalDelete
-
-
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(false);
+    const [shouldRenderTable, setShouldRenderTable] = useState(true);
 
     useEffect(() => {
         const handleResize = () => {
@@ -35,18 +31,17 @@ const TableConditional = ({
 
     return shouldRenderTable ? (
         <TableAgenda
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             openModal={openModal}
             openModalDelete={openModalDelete}
- 
         />
     ) : (
         <Cards
-           currentExpedientes={currentExpedientes}
+            currentExpedientes={currentExpedientes}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}

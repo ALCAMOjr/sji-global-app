@@ -70,7 +70,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                     onClick={() => OpenModal(expediente)}
                                     className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                                 >
-                                    Ver Tarea
+                                    Ver Tareas
                                 </a>
                             </div>
                             <div className="flow-root">

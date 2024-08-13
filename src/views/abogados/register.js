@@ -23,7 +23,7 @@ export default async function register({ username, password, userType, nombre, a
 
         }, config);
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
             throw new Error('Response is NOT ok');
         }
 

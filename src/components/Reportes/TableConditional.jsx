@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
 import TableReportes from './TableReportes.jsx';
 
-
-
 const TableConditional = ({
     reportesDetalles
-
-
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(false);
+    const [shouldRenderTable, setShouldRenderTable] = useState(true); // Set to true by default
 
     useEffect(() => {
         const handleResize = () => {
@@ -28,11 +24,11 @@ const TableConditional = ({
 
     return shouldRenderTable ? (
         <TableReportes
-        reportesDetalles={reportesDetalles}
+            reportesDetalles={reportesDetalles}
         />
     ) : (
         <Cards
-        reportesDetalles={reportesDetalles}
+            reportesDetalles={reportesDetalles}
         />
     );
 };

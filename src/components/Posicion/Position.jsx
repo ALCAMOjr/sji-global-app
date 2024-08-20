@@ -369,7 +369,7 @@ const Position = () => {
 
             <>
                 {isDesktopOrLaptop ? (
-                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                    <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
                         <div className="flex">
                             <button
                                 id="dropdown-button"
@@ -407,6 +407,11 @@ const Position = () => {
                             )}
                             <div className="relative w-full">
                                 <input
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleManualSearch();
+                                    }
+                                }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -441,9 +446,9 @@ const Position = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 ) : (
-                    <form className="max-w-xs mx-auto mb-4 -ml-8 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="max-w-xs mx-auto mb-4 -ml-8 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                         <div className="flex">
                             <button
                                 id="dropdown-button"
@@ -482,6 +487,11 @@ const Position = () => {
                             )}
                             <div className="relative w-full">
                                 <input
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleManualSearch();
+                                    }
+                                }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -495,6 +505,7 @@ const Position = () => {
                                     type="button"
                                     disabled={!isManualSearch}
                                     onClick={handleManualSearch}
+                                 
                                     className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
                                 >
                                     <svg
@@ -516,7 +527,7 @@ const Position = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 )}
             </>
 

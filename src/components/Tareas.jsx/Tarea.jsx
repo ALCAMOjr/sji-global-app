@@ -235,7 +235,7 @@ const Tarea = () => {
 
 
 {isDesktopOrLaptop ? (
-                    <form className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                    <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
                         <div className="flex">
                             <button
                                 id="dropdown-button"
@@ -279,6 +279,11 @@ const Tarea = () => {
                             )}
                             <div className="relative w-full">
                                 <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -313,9 +318,9 @@ const Tarea = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 ) : (
-                    <form className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                         <div className="flex">
                             <button
                                 id="dropdown-button"
@@ -359,6 +364,11 @@ const Tarea = () => {
                             )}
                             <div className="relative w-full">
                                 <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -393,7 +403,7 @@ const Tarea = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 )}
 
 

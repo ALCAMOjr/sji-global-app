@@ -58,6 +58,7 @@ const UpdateAllExpedientes = useCallback(async () => {
     try {
         const response = await updateAllExpedientes({ token: jwt });
 
+        console.log("Response", response)
         setExpedientes(response);
         return { success: true, data: response };
 

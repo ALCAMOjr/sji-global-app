@@ -4,7 +4,6 @@ const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/ta
 
 
 export default async function DeleteTarea({ id, token }) {
-    console.log("Response antes", id)
     try {
         const config = {
             headers: {

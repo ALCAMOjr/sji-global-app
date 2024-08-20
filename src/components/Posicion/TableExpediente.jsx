@@ -9,9 +9,8 @@ import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import HasTarea from '../../views/tareas/HasTarea';
 import Context from '../../context/abogados.context';
-import igualicon from "../../assets/igual.png";
-import sprinticon from "../../assets/sprint.png";
-
+import flecha_derecha from "../../assets/flecha_derecha.png";
+import flecha_izquierda from "../../assets/flecha_izquierda.png";
 
 const TableExpedientes = ({
     currentExpedientes,
@@ -22,13 +21,14 @@ const TableExpedientes = ({
     openModalTarea
 }) => {
 
+    console.log(currentExpedientes)
+
     return (
         <div>
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            {/* Encabezados de la tabla */}
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Numero</span>
                             </TableCell>
@@ -52,11 +52,12 @@ const TableExpedientes = ({
                                 <span className='text-xs font-bold text-black'>Termino</span>
                             </TableCell>
                             <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Notification</span>
+                                <span className='text-xs font-bold text-black'>Notificación</span>
                             </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>MacroEtapa</span>
+                            <TableCell className='bg-white'>
+                                <span className='text-xs font-bold text-black'>Días</span>
                             </TableCell>
+                        
                             <TableCell className='bg-white'>
                                 <span className='text-xs font-bold text-black'>Sprints</span>
                             </TableCell>
@@ -145,9 +146,22 @@ const Row = ({
         }
     };
 
-    const bgColorClass = getBackgroundColor(expediente.macroetapa_aprobada);
+    const getSprintIcon = (notificacion) => {
+        if (!notificacion) return null;
 
-    const isEqual = expediente.macroetapa && expediente.macroetapa_aprobada === expediente.macroetapa;
+        switch (notificacion) {
+            case 'NO NOTIFICADA/TERMINADA':
+            case 'SOLICITADA':
+                return <img src={flecha_derecha} alt="Derecha" />;
+            case 'NOTIFICADA/TERMINADA':
+                return <img src={flecha_izquierda} alt="Izquierda" />;
+            default:
+                return null;
+        }
+    };
+
+    const bgColorClass = getBackgroundColor(expediente.macroetapa_aprobada);
+    const sprintIcon = getSprintIcon(expediente.notificacion);
 
     return (
         <Fragment>
@@ -181,19 +195,11 @@ const Row = ({
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.notificacion}</span>
                 </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.macroetapa}</span>
+                <TableCell className={`max-w-xs truncate`}>
+                    <span className="text-xs">Hola</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate`}>
-                    <span className="text-xs">
-                        {expediente.macroetapa ? (
-                            isEqual ? (
-                                <img src={igualicon} alt="Igual" className="w-6 h-6" />
-                            ) : (
-                                <img src={sprinticon} alt="Sprint" className="w-6 h-6" />
-                            )
-                        ) : null}
-                    </span>
+                    {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
                 </TableCell>
                 <TableCell align="center">
                     {hasTarea ? (
@@ -210,13 +216,13 @@ const Row = ({
                             type="button"
                             className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                         >
-                            Nueva
+                            Asignar Tarea
                         </button>
                     )}
                 </TableCell>
             </TableRow>
         </Fragment>
     );
-};
+}
 
 export default TableExpedientes;

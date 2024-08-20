@@ -3,8 +3,8 @@ import { Card } from "flowbite-react";
 import { Pagination } from "flowbite-react";
 import HasTarea from '../../views/tareas/HasTarea';
 import Context from '../../context/abogados.context';
-import igualicon from "../../assets/igual.png";
-import sprinticon from "../../assets/sprint.png";
+import flecha_derecha from "../../assets/flecha_derecha.png";
+import flecha_izquierda from "../../assets/flecha_izquierda.png";
 
 const customTheme = {
     pagination: {
@@ -34,21 +34,6 @@ const customTheme = {
         }
     }
 };
-const colorMapping = {
-    '01': '#F5F5F5', // Asignación
-    '02': '#D3D3D3', // Convenios previos a demanda
-    '03': '#FFFFE0', // Demanda sin emplazamiento
-    '04': '#FFA07A', // Emplazamiento sin sentencia
-    '06': '#D8BFD8', // Convenio Judicial
-    '07': '#FFA07A', // Juicio con sentencia
-    '08': '#FFB6C1', // Proceso de ejecución
-    '09': '#FFD700', // Adjudicación
-    '10': '#87CEEB', // Escrituración en proceso
-    '15': '#90EE90', // Autoseguros
-    '16': '#20B2AA', // Liquidación
-    '17': '#AFEEEE', // Entrega por Poder Notarial
-    '18': '#778899'  // Irrecuperabilidad
-};
 
 const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea }) => {
     const { jwt } = useContext(Context);
@@ -70,6 +55,20 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
 
         fetchTaskStatuses();
     }, [currentExpedientes, jwt]);
+
+    const getSprintIcon = (notificacion) => {
+        if (!notificacion) return null;
+
+        switch (notificacion) {
+            case 'NO NOTIFICADA/TERMINADA':
+            case 'SOLICITADA':
+                return <img src={flecha_derecha} alt="Derecha" />;
+            case 'NOTIFICADA/TERMINADA':
+                return <img src={flecha_izquierda} alt="Izquierda" />;
+            default:
+                return null;
+        }
+    };
 
     const getBackgroundColor = (macroetapa) => {
         switch (macroetapa) {
@@ -109,8 +108,9 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
             <div className="mt-24 mb-4 flex justify-center items-center flex-wrap">
                 {currentExpedientes.map((expediente, index) => {
 
-                    const isEqual = expediente.macroetapa && expediente.macroetapa_aprobada === expediente.macroetapa;
+
                     const color = getBackgroundColor(expediente.macroetapa_aprobada);
+                    const sprintIcon = getSprintIcon(expediente.notificacion);
 
                     return (
                         <div key={index} className="w-full max-w-xs mb-20 m-4">
@@ -169,22 +169,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                         <p className="text-sm text-gray-700">
                                             <span className="font-bold">Notificación:</span> {expediente.notificacion}
                                         </p>
-                                        {/* Sprint Icons */}
-                                        <div>
-                                            <span className="text-xs"> <span className="text-sm text-gray-700 font-bold">Sprints:</span>
-                                                {expediente.macroetapa ? (
-                                                    isEqual ? (
-                                                        <img src={igualicon} alt="Igual" className="w-6 h-6" />
-                                                    ) : (
-                                                        <img src={sprinticon} alt="Sprint" className="w-6 h-6" />
-                                                    )
-                                                ) : null}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-gray-700">
-                                            <span className="font-bold">MacroEtapa:</span> {expediente.macroetapa}
-                                        </p>
-
                                         <p className="text-sm text-gray-700 flex items-center">
                                             <span className="font-bold">Color MacroEtapa:</span>
                                             <span
@@ -193,6 +177,12 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
 
                                         </p>
 
+                                        {/* Sprint Icons */}
+                                        <div>
+                                            <span className="text-xs"> <span className="text-sm text-gray-700 font-bold">Sprints:</span>
+                                            {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
+                                            </span>
+                                        </div>
 
                                     </div>
 

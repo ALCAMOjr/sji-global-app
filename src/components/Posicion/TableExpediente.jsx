@@ -91,6 +91,38 @@ const TableExpedientes = ({
         </div>
     );
 }
+const parseDate = (dateStr) => {
+    if (!dateStr) {
+        return;
+    }
+
+    const monthMap = {
+        'ene.': '01',
+        'feb.': '02',
+        'mar.': '03',
+        'abr.': '04',
+        'may.': '05',
+        'jun.': '06',
+        'jul.': '07',
+        'ago.': '08',
+        'sep.': '09',
+        'oct.': '10',
+        'nov.': '11',
+        'dic.': '12'
+    };
+
+    const [day, month, year] = dateStr.split('/');
+    const monthNum = monthMap[month.toLowerCase()] || '01'; 
+    return new Date(`${year}-${monthNum}-${day}`);
+};
+
+const calculateDaysDifference = (dateStr) => {
+    const date = parseDate(dateStr);
+    const today = new Date();
+    const diffTime = Math.abs(today - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+};
 
 const Row = ({
     expediente,
@@ -162,6 +194,9 @@ const Row = ({
 
     const bgColorClass = getBackgroundColor(expediente.macroetapa_aprobada);
     const sprintIcon = getSprintIcon(expediente.notificacion);
+     const daysDifference = expediente.fecha ? calculateDaysDifference(expediente.fecha) : '';
+    
+    const daysDisplay = daysDifference > 30 ? daysDifference : '';
 
     return (
         <Fragment>
@@ -196,7 +231,7 @@ const Row = ({
                     <span className="text-xs">{expediente.notificacion}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate`}>
-                    <span className="text-xs">Hola</span>
+                    <span className="text-lg">{daysDisplay}</span>
                 </TableCell>
                 <TableCell className={`max-w-xs truncate`}>
                     {sprintIcon && <span className="text-xs">{sprintIcon}</span>}

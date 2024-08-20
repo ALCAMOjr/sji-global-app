@@ -103,6 +103,39 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
         }
     };
 
+    const parseDate = (dateStr) => {
+        if (!dateStr) {
+            return;
+        }
+    
+        const monthMap = {
+            'ene.': '01',
+            'feb.': '02',
+            'mar.': '03',
+            'abr.': '04',
+            'may.': '05',
+            'jun.': '06',
+            'jul.': '07',
+            'ago.': '08',
+            'sep.': '09',
+            'oct.': '10',
+            'nov.': '11',
+            'dic.': '12'
+        };
+    
+        const [day, month, year] = dateStr.split('/');
+        const monthNum = monthMap[month.toLowerCase()] || '01'; 
+        return new Date(`${year}-${monthNum}-${day}`);
+    };
+    
+    const calculateDaysDifference = (dateStr) => {
+        const date = parseDate(dateStr);
+        const today = new Date();
+        const diffTime = Math.abs(today - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays;
+    };
+    
     return (
         <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 flex justify-center items-center flex-wrap">
             <div className="mt-24 mb-4 flex justify-center items-center flex-wrap">
@@ -111,7 +144,9 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
 
                     const color = getBackgroundColor(expediente.macroetapa_aprobada);
                     const sprintIcon = getSprintIcon(expediente.notificacion);
-
+                    const daysDifference = expediente.fecha ? calculateDaysDifference(expediente.fecha) : '';
+    
+                    const daysDisplay = daysDifference > 30 ? daysDifference : '';
                     return (
                         <div key={index} className="w-full max-w-xs mb-20 m-4">
                             <Card className={`bg-white text-black transform transition duration-500 ease-in-out hover:scale-105`}>
@@ -168,6 +203,9 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                         </p>
                                         <p className="text-sm text-gray-700">
                                             <span className="font-bold">Notificación:</span> {expediente.notificacion}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Dias:</span> {daysDisplay}
                                         </p>
                                         <p className="text-sm text-gray-700 flex items-center">
                                             <span className="font-bold">Color MacroEtapa:</span>

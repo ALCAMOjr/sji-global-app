@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner, Tooltip, Button } from "@nextui-org/react";
 import Error from "./Error.jsx";
@@ -12,10 +12,12 @@ import useAbogados from '../../hooks/abogados/useAbogados.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 import getPositionExpedientes from '../../views/position/getPositionExpedientes.js';
 import useAgenda from '../../hooks/tareas/useAgenda.jsx';
-
+import useExpedientesSial from "../../hooks/expedientesial/useExpedienteSial.jsx";
+import getPositionByEtapa from '../../views/position/getPositionByEtapa.js';
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
+    const { etapas, loadingEtapas, errorEtapas } = useExpedientesSial();
     const { expedientes, loading, error, setExpedientes } = usePosition();
     const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);
@@ -24,13 +26,14 @@ const Position = () => {
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
-    const [itemsPerPage, setItemsPerPage] = useState(160);
+    const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
+    const [originalExpedientes, setOriginalExpedientes] = useState([]);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
-    const [errors, setErrors] = useState({});
+    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const { jwt } = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
@@ -41,7 +44,7 @@ const Position = () => {
         abogado_id: ''
     });
 
-
+   
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -62,16 +65,16 @@ const Position = () => {
         const { tarea, fecha_entrega, observaciones, abogado_id } = formData;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-    
+
         const selectedDate = new Date(fecha_entrega);
         selectedDate.setHours(0, 0, 0, 0);
-    
+
         if (selectedDate <= today) {
             setFechaError('La fecha debe ser después de hoy y mañana.');
             setIsLoading(false);
             return;
         }
-    
+
 
         try {
             const { success, error } = await registerNewTarea({
@@ -97,6 +100,9 @@ const Position = () => {
                     toast.error('Ya existe una tarea asignada a este expediente.');
                 } else if (error === 'ID de abogado inválido o el usuario no es un abogado.') {
                     toast.error('ID de abogado inválido o el usuario no es un abogado.');
+                } else if (error === 'El numero de expediente es inválido.') {
+                    toast.error('El numero de expediente no existe en el tribunal virtual. Por favor crea el expediente en Expediente Tv e intente de nuevo.');
+                    
                 } else {
                     toast.error('Algo mal sucedió al crear la tarea: ' + error);
                 }
@@ -111,32 +117,28 @@ const Position = () => {
     };
 
     useEffect(() => {
-        if (expedientes) {
-            setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = currentPage * itemsPerPage;
-            setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+        if (originalExpedientes.length === 0 && expedientes.length > 0) {
+            setOriginalExpedientes(expedientes);
         }
-    }, [expedientes, currentPage, itemsPerPage]);
-
-
+        setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+    }, [expedientes, itemsPerPage, currentPage]);
+    
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage);
+        setCurrentPage(newPage + 1); 
     };
-
-
-
+    
+    const handleChangeRowsPerPage = (event) => {
+        setItemsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(1);
+    };
+    
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
 
-
-
-
-    const handleChangeRowsPerPage = (event) => {
-        setItemsPerPage(+event.target.value);
-        setCurrentPage(1);
-    };
     const openModalTarea = (expediente) => {
         setSelectExpedientetoTask(expediente)
         setIsOpenModal(true);
@@ -176,31 +178,42 @@ const Position = () => {
 
 
 
-    const handleSearchTypeChange = (type) => {
-        setSearchType(type);
-        setIsSearchOpen(false);
-        setSearch('');
-        setIsManualSearch(type === 'Numero');
-
-        setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = currentPage * itemsPerPage;
-        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+     const handleSearchInputChange = async (e) => {
+        const searchTerm = e.target.value;
+        setSearch(searchTerm);
+    
+        if (searchType === 'Numero' && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
+    
+        if (searchType === 'Nombre' && searchTerm.trim() !== '') {
+            searcherExpediente(searchTerm);
+        }
+    
+        if (searchType === 'Etapa' && searchTerm.trim() !== '') {
+            searcherExpediente(searchTerm);
+        }
+    
+        if (searchTerm.trim() === '') {
+            setIsManualSearch(false);
+            setExpedientes(originalExpedientes);
+        }
     };
-
-
+    
     const searcherExpediente = async (searchTerm) => {
-        const lowercaseSearchTerm = searchTerm.toLowerCase();
         let filteredExpedientes = [];
-
+        setisLoadingExpedientes(true);
+    
         if (searchType === 'Nombre') {
-            filteredExpedientes = expedientes.filter(expediente =>
+            const lowercaseSearchTerm = searchTerm.toLowerCase();
+            filteredExpedientes = originalExpedientes.filter(expediente =>
                 expediente.acreditado.toLowerCase().includes(lowercaseSearchTerm)
             );
         } else if (searchType === 'Numero') {
+            const lowercaseSearchTerm = searchTerm.toLowerCase();
             try {
                 const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
-
+    
                 if (expediente && expediente.length > 0) {
                     filteredExpedientes.push(expediente[0]);
                 } else {
@@ -213,37 +226,36 @@ const Position = () => {
                     console.error("Something went wrong", error);
                 }
             }
+        } else if (searchType === 'Etapa') {
+            try {
+                const expedientes = await getPositionByEtapa({ etapa: searchTerm, token: jwt });
+    
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
+                } else {
+                    filteredExpedientes = [];
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    filteredExpedientes = [];
+                } else {
+                    console.error("Something went wrong", error);
+                }
+            }
         }
-
-        setCurrentExpedientes(filteredExpedientes);
-        setTotalPages(Math.ceil(filteredExpedientes.length / itemsPerPage));
-        setCurrentPage(1);
+    
+        setExpedientes(filteredExpedientes);
+        setisLoadingExpedientes(false);
     };
+    
+    const handleSearchTypeChange = (type) => {
+        setSearchType(type);
+        setIsSearchOpen(false);
+        setSearch('');
+        setIsManualSearch(type === 'Numero');
 
-
-
-    const handleSearchInputChange = (e) => {
-        const searchTerm = e.target.value;
-        setSearch(searchTerm);
-
-
-        if (searchType === 'Numero' && searchTerm.trim() !== '') {
-            setIsManualSearch(true);
-        }
-
-        if (searchType === 'Nombre' && searchTerm.trim() !== '') {
-            searcherExpediente(searchTerm);
-        }
-
-        if (searchTerm.trim() === '') {
-            setIsManualSearch(false);
-
-            setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = currentPage * itemsPerPage;
-            setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
-        }
-    }
+        setExpedientes(originalExpedientes);
+    };
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
@@ -256,14 +268,14 @@ const Position = () => {
 
 
 
-    if (loading) return (
+    if (loading || loadingEtapas || isLoadingExpedientes) return (
         <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
 
 
-    if (error) return <Error message={error.message} />;
+    if (error || errorEtapas) return <Error message={error.message} />;
 
 
     return (
@@ -401,29 +413,51 @@ const Position = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
+                                                MacroEtapa
+                                                {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
                                     </ul>
                                 </div>
                             )}
                             <div className="relative w-full">
-                                <input
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleManualSearch();
-                                    }
-                                }}
-                                    value={search}
-                                    onChange={handleSearchInputChange}
-                                    type="search"
-                                    id="search-dropdown"
-                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                    placeholder="Buscar Expedientes:"
-                                    required
-                                    style={{ width: "300px" }}
-                                />
+                                {searchType === "Etapa" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="etapa-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                        <option value="">Todas las Etapas</option>
+                                        {etapas.map((etapa, index) => (
+                                            <option key={index} value={etapa.macroetapa_aprobada}>
+                                                {etapa.macroetapa_aprobada}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleManualSearch();
+                                            }
+                                        }}
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        type="search"
+                                        id="search-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        placeholder="Buscar Expedientes:"
+                                        required
+                                        style={{ width: "300px" }}
+                                    />
+                                )}
                                 <button
                                     type="button"
-                                    disabled={!isManualSearch}
+                                    disabled={!isManualSearch && searchType !== "Etapa"}
                                     onClick={handleManualSearch}
                                     className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
                                 >
@@ -480,36 +514,58 @@ const Position = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
+                                                MacroEtapa
+                                                {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
 
 
                                     </ul>
                                 </div>
                             )}
-                            <div className="relative w-full">
-                                <input
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleManualSearch();
-                                    }
-                                }}
-                                    value={search}
-                                    onChange={handleSearchInputChange}
-                                    type="search"
-                                    id="search-dropdown"
-                                    className="block p-1.5 w-full z-20 text-xs text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                    placeholder="Buscar Expedientes:"
-                                    required
-                                    style={{ width: "200px" }}
-                                />
+                                   <div className="relative w-full">
+                                {searchType === "Etapa" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="etapa-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                       <option value="">Todas las Etapas</option>
+                                        {etapas.map((etapa, index) => (
+                                            <option key={index} value={etapa.macroetapa_aprobada}>
+                                                {etapa.macroetapa_aprobada}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleManualSearch();
+                                            }
+                                        }}
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        type="search"
+                                        id="search-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        placeholder="Buscar Expedientes:"
+                                        required
+                                        style={{ width: "300px" }}
+                                    />
+                                )}
                                 <button
                                     type="button"
-                                    disabled={!isManualSearch}
+                                    disabled={!isManualSearch && searchType !== "Etapa"}
                                     onClick={handleManualSearch}
-                                 
-                                    className={`absolute top-0 right-0 p-1.5 text-xs font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"}`}
+                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
                                 >
                                     <svg
-                                        className="w-3 h-3"
+                                        className="w-4 h-4"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -531,7 +587,7 @@ const Position = () => {
                 )}
             </>
 
-            {currentExpedientes.length === 0 ? (
+            {expedientes.length === 0 ? (
                 <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
                     <div className="flex flex-col items-center justify-center">
                         <div className="text-gray-400 mb-2">
@@ -553,6 +609,8 @@ const Position = () => {
 
                 <TableConditional
                     currentExpedientes={currentExpedientes}
+                    expedientes={expedientes}
+                    itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     handleChangePage={handleChangePage}

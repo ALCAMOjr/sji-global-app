@@ -43,6 +43,8 @@ export default function useAgenda() {
                     return { success: false, error: 'Ya existe una tarea asignada a este expediente.' };
                 } else if (errorMessage === 'Invalid abogado id or the user is not an abogado.') {
                     return { success: false, error: 'ID de abogado inválido o el usuario no es un abogado.' };
+                } else if (errorMessage === 'Cannot assign a task to a non-existent expediente.') {
+                    return { success: false, error: 'El numero de expediente es inválido.' };
                 } else {
                     return { success: false, error: errorMessage || 'Error al crear la tarea.' };
                 }

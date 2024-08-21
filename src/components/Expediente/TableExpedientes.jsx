@@ -19,6 +19,8 @@ import TablePagination from '@mui/material/TablePagination';
 import copiaricon from "../../assets/copiaricon.png"
 const TableExpedientes = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
@@ -111,12 +113,22 @@ const TableExpedientes = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={currentExpedientes.length}
-                rowsPerPage={totalPages}
-                page={currentPage}
+                count={expedientes.length}  
+                rowsPerPage={itemsPerPage} 
+                page={currentPage - 1}  
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
+                slotProps={{
+                    actions: {
+                        previousButton: {
+                            disabled: currentPage === 1,
+                        },
+                        nextButton: {
+                            disabled: currentPage >= totalPages,
+                        },
+                    },
+                }}
             />
         </div>
     );
@@ -219,8 +231,7 @@ const Row = ({
                     )}
                 </TableCell>
             </TableRow>
-            {expediente.detalles && expediente.detalles.length > 0 && (
-                <TableRow>
+                            <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
@@ -253,7 +264,7 @@ const Row = ({
                         </Collapse>
                     </TableCell>
                 </TableRow>
-            )}
+       
         </Fragment>
     );
 };

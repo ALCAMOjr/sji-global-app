@@ -24,23 +24,27 @@ export default function useExpedientes() {
         }
     }, [jwt]);
 
-    const deleteExpediente = useCallback(async (numero) => {
+    const deleteExpediente = useCallback(async ({numero, setOriginalExpedientes}) => {
         try {
             const responseStatus = await deleteExpedientes({ numero: numero, token: jwt });
-    
             if (responseStatus === 204) {
-                setExpedientes(prevExpedientes => prevExpedientes.filter(expediente => expediente.numero !== numero.numero));
+                setOriginalExpedientes([]);
+                setExpedientes(prevExpedientes => prevExpedientes.filter(expediente => expediente.numero !== numero));
             }
             return { success: responseStatus === 204 };
         } catch (err) {
             console.error(err);
-            return { success: false, error: err };
+            if (err.response && err.response.status === 400 && err.response.data.error === 'Cannot delete expediente with pending tasks') {
+                return { success: false, error: 'El expediente tiene tareas pendientes sin completar' };
+            }
+            return { success: false, error: err.message || err };
         }
     }, [jwt]);
 
-    const updateExpediente = useCallback(async ({ numero, nombre, url }) => {
+    const updateExpediente = useCallback(async ({ numero, nombre, url, setOriginalExpedientes}) => {
         try {
             const updatedExpediente = await updateExpedientes({ numero, nombre, url, token: jwt });
+            setOriginalExpedientes([]);
             setExpedientes(prevExpedientes => prevExpedientes.map(expediente => expediente.numero === numero ? updatedExpediente : expediente));
             return { success: true, data: updatedExpediente };
         } catch (error) {
@@ -54,11 +58,11 @@ export default function useExpedientes() {
     }, [jwt]);
 
 
-const UpdateAllExpedientes = useCallback(async () => {
+const UpdateAllExpedientes = useCallback(async (setOriginalExpedientes) => {
     try {
         const response = await updateAllExpedientes({ token: jwt });
 
-        console.log("Response", response)
+        setOriginalExpedientes([]);
         setExpedientes(response);
         return { success: true, data: response };
 
@@ -77,10 +81,11 @@ const UpdateAllExpedientes = useCallback(async () => {
     
     
     
-    const registerNewExpediente = useCallback(async ({ numero, nombre, url }) => {
+    const registerNewExpediente = useCallback(async ({ numero, nombre, url, setOriginalExpedientes }) => {
         try {
             const newExpediente = await createExpediente({ numero, nombre, url, token: jwt });
-            setExpedientes(prevExpedientes => [...prevExpedientes, newExpediente]);
+            setOriginalExpedientes([]);
+            setExpedientes(prevExpedientes => [newExpediente, ...prevExpedientes]);
             return { success: true, data: newExpediente };
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -101,6 +106,6 @@ const UpdateAllExpedientes = useCallback(async () => {
         }
     }, [jwt]);
     
-    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes };
+    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes, setExpedientes };
     
 }

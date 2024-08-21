@@ -35,7 +35,7 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea,   Expedientes }) => {
     const { jwt } = useContext(Context);
     const [tasksStatus, setTasksStatus] = useState({});
 

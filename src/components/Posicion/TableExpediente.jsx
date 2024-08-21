@@ -14,6 +14,8 @@ import flecha_izquierda from "../../assets/flecha_izquierda.png";
 
 const TableExpedientes = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
@@ -21,7 +23,6 @@ const TableExpedientes = ({
     openModalTarea
 }) => {
 
-    console.log(currentExpedientes)
 
     return (
         <div>
@@ -54,11 +55,11 @@ const TableExpedientes = ({
                             <TableCell className='bg-blue-200'>
                                 <span className='text-xs font-bold text-black'>Notificación</span>
                             </TableCell>
-                            <TableCell className='bg-white'>
+                            <TableCell align='center' className='bg-white'>
                                 <span className='text-xs font-bold text-black'>Días</span>
                             </TableCell>
-                        
-                            <TableCell className='bg-white'>
+
+                            <TableCell align='center' className='bg-white'>
                                 <span className='text-xs font-bold text-black'>Sprints</span>
                             </TableCell>
                             <TableCell align="center" className=''>
@@ -79,14 +80,24 @@ const TableExpedientes = ({
             </TableContainer>
 
             <TablePagination
-               rowsPerPageOptions={[600, 1200, 2000]}
+                rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={currentExpedientes.length}
-                rowsPerPage={totalPages}
-                page={currentPage}
+                count={expedientes.length}  
+                rowsPerPage={itemsPerPage} 
+                page={currentPage - 1}  
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
+                slotProps={{
+                    actions: {
+                        previousButton: {
+                            disabled: currentPage === 1,
+                        },
+                        nextButton: {
+                            disabled: currentPage >= totalPages,
+                        },
+                    },
+                }}
             />
         </div>
     );
@@ -112,7 +123,7 @@ const parseDate = (dateStr) => {
     };
 
     const [day, month, year] = dateStr.split('/');
-    const monthNum = monthMap[month.toLowerCase()] || '01'; 
+    const monthNum = monthMap[month.toLowerCase()] || '01';
     return new Date(`${year}-${monthNum}-${day}`);
 };
 
@@ -148,35 +159,48 @@ const Row = ({
     const getBackgroundColor = (macroetapa) => {
         switch (macroetapa) {
             case '01. Asignación':
-                return 'bg-[#F5F5F5]'; 
+                return 'bg-[#F5F5F5]';
             case '02. Convenios previos a demanda':
-                return 'bg-[#D3D3D3]'; 
+                return 'bg-[#D3D3D3]';
             case '03. Demanda sin emplazamiento':
-                return 'bg-[#FFDEAD]'; 
+                return 'bg-[#FFDEAD]';
             case '04. Emplazamiento sin sentencia':
-                return 'bg-[#FFA07A]'; 
+                return 'bg-[#FFA07A]';
             case '06. Convenio Judicial':
-                return 'bg-[#D8BFD8]'; 
+                return 'bg-[#D8BFD8]';
             case '07. Juicio con sentencia':
-                return 'bg-[#FFA07A]'; 
+                return 'bg-[#FFA07A]';
             case '08. Proceso de ejecución':
                 return 'bg-[#FFB6C1]';
             case '09. Adjudicación':
                 return 'bg-[#FFD700]';
             case '10. Escrituración en proceso':
-                return 'bg-[#87CEEB]'; 
+                return 'bg-[#87CEEB]';
             case '15. Autoseguros':
                 return 'bg-[#90EE90]';
             case '16. Liquidación':
-                return 'bg-[#20B2AA]'; 
+                return 'bg-[#20B2AA]';
             case '17. Entrega por Poder Notarial':
                 return 'bg-[#AFEEEE]';
             case '18. Irrecuperabilidad':
-                return 'bg-[#778899]'; 
+                return 'bg-[#778899]';
             default:
-                return 'bg-white'; 
+                return 'bg-white';
         }
     };
+
+    const getDaysBackgroundColor = (days) => {
+        if (days >= 90) {
+            return 'bg-dark-red';
+        } else if (days >= 60) {
+            return 'bg-dark-green';
+        } else if (days >= 30) {
+            return 'bg-dark-blue'; o
+        } else {
+            return '';
+        }
+    };
+
 
     const getSprintIcon = (notificacion) => {
         if (!notificacion) return null;
@@ -194,8 +218,9 @@ const Row = ({
 
     const bgColorClass = getBackgroundColor(expediente.macroetapa_aprobada);
     const sprintIcon = getSprintIcon(expediente.notificacion);
-     const daysDifference = expediente.fecha ? calculateDaysDifference(expediente.fecha) : '';
-    
+    const daysDifference = expediente.fecha ? calculateDaysDifference(expediente.fecha) : '';
+
+    const daysBackgroundColor = getDaysBackgroundColor(daysDifference);
     const daysDisplay = daysDifference > 30 ? daysDifference : '';
 
     return (
@@ -230,13 +255,13 @@ const Row = ({
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.notificacion}</span>
                 </TableCell>
-                <TableCell className={`max-w-xs truncate`}>
-                    <span className="text-lg">{daysDisplay}</span>
+                <TableCell align='center' className={`max-w-xs truncate ${daysBackgroundColor}`}>
+                    <span className="text-lg text-white">{daysDisplay}</span>
                 </TableCell>
-                <TableCell className={`max-w-xs truncate`}>
+                <TableCell align="right" className={`max-w-xs truncate`}>
                     {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="right">
                     {hasTarea ? (
                         <button
                             type="button"

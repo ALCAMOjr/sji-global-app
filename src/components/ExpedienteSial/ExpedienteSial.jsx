@@ -14,51 +14,53 @@ import masicon from "../../assets/mas.png"
 
 
 const ExpedientesSial = () => {
-    const { expedientes, loading, error, uploadFile } = useExpedientesSial();
+    const { expedientes, loadingExpedientes, errorExpedientes, uploadFile, setExpedientes } = useExpedientesSial();
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const menuRef = useRef(null);
     const [search, setSearch] = useState('');
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
-    const [itemsPerPage, setItemsPerPage] = useState(160);
+    const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [originalExpedientes, setOriginalExpedientes] = useState([]);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const [errors, setErrors] = useState({});
     const inputFileRef = useRef(null);
     const { jwt } = useContext(Context);
     const [areFilesValid, setAreFilesValid] = useState(true);
 
-
-
     useEffect(() => {
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
+        if (originalExpedientes.length === 0 && expedientes.length > 0) {
+            setOriginalExpedientes(expedientes);
+        }
+        const reversedExpedientes = [...expedientes].reverse();
         setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-
-    }, [expedientes, currentPage, itemsPerPage]);
-
-
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
+    }, [expedientes, itemsPerPage, currentPage]);
+    
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage);
+        setCurrentPage(newPage + 1); 
     };
+    
+    const handleChangeRowsPerPage = (event) => {
+        setItemsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(1);
+    };
+    
 
-
-
+   
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
 
-
-
-    const handleChangeRowsPerPage = (event) => {
-        setItemsPerPage(+event.target.value);
-        setCurrentPage(1);
-    };
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -115,7 +117,7 @@ const ExpedientesSial = () => {
         setIsLoading(true);
 
         try {
-            const { success, error } = await uploadFile(selectedFiles);
+            const { success, error } = await uploadFile(setOriginalExpedientes, selectedFiles);
             if (success) {
                 toast.info('Archivos subidos correctamente.', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -123,6 +125,7 @@ const ExpedientesSial = () => {
                         background: '#1D4ED8',
                     },
                 });
+            
             } else {
                 toast.error(`Algo mal sucedió al subir los archivos: ${error}`);
             }
@@ -163,13 +166,12 @@ const ExpedientesSial = () => {
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+        setExpedientes(originalExpedientes);
     };
 
 
     const searcherExpediente = async (searchTerm) => {
+        setisLoadingExpedientes(true)
         const lowercaseSearchTerm = searchTerm.toLowerCase();
         let filteredExpedientes = [];
         if (searchType === 'Nombre') {
@@ -192,9 +194,8 @@ const ExpedientesSial = () => {
             }
         }
 
-        setCurrentExpedientes(filteredExpedientes);
-        setTotalPages(Math.ceil(filteredExpedientes.length / itemsPerPage));
-        setCurrentPage(1);
+        setExpedientes(filteredExpedientes);
+        setisLoadingExpedientes(false);
     };
 
 
@@ -214,10 +215,8 @@ const ExpedientesSial = () => {
 
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-
-            let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-            setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-            setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+            setExpedientes(originalExpedientes);      
+        
         }
     }
 
@@ -232,14 +231,14 @@ const ExpedientesSial = () => {
 
 
 
-    if (loading) return (
+    if (loadingExpedientes || isLoadingExpedientes) return (
         <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
 
 
-    if (error) return <Error message={error.message} />;
+    if (errorExpedientes) return <Error message={errorExpedientes.message} />;
 
 
     return (
@@ -409,13 +408,6 @@ const ExpedientesSial = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        {/* <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                                Nombre
-                                                {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li> */}
-
                                     </ul>
                                 </div>
                             )}
@@ -494,12 +486,6 @@ const ExpedientesSial = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        {/* <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Nombre")}>
-                                                Nombre
-                                                {searchType === "Nombre" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li> */}
 
                                     </ul>
                                 </div>
@@ -550,7 +536,7 @@ const ExpedientesSial = () => {
             </>
 
 
-            {currentExpedientes.length === 0 ? (
+            {expedientes.length === 0 ? (
                 <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
                     <div className="flex flex-col items-center justify-center">
                         <div className="text-gray-400 mb-2">
@@ -572,6 +558,8 @@ const ExpedientesSial = () => {
 
                 <TableConditional
                     currentExpedientes={currentExpedientes}
+                    expedientes={expedientes}
+                    itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     handleChangePage={handleChangePage}

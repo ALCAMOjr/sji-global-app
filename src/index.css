@@ -16,6 +16,19 @@ input[type="checkbox"] {
   border-radius: 4px;
 }
 
+.bg-dark-blue {
+  background-color: #003366; /* Ejemplo de color oscuro */
+}
+
+.bg-dark-green {
+  background-color: #8950c6; /* Ejemplo de color oscuro */
+}
+
+.bg-dark-red {
+  background-color: #d1302b; /* Ejemplo de color oscuro */
+}
+
+
 .color-bubble {
   width: 12px; /* Tamaño de la bolita */
   height: 12px;

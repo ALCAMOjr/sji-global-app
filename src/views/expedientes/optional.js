@@ -65,7 +65,7 @@ export async function deleteExpedientes({numero, token}) {
             }
         };
 
-        const response = await axios.delete(`${baseUrl}/${numero.numero}`, config);
+        const response = await axios.delete(`${baseUrl}/${numero}`, config);
 
         if (response.status !== 204) {
             throw new Error('Response is NOT ok');

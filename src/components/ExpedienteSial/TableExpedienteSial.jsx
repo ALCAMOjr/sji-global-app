@@ -10,11 +10,12 @@ import TablePagination from '@mui/material/TablePagination';
 
 const TableExpedientes = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
-    onPageChange
 }) => {
 
     return (
@@ -110,14 +111,24 @@ const TableExpedientes = ({
             </TableContainer>
 
             <TablePagination
-                rowsPerPageOptions={[600, 1200, 2000]}
+                rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={currentExpedientes.length}
-                rowsPerPage={totalPages}
-                page={currentPage}
+                count={expedientes.length}  
+                rowsPerPage={itemsPerPage} 
+                page={currentPage - 1}  
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
+                slotProps={{
+                    actions: {
+                        previousButton: {
+                            disabled: currentPage === 1,
+                        },
+                        nextButton: {
+                            disabled: currentPage >= totalPages,
+                        },
+                    },
+                }}
             />
         </div>
 

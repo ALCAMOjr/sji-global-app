@@ -107,7 +107,7 @@ const Abogados = () => {
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al crear el abogado: ${error}`);
+                toast.error(`Algo mal sucedió al eliminar el abogado: ${error}`);
             }
         } catch (error) {
             console.error(error);

@@ -4,6 +4,8 @@ import TableAgenda from './TableAgenda.jsx';
 
 const TableConditional = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
@@ -32,6 +34,8 @@ const TableConditional = ({
     return shouldRenderTable ? (
         <TableAgenda
             currentExpedientes={currentExpedientes}
+            expedientes={expedientes}
+            itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
@@ -42,6 +46,8 @@ const TableConditional = ({
     ) : (
         <Cards
             currentExpedientes={currentExpedientes}
+            expedientes={expedientes}
+            itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}

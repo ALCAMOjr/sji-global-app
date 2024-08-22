@@ -61,20 +61,23 @@ const Position = () => {
     const handleCreateTarea = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
+    
         const { tarea, fecha_entrega, observaciones, abogado_id } = formData;
+    
+    
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        const selectedDate = new Date(fecha_entrega);
+        
+        const selectedDate = new Date(`${fecha_entrega}T00:00:00`);
         selectedDate.setHours(0, 0, 0, 0);
-
-        if (selectedDate <= today) {
-            setFechaError('La fecha debe ser después de hoy y mañana.');
+        
+   
+        if (selectedDate.getTime() < today.getTime()) {
+            setFechaError('La fecha no puede estar en el pasado. Debes seleccionar hoy o una fecha futura.');
             setIsLoading(false);
             return;
         }
-
+        
 
         try {
             const { success, error } = await registerNewTarea({
@@ -351,7 +354,7 @@ const Position = () => {
                                             .filter(abogado => abogado.user_type === 'abogado')
                                             .map((abogado) => (
                                                 <option key={abogado.id} value={abogado.id}>
-                                                    {abogado.nombre}
+                                                    {abogado.username}
                                                 </option>
                                             ))}
                                     </select>
@@ -531,7 +534,7 @@ const Position = () => {
                                         value={search}
                                         onChange={handleSearchInputChange}
                                         id="etapa-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        className="block p-2.5 w-full mr-32 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
                                        <option value="">Todas las Etapas</option>

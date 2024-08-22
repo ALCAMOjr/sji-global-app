@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import Context from '../../context/abogados.context.jsx';
 import createTarea from '../../views/tareas/CreateTarea.js';
 import getTareas from '../../views/tareas/getTareas.js';
+import CancelTarea from '../../views/tareas/CancelTarea.js';
+import DeleteTarea from '../../views/tareas/DeleteTarea.js';
 
 export default function useAgenda() {
     const { jwt } = useContext(Context);
@@ -34,7 +36,7 @@ export default function useAgenda() {
                 token: jwt
             });
 
-            setExpedientes(prevTareas => [...prevTareas, newTarea]);
+            
             return { success: true, data: newTarea };
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -55,5 +57,36 @@ export default function useAgenda() {
         }
     }, [jwt]);
 
-    return { expedientes, loading, error, setExpedientes, registerNewTarea };
+    const deteleTarea = useCallback(async ({id, setOriginalExpedientes}) => {
+        try {
+            const responseStatus = await DeleteTarea({ id, token: jwt });
+            if (responseStatus === 204) {
+                setOriginalExpedientes([]);
+                const expediente = await getTareas({token: jwt})
+                setExpedientes(expediente);
+            }
+            return { success: responseStatus === 204 };
+        } catch (err) {
+            console.error(err);
+            return { success: false, error: err.message };;
+        }
+  }, [jwt]);
+  
+  const cancelTarea = useCallback(async ({id, setOriginalExpedientes}) => {
+    try {
+        const responseStatus = await CancelTarea({ id, token: jwt });
+        if (responseStatus === 200) {
+            setOriginalExpedientes([]);
+            const expediente = await getTareas({token: jwt})
+            setExpedientes(expediente);
+        }
+        return { success: responseStatus === 200 };
+    } catch (err) {
+        console.error(err);
+        return { success: false, error: err.message };;
+    }
+}, [jwt]);
+
+
+    return { expedientes, loading, error, setExpedientes, registerNewTarea, deteleTarea, cancelTarea };
 }

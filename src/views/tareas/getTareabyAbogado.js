@@ -12,6 +12,8 @@ export default async function getTareaByAbogado({ username, token }) {
             }
         };
 
+        console.log("USERNAME", username)
+
         const response = await axios.get(`${baseUrl}/${username}`, config);
 
         if (response.status !== 200) {

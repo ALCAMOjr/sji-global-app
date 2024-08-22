@@ -18,6 +18,8 @@ import copiaricon from "../../assets/copiaricon.png";
 
 const TableAgenda = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
@@ -63,12 +65,22 @@ const TableAgenda = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={currentExpedientes.length}
-                rowsPerPage={totalPages}
-                page={currentPage}
+                count={expedientes.length}  
+                rowsPerPage={itemsPerPage} 
+                page={currentPage - 1}  
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
+                slotProps={{
+                    actions: {
+                        previousButton: {
+                            disabled: currentPage === 1,
+                        },
+                        nextButton: {
+                            disabled: currentPage >= totalPages,
+                        },
+                    },
+                }}
             />
         </div>
     );

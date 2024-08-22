@@ -39,11 +39,10 @@ const ExpedientesSial = () => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
         }
-        const reversedExpedientes = [...expedientes].reverse();
-        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
+        setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
+        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage]);
     
     const handleChangePage = (event, newPage) => {

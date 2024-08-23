@@ -6,21 +6,21 @@ import check from "../../assets/check.png";
 import Error from './Error.jsx';
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
-import getTareaByAbogado from '../../views/tareas/getTareabyAbogado.js';
 import getTareaByExpediente from '../../views/tareas/getTareaByExpediente.js';
 import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
-import getTareasUser from '../../views/tareas/getTareasUser.js';
-import StartTarea from "../../views/tareas/StartTarea.js"
-import CompleteTarea from "../../views/tareas/CompleteTarea.js"
+import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
 
 const Tarea = () => {
 
-    const { expedientes, loading, error, setExpedientes } = useTareas();
+    const { expedientes, loading, error, setExpedientes, startTarea, completeTarea } = useTareas();
+    const { savePdfs, fetchFilename } = useExpedientes();
     const [itemsPerPage, setItemsPerPage] = useState(200);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    const [originalExpedientes, setOriginalExpedientes] = useState([]);
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
+     const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const menuRef = useRef(null);
@@ -31,40 +31,88 @@ const Tarea = () => {
     const { jwt } = useContext(Context);
 
     useEffect(() => {
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
+        if (originalExpedientes.length === 0 && expedientes.length > 0) {
+            setOriginalExpedientes(expedientes);
+        }
+        const reversedExpedientes = [...expedientes].reverse();
         setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
-
-    }, [expedientes, currentPage, itemsPerPage]);
-
-
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
+    }, [expedientes, itemsPerPage, currentPage]);
+    
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage);
+        setCurrentPage(newPage + 1); 
+    };
+    
+    const handleChangeRowsPerPage = (event) => {
+        setItemsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(1);
     };
 
 
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
+    const handleDownload = async (url, fecha) => {
+        try {
+            const { success: saveSuccess, fileName, error: saveError } = await savePdfs({ url, fecha });
+            if (!saveSuccess) {
+                toast.error(`Error al guardar el PDF: ${saveError}`);
+                return;
+            }
+    
+            console.log("Filename", fileName);
+            const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
+            if (!fetchSuccess) {
+                toast.error(`Error al obtener el archivo PDF: ${fetchError}`);
+                return;
+            }
+    
+            
+            const downloadUrl = URL.createObjectURL(data);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileName; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(downloadUrl)
+    
+            toast.info('PDF descargado con éxito.', {
+                icon: () => <img src={check} alt="Success Icon" />,
+                progressStyle: {
+                    background: '#1D4ED8',
+                },
+            });
+        } catch (error) {
+            console.error('Error al descargar el PDF:', error);
+            toast.error('Error al descargar el PDF.');
+        }
+    };
+    
+    
+    
 
+    
     const handleInitTarea = async (id) => {
         setIsLoading(true);
         try {
-            const response = await StartTarea({
+            const {success, error} = await startTarea({
                 id: id,
-                token: jwt
+                setOriginalExpedientes
+
             });
-            if (response == 200) {
+            if (success) {
                 toast.info('Se inicio correctamente la tarea', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
-                const expedientes = await getTareasUser({ token: jwt });
-                setExpedientes(expedientes);
             } else {
-                toast.error('Algo mal sucedió al iniciar la tarea:');
+                toast.error(`Algo mal sucedió al iniciar la tarea: ${error}`);
+
             }
         } catch (error) {
             console.error(error);
@@ -74,25 +122,24 @@ const Tarea = () => {
         }
     };
 
-
     const handleCompleteTarea = async (id) => {
         setIsLoading(true);
         try {
-            const response = await CompleteTarea({
+            const {success, error} = await completeTarea({
                 id: id,
-                token: jwt
+                setOriginalExpedientes
+
             });
-            if (response == 200) {
+            if (success) {
                 toast.info('Se completo correctamente la tarea', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
-                const expedientes = await getTareasUser({ token: jwt });
-                setExpedientes(expedientes);
             } else {
-                toast.error('Algo mal sucedió al completar la tarea:');
+                toast.error(`Algo mal sucedió al completar la tarea: ${error}`);
+
             }
         } catch (error) {
             console.error(error);
@@ -100,11 +147,6 @@ const Tarea = () => {
         } finally {
             setIsLoading(false);
         }
-    };
-    
-    const handleChangeRowsPerPage = (event) => {
-        setItemsPerPage(+event.target.value);
-        setCurrentPage(1);
     };
 
 
@@ -133,36 +175,22 @@ const Tarea = () => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
-        setIsManualSearch(type === 'Numero' && type === "Abogado");
+        setIsManualSearch(type === 'Numero');
 
-        let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-        setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+       
+        setExpedientes(originalExpedientes);
     };
 
 
     const searcherExpediente = async (searchTerm) => {
+        setisLoadingExpedientes(true);
         const lowercaseSearchTerm = searchTerm.toLowerCase();
         let filteredExpedientes = [];
         try {
-            if (searchType === "Abogado") {
-                try {
-                    const expedientes = await getTareaByAbogado({ username: lowercaseSearchTerm, token: jwt });
-          
-                    if (expedientes && expedientes.length > 0) {
-                 
-                        filteredExpedientes.push(...expedientes); 
-                    } else {
-                       
-                        filteredExpedientes = [];
-                    }
-                } catch (error) {
-                    console.error("Error fetching expediente by abogado:", error);
-                    filteredExpedientes = [];
-                }
-            } else if (searchType === 'Numero') {
+           if (searchType === 'Numero') {
                 try {
                     const expediente = await getTareaByExpediente({ numero: lowercaseSearchTerm, token: jwt });
+                    console.log("Tareas", expediente)
                     if (expediente) {
                         filteredExpedientes.push(expediente[0]);
                     } else {
@@ -177,9 +205,8 @@ const Tarea = () => {
                 }
             }
     
-            setCurrentExpedientes(filteredExpedientes);
-            setTotalPages(Math.ceil(filteredExpedientes.length / itemsPerPage));
-            setCurrentPage(1);
+            setExpedientes(filteredExpedientes);
+            setisLoadingExpedientes(false);
         } catch (error) {
             console.error("Something went wrong in searcherExpediente:", error);
         }
@@ -198,16 +225,9 @@ const Tarea = () => {
             setIsManualSearch(true);
         }
 
-        if (searchType === "Abogado" && searchTerm.trim() !== '') {
-            setIsManualSearch(true);
-        }
-
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-
-            let reversedExpedientes = expedientes ? [...expedientes].reverse() : [];
-            setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
-            setCurrentExpedientes(reversedExpedientes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+            setExpedientes(originalExpedientes);
         }
     }
 
@@ -220,7 +240,7 @@ const Tarea = () => {
 
 
 
-    if (loading) return (
+    if (loading || isLoadingExpedientes) return (
         <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
@@ -265,12 +285,6 @@ const Tarea = () => {
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
                                                 Numero
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
-                                            Abogado
-                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
 
@@ -352,13 +366,7 @@ const Tarea = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
-                                                Abogado
-                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-
+                                
                                     </ul>
                                 </div>
                             )}
@@ -408,7 +416,7 @@ const Tarea = () => {
 
 
          
-{currentExpedientes.length === 0 ? (
+{expedientes.length === 0 ? (
                 <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
                     <div className="flex flex-col items-center justify-center">
                         <div className="text-gray-400 mb-2">
@@ -430,6 +438,8 @@ const Tarea = () => {
 
                 <TableConditional
                     currentExpedientes={currentExpedientes}
+                    expedientes={expedientes}
+                    itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     handleChangePage={handleChangePage}
@@ -438,6 +448,7 @@ const Tarea = () => {
                     handleInitTarea={handleInitTarea}
                     isLoading={isLoading}
                     handleCompleteTarea={handleCompleteTarea}
+                    handleDownload={handleDownload}
                 />
             )}
         </div>

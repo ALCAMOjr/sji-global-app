@@ -45,6 +45,7 @@ const Expedientes = () => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
         }
+       
         setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;

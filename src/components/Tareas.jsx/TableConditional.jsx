@@ -4,6 +4,8 @@ import TableTarea from './TableTareas.jsx';
 
 const TableConditional = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
@@ -11,7 +13,8 @@ const TableConditional = ({
     onPageChange,
     handleInitTarea,
     isLoading,
-    handleCompleteTarea
+    handleCompleteTarea,
+    handleDownload
 }) => {
     const [shouldRenderTable, setShouldRenderTable] = useState(true); // Set to true by default
 
@@ -33,6 +36,8 @@ const TableConditional = ({
     return shouldRenderTable ? (
         <TableTarea
             currentExpedientes={currentExpedientes}
+            expedientes={expedientes}
+            itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
@@ -40,10 +45,13 @@ const TableConditional = ({
             handleInitTarea={handleInitTarea}
             isLoading={isLoading}
             handleCompleteTarea={handleCompleteTarea}
+            handleDownload={handleDownload}
         />
     ) : (
         <Cards
             currentExpedientes={currentExpedientes}
+            expedientes={expedientes}
+            itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             totalPages={totalPages}
             handleChangePage={handleChangePage}
@@ -52,6 +60,7 @@ const TableConditional = ({
             handleInitTarea={handleInitTarea}
             isLoading={isLoading}
             handleCompleteTarea={handleCompleteTarea}
+            handleDownload={handleDownload}
         />
     );
 };

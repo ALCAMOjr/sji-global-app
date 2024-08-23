@@ -173,7 +173,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                             : "Abogado"}
                                             </TableCell>
                                             <TableCell>Status</TableCell>
-                                            <TableCell>Acciones</TableCell>
+                                            <TableCell align='center'>Acciones</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>

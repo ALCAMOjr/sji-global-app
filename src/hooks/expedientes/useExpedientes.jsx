@@ -3,6 +3,8 @@ import Context from '../../context/abogados.context.jsx';
 import createExpediente from '../../views/expedientes/createExpediente.js';
 import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
 import { updateExpedientes, deleteExpedientes, updateAllExpedientes } from '../../views/expedientes/optional.js';
+import getPdf from '../../views/expedientes/getPdf.js';
+import getFilename from '../../views/expedientes/getFilename.js';
 
 export default function useExpedientes() {
     const { jwt } = useContext(Context);
@@ -105,7 +107,62 @@ const UpdateAllExpedientes = useCallback(async (setOriginalExpedientes) => {
             }
         }
     }, [jwt]);
+
+
+    const savePdfs = useCallback(async ({ url, fecha }) => {
+        try {
+            const response = await getPdf({ url, fecha, token: jwt });
+            if (response.pdfPath) {
+                const fileName = response.pdfPath.split('/').pop();
+                return { success: true, fileName };
+            } else {
+                return { success: false, error: 'Error inesperado, PDF no encontrado.' };
+            }
     
-    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes, setExpedientes };
+        } catch (error) {
+            if (error.response) {
+                const errorMessage = error.response.data.error;
+                
+                if (error.response.status === 404 && errorMessage === 'PDF not found.') {
+                    return { success: false, error: 'PDF no encontrado.' };
+                } else if (error.response.status === 500 && errorMessage === 'Scraping failed for the provided URL.') {
+                    return { success: false, error: 'PDF no encontrado.' };
+                }
+            }
+            console.error(error);
+            return { success: false, error: 'Error al obtener el PDF.' };
+        }
+    }, [jwt]);
+    
+
+    const fetchFilename = useCallback(async (filename) => {
+        try {
+            const response = await getFilename({ filename, token: jwt });
+    
+            if (response) {
+                return { success: true, data: response };
+            } else {
+                return { success: false, error: 'Error inesperado, archivo no encontrado.' };
+            }
+    
+        } catch (error) {
+            if (error.response) {
+                const errorMessage = error.response.data.error;
+    
+                if (error.response.status === 404 && errorMessage === 'PDF not found.') {
+                    return { success: false, error: 'PDF no encontrado.' };
+                }
+            }
+    
+            console.error(error);
+            return { success: false, error: 'Error al obtener el archivo PDF.' };
+        }
+    }, [jwt]);
+    
+
+ 
+    
+    
+    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes, setExpedientes, savePdfs, fetchFilename };
     
 }

@@ -1,5 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, Fragment, useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -16,17 +15,25 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TablePagination from '@mui/material/TablePagination';
 import copiaricon from "../../assets/copiaricon.png"
 import { Spinner } from "@nextui-org/react";
+
+
+
 const TableTarea = ({
     currentExpedientes,
+    expedientes,
+    itemsPerPage,
     currentPage,
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
     handleInitTarea,
     isLoading,
-    handleCompleteTarea
+    handleCompleteTarea,
+    handleDownload
 }) => {
 
+
+    console.log(expedientes)
 
 
     return (
@@ -62,6 +69,7 @@ const TableTarea = ({
                                 handleInitTarea={handleInitTarea}
                                 isLoading={isLoading}
                                 handleCompleteTarea={handleCompleteTarea}
+                                handleDownload={handleDownload}
 
                             />
                         ))}
@@ -71,12 +79,22 @@ const TableTarea = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={currentExpedientes.length}
-                rowsPerPage={totalPages}
-                page={currentPage}
+                count={expedientes.length}
+                rowsPerPage={itemsPerPage}
+                page={currentPage - 1}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
+                slotProps={{
+                    actions: {
+                        previousButton: {
+                            disabled: currentPage === 1,
+                        },
+                        nextButton: {
+                            disabled: currentPage >= totalPages,
+                        },
+                    },
+                }}
             />
         </div>
     );
@@ -86,11 +104,14 @@ const Row = ({
     expediente,
     handleInitTarea,
     isLoading,
-    handleCompleteTarea
-
+    handleCompleteTarea,
+    handleDownload
 }) => {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [nestedOpen, setNestedOpen] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+    const [downloadingDetails, setDownloadingDetails] = useState({});
+
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -103,6 +124,11 @@ const Row = ({
             });
     };
 
+    const handleDownloadLoading = async (url, fecha, id) => {
+        setDownloadingDetails(prevState => ({ ...prevState, [id]: true }));
+        await handleDownload(url, fecha);
+        setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
+    };
 
     return (
         <Fragment>
@@ -138,41 +164,41 @@ const Row = ({
                     {expediente.url}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
-
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
-                <TableRow>
-                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                        <Collapse in={open} timeout="auto" unmountOnExit>
-                            <Box sx={{ margin: 1 }}>
-                                <Typography variant="h6" gutterBottom component="div">
-                                    Tarea del Espediente
-                                </Typography>
-                                <Table size="small" aria-label="details">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Tarea</TableCell>
-                                            <TableCell>Fecha de Entrega</TableCell>
-                                            <TableCell>Observaciones</TableCell>
-                                            <TableCell>Status</TableCell>
-
-
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {expediente.tareas.map((tarea, idx) => (
-                                            tarea && (
-                                                <TableRow key={idx}>
-                                                    <TableCell className="text-xs">{tarea.tarea}</TableCell>
-                                                    <TableCell className="text-xs">  {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric'
-                                                    })}</TableCell>
-                                                    <TableCell className="text-xs">{tarea.observaciones}</TableCell>
-                                                    <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
-                                                    <TableCell align='center'>
-                                                    {tarea.estado_tarea === 'Asignada' && (
+                <Fragment>
+                    <TableRow>
+                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                            <Collapse in={open} timeout="auto" unmountOnExit>
+                                <Box sx={{ margin: 1 }}>
+                                    <Typography variant="h6" gutterBottom component="div">
+                                        Tarea del Espediente
+                                    </Typography>
+                                    <Table size="small" aria-label="details">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Tarea</TableCell>
+                                                <TableCell>Fecha de Entrega</TableCell>
+                                                <TableCell>Observaciones</TableCell>
+                                                <TableCell>Status</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {expediente.tareas.map((tarea, idx) => (
+                                                tarea && (
+                                                    <TableRow key={idx}>
+                                                        <TableCell className="text-xs">{tarea.tarea}</TableCell>
+                                                        <TableCell className="text-xs">
+                                                            {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
+                                                                day: '2-digit',
+                                                                month: '2-digit',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </TableCell>
+                                                        <TableCell className="text-xs">{tarea.observaciones}</TableCell>
+                                                        <TableCell className="text-xs">{tarea.estado_tarea}</TableCell>
+                                                        <TableCell align="center">
+                                                            {tarea.estado_tarea === 'Asignada' && (
                                                                 <button
                                                                     onClick={() => handleInitTarea(tarea.tareaId)}
                                                                     type="button"
@@ -183,28 +209,86 @@ const Row = ({
                                                             )}
                                                             {tarea.estado_tarea === 'Iniciada' && (
                                                                 <button
-                                                                onClick={() => handleCompleteTarea(tarea.tareaId)}
+                                                                    onClick={() => handleCompleteTarea(tarea.tareaId)}
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                   {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
-                                                             
+                                                                    {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
                                                                 </button>
                                                             )}
-                                                        
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Box>
-                        </Collapse>
-                    </TableCell>
-                </TableRow>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            ))}
+
+                                            <TableRow>
+                                                <TableCell colSpan={9} align="center">
+                                                    <IconButton
+                                                        aria-label="expand nested row"
+                                                        size="small"
+                                                        onClick={() => setNestedOpen(!nestedOpen)}
+                                                    >
+                                                        {nestedOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                                                    <Collapse in={nestedOpen} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <Typography variant="h6" gutterBottom component="div">
+                                                                Detalles
+                                                            </Typography>
+                                                            <Table size="small" aria-label="details">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Descarga</TableCell>
+                                                                        <TableCell>Fecha</TableCell>
+                                                                        <TableCell>Etapa</TableCell>
+                                                                        <TableCell>Termino</TableCell>
+                                                                        <TableCell>Notificación</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {expediente.details.map((detalle, idx) => (
+                                                                        detalle && (
+                                                                            <TableRow key={idx}>
+                                                                                <TableCell align="left">
+                                                                                    <TableCell align="left">
+                                                                                        <button
+                                                                                            onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
+                                                                                            type="button"
+                                                                                            className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                                                        >
+                                                                                            {downloadingDetails[detalle.id] ? <Spinner size='sm' color="default" /> : 'PDF'}
+                                                                                        </button>
+                                                                                    </TableCell>
+
+                                                                                </TableCell>
+                                                                                <TableCell className="text-xs truncate">{detalle.fecha}</TableCell>
+                                                                                <TableCell className="text-xs truncate">{detalle.etapa}</TableCell>
+                                                                                <TableCell className="text-xs truncate">{detalle.termino}</TableCell>
+                                                                                <TableCell className="text-xs truncate">{detalle.notificacion}</TableCell>
+                                                                            </TableRow>
+                                                                        )
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </Box>
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </Box>
+                            </Collapse>
+                        </TableCell>
+                    </TableRow>
+                </Fragment>
             )}
         </Fragment>
     );
 };
+
 
 export default TableTarea;

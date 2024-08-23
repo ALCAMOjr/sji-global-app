@@ -5,6 +5,8 @@ const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/ta
 
 export default async function StartTarea({ id, token }) {
 
+    console.log("ID", id)
+
 
     try {
         const config = {
@@ -21,7 +23,9 @@ export default async function StartTarea({ id, token }) {
 
         }
 
+        console.log(response.status)
         return response.status;
+
 
     } catch (error) {
         throw error;

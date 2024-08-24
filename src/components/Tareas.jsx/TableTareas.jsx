@@ -27,13 +27,12 @@ const TableTarea = ({
     handleChangePage,
     handleChangeRowsPerPage,
     handleInitTarea,
-    isLoading,
     handleCompleteTarea,
-    handleDownload
+    handleDownload,
+    handleUpdate
 }) => {
 
 
-    console.log(expedientes)
 
 
     return (
@@ -56,7 +55,12 @@ const TableTarea = ({
                                 <span className='text-sm font-bold text-black'>Expediente</span>
                             </TableCell>
 
-
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Juzgado</span>
+                            </TableCell>
+                            <TableCell align='left'>
+                                <span className='text-sm font-bold text-black'>Acciones</span>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -67,9 +71,9 @@ const TableTarea = ({
                                 expediente={expediente}
                                 index={index}
                                 handleInitTarea={handleInitTarea}
-                                isLoading={isLoading}
                                 handleCompleteTarea={handleCompleteTarea}
                                 handleDownload={handleDownload}
+                                handleUpdate={handleUpdate}
 
                             />
                         ))}
@@ -103,15 +107,18 @@ const TableTarea = ({
 const Row = ({
     expediente,
     handleInitTarea,
-    isLoading,
     handleCompleteTarea,
-    handleDownload
+    handleDownload,
+    handleUpdate
 }) => {
     const [open, setOpen] = useState(false);
     const [nestedOpen, setNestedOpen] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloadingDetails, setDownloadingDetails] = useState({});
-
+    const [UpgradeLoading, setUpgradeLoading] = useState({});
+    const [TaskStartLoading, setTaskStartLoading] = useState({});
+    const [TaskCompleteLoading, setTaskCompleteLoading] = useState({});
+    
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -129,6 +136,25 @@ const Row = ({
         await handleDownload(url, fecha);
         setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
     };
+
+    const handleUpgradeLoading = async (numero, nombre, url, id) => {
+        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
+        await handleUpdate(numero, nombre, url);
+        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
+    };
+
+    const handleTaskStartLoading = async (id) => {
+        setTaskStartLoading(prevState => ({ ...prevState, [id]: true }));
+        await handleInitTarea(id);
+        setTaskStartLoading(prevState => ({ ...prevState, [id]: false }));
+    };
+
+    const handleTaskCompleteLoading = async (id) => {
+        setTaskCompleteLoading(prevState => ({ ...prevState, [id]: true }));
+        await handleCompleteTarea(id);
+        setTaskCompleteLoading(prevState => ({ ...prevState, [id]: false }));
+    };
+
 
     return (
         <Fragment>
@@ -164,6 +190,16 @@ const Row = ({
                     {expediente.url}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
+                <TableCell className="max-w-xs">{expediente.juzgado}</TableCell>
+                <TableCell align="left">
+                    <button
+                        onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero )}
+                        type="button"
+                        className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                    >
+                        {UpgradeLoading[expediente.numero] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
+                    </button>
+                </TableCell>
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
                 <Fragment>
@@ -181,6 +217,7 @@ const Row = ({
                                                 <TableCell>Fecha de Entrega</TableCell>
                                                 <TableCell>Observaciones</TableCell>
                                                 <TableCell>Status</TableCell>
+                                                <TableCell align='center'>Acciones</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -200,20 +237,20 @@ const Row = ({
                                                         <TableCell align="center">
                                                             {tarea.estado_tarea === 'Asignada' && (
                                                                 <button
-                                                                    onClick={() => handleInitTarea(tarea.tareaId)}
+                                                                    onClick={() => handleTaskStartLoading(tarea.tareaId)}
                                                                     type="button"
                                                                     className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {isLoading ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                     {TaskStartLoading[tarea.tareaId]  ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
                                                                 </button>
                                                             )}
                                                             {tarea.estado_tarea === 'Iniciada' && (
                                                                 <button
-                                                                    onClick={() => handleCompleteTarea(tarea.tareaId)}
+                                                                    onClick={() => handleTaskCompleteLoading(tarea.tareaId)}
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                                     {TaskCompleteLoading[tarea.tareaId] ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
                                                                 </button>
                                                             )}
                                                         </TableCell>
@@ -247,13 +284,14 @@ const Row = ({
                                                                         <TableCell>Etapa</TableCell>
                                                                         <TableCell>Termino</TableCell>
                                                                         <TableCell>Notificación</TableCell>
+
                                                                     </TableRow>
                                                                 </TableHead>
                                                                 <TableBody>
-                                                                    {expediente.details.map((detalle, idx) => (
-                                                                        detalle && (
-                                                                            <TableRow key={idx}>
-                                                                                <TableCell align="left">
+                                                                    {expediente.details.length > 1 ? (
+                                                                        expediente.details.map((detalle, idx) => (
+                                                                            detalle && (
+                                                                                <TableRow key={idx}>
                                                                                     <TableCell align="left">
                                                                                         <button
                                                                                             onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
@@ -263,15 +301,18 @@ const Row = ({
                                                                                             {downloadingDetails[detalle.id] ? <Spinner size='sm' color="default" /> : 'PDF'}
                                                                                         </button>
                                                                                     </TableCell>
-
-                                                                                </TableCell>
-                                                                                <TableCell className="text-xs truncate">{detalle.fecha}</TableCell>
-                                                                                <TableCell className="text-xs truncate">{detalle.etapa}</TableCell>
-                                                                                <TableCell className="text-xs truncate">{detalle.termino}</TableCell>
-                                                                                <TableCell className="text-xs truncate">{detalle.notificacion}</TableCell>
-                                                                            </TableRow>
-                                                                        )
-                                                                    ))}
+                                                                                    <TableCell className="text-xs truncate">{detalle.fecha}</TableCell>
+                                                                                    <TableCell className="text-xs truncate">{detalle.etapa}</TableCell>
+                                                                                    <TableCell className="text-xs truncate">{detalle.termino}</TableCell>
+                                                                                    <TableCell className="text-xs truncate">{detalle.notificacion}</TableCell>
+                                                                                </TableRow>
+                                                                            )
+                                                                        ))
+                                                                    ) : (
+                                                                        <TableRow>
+                                                                            <TableCell colSpan={5} align="center">No hay detalles disponibles</TableCell>
+                                                                        </TableRow>
+                                                                    )}
                                                                 </TableBody>
                                                             </Table>
                                                         </Box>

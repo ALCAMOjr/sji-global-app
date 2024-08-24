@@ -6,13 +6,14 @@ import check from "../../assets/check.png";
 import Error from './Error.jsx';
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
-import getTareaByExpediente from '../../views/tareas/getTareaByExpediente.js';
+import getTareasUserByExpediente from '../../views/tareas/getTareasUserByExpediente.js';
 import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
 import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
+import getTareasUser from '../../views/tareas/getTareasUser.js';
 
 const Tarea = () => {
-
+    const { updateExpediente } = useExpedientes();
     const { expedientes, loading, error, setExpedientes, startTarea, completeTarea } = useTareas();
     const { savePdfs, fetchFilename } = useExpedientes();
     const [itemsPerPage, setItemsPerPage] = useState(200);
@@ -29,6 +30,8 @@ const Tarea = () => {
     const [isManualSearch, setIsManualSearch] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
+    const [openMenuIndex, setOpenMenuIndex] = useState(null);
+    const [isOpen, setIsOpen] = useState([]);
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -48,6 +51,16 @@ const Tarea = () => {
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
         setCurrentPage(1);
+    };
+
+    const handleMenuToggle = (index) => {
+        setOpenMenuIndex(index === openMenuIndex ? null : index);
+
+        setIsOpen(prevState => {
+            const newState = [...prevState];
+            newState[index] = !newState[index];
+            return newState;
+        });
     };
 
 
@@ -92,6 +105,50 @@ const Tarea = () => {
     };
     
     
+    const handleUpdate = async (numero, nombre, url) => {
+        setIsLoading(true);
+        if (!url) {
+            toast.error('La URL no existe para este expediente.');
+            setIsLoading(false);
+            return;
+        }
+
+        console.log(numero, nombre, url)
+        try {
+            const { success, error } = await updateExpediente({
+                numero: numero,
+                nombre: nombre,
+                url: url,
+                setOriginalExpedientes
+
+            });
+
+            
+
+            if (success) {
+                toast.info('Se actualizó correctamente el Expediente', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+
+            const expedientes = await getTareasUser({token: jwt});
+            setExpedientes(expedientes)
+            } else {
+                if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
+                    toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
+                } else {
+                    toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al actualizar el Expediente');
+        } finally {
+           setIsLoading(false);
+        }
+    };
     
 
     
@@ -189,7 +246,7 @@ const Tarea = () => {
         try {
            if (searchType === 'Numero') {
                 try {
-                    const expediente = await getTareaByExpediente({ numero: lowercaseSearchTerm, token: jwt });
+                    const expediente = await getTareasUserByExpediente({ numero: lowercaseSearchTerm, token: jwt });
                     console.log("Tareas", expediente)
                     if (expediente) {
                         filteredExpedientes.push(expediente[0]);
@@ -449,6 +506,12 @@ const Tarea = () => {
                     isLoading={isLoading}
                     handleCompleteTarea={handleCompleteTarea}
                     handleDownload={handleDownload}
+                    setOpenMenuIndex={setOpenMenuIndex}
+                    setIsOpen={setIsOpen}
+                    openMenuIndex={openMenuIndex}
+                    isOpen={isOpen}
+                    handleMenuToggle={handleMenuToggle}
+                    handleUpdate={handleUpdate}
                 />
             )}
         </div>

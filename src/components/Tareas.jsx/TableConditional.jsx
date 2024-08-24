@@ -14,9 +14,15 @@ const TableConditional = ({
     handleInitTarea,
     isLoading,
     handleCompleteTarea,
-    handleDownload
+    handleDownload,
+    setOpenMenuIndex,
+    setIsOpen,
+    openMenuIndex,
+    isOpen,
+    handleMenuToggle,
+    handleUpdate
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(true); // Set to true by default
+    const [shouldRenderTable, setShouldRenderTable] = useState(true); 
 
     useEffect(() => {
         const handleResize = () => {
@@ -46,6 +52,12 @@ const TableConditional = ({
             isLoading={isLoading}
             handleCompleteTarea={handleCompleteTarea}
             handleDownload={handleDownload}
+            setOpenMenuIndex={setOpenMenuIndex}
+            setIsOpen={setIsOpen}
+            openMenuIndex={openMenuIndex}
+            isOpen={isOpen}
+            handleMenuToggle={handleMenuToggle}
+            handleUpdate={handleUpdate}
         />
     ) : (
         <Cards
@@ -61,6 +73,12 @@ const TableConditional = ({
             isLoading={isLoading}
             handleCompleteTarea={handleCompleteTarea}
             handleDownload={handleDownload}
+            setOpenMenuIndex={setOpenMenuIndex}
+            setIsOpen={setIsOpen}
+            openMenuIndex={openMenuIndex}
+            isOpen={isOpen}
+            handleMenuToggle={handleMenuToggle}
+            handleUpdate={handleUpdate}
         />
     );
 };

@@ -1,5 +1,4 @@
 import React, { useEffect, Fragment, useState } from 'react';
-import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -30,7 +29,6 @@ const TableExpedientes = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
-    menuDirection,
     setOpenMenuIndex,
     setIsOpen
 }) => {
@@ -103,7 +101,6 @@ const TableExpedientes = ({
                                 openMenuIndex={openMenuIndex}
                                 openModalUpdate={openModalUpdate}
                                 openModalDelete={openModalDelete}
-                                menuDirection={menuDirection}
 
                             />
                         ))}
@@ -113,9 +110,9 @@ const TableExpedientes = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={expedientes.length}  
-                rowsPerPage={itemsPerPage} 
-                page={currentPage - 1}  
+                count={expedientes.length}
+                rowsPerPage={itemsPerPage}
+                page={currentPage - 1}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
@@ -143,7 +140,6 @@ const Row = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
-    menuDirection,
 }) => {
     const [open, setOpen] = React.useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -216,7 +212,7 @@ const Row = ({
                             zIndex: 9999,
                             marginTop: index === 0 || index === currentExpedientes.length - 1 ? -120 : 0,
                             marginRight: index === 0 || index === currentExpedientes.length - 1 ? 90 : 0,
-                                  }}>
+                        }}>
                             <ul>
                                 <li className="flex items-center">
                                     <GrUpdate className="inline-block ml-8 w-4 h-4" />
@@ -231,24 +227,25 @@ const Row = ({
                     )}
                 </TableCell>
             </TableRow>
-                            <TableRow>
-                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                        <Collapse in={open} timeout="auto" unmountOnExit>
-                            <Box sx={{ margin: 1 }}>
-                                <Typography variant="h6" gutterBottom component="div">
-                                    Detalles
-                                </Typography>
-                                <Table size="small" aria-label="details">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Fecha</TableCell>
-                                            <TableCell>Etapa</TableCell>
-                                            <TableCell>Termino</TableCell>
-                                            <TableCell>Notificación</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {expediente.detalles.map((detalle, idx) => (
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box sx={{ margin: 1 }}>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Detalles
+                            </Typography>
+                            <Table size="small" aria-label="details">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Fecha</TableCell>
+                                        <TableCell>Etapa</TableCell>
+                                        <TableCell>Termino</TableCell>
+                                        <TableCell>Notificación</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {expediente.detalles.length > 1 ? (
+                                        expediente.detalles.map((detalle, idx) => (
                                             detalle && (
                                                 <TableRow key={idx}>
                                                     <TableCell className="text-xs">{detalle.fecha}</TableCell>
@@ -257,14 +254,20 @@ const Row = ({
                                                     <TableCell className="text-xs">{detalle.notificacion}</TableCell>
                                                 </TableRow>
                                             )
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </Box>
-                        </Collapse>
-                    </TableCell>
-                </TableRow>
-       
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={3} align="center">No hay detalles disponibles</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+
+                            </Table>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+
         </Fragment>
     );
 };

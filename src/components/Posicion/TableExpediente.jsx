@@ -1,16 +1,57 @@
 import React, { useEffect, Fragment, useState, useContext } from 'react';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import HasTarea from '../../views/tareas/HasTarea';
 import Context from '../../context/abogados.context';
 import flecha_derecha from "../../assets/flecha_derecha.png";
 import flecha_izquierda from "../../assets/flecha_izquierda.png";
+import { Spinner } from "@nextui-org/react";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+
+const parseDate = (dateStr) => {
+    if (!dateStr) {
+        return;
+    }
+
+    const monthMap = {
+        'ene.': '01',
+        'feb.': '02',
+        'mar.': '03',
+        'abr.': '04',
+        'may.': '05',
+        'jun.': '06',
+        'jul.': '07',
+        'ago.': '08',
+        'sep.': '09',
+        'oct.': '10',
+        'nov.': '11',
+        'dic.': '12'
+    };
+
+    const [day, month, year] = dateStr.split('/');
+    const monthNum = monthMap[month.toLowerCase()] || '01';
+    return new Date(`${year}-${monthNum}-${day}`);
+};
+
+const calculateDaysDifference = (dateStr) => {
+    const date = parseDate(dateStr);
+    const today = new Date();
+    const diffTime = Math.abs(today - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+};
 
 const TableExpedientes = ({
     currentExpedientes,
@@ -20,7 +61,9 @@ const TableExpedientes = ({
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
-    openModalTarea
+    openModalTarea,
+    handleDownload,
+    handleUpdate
 }) => {
 
 
@@ -30,6 +73,7 @@ const TableExpedientes = ({
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
+                        <TableCell />
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Numero</span>
                             </TableCell>
@@ -65,6 +109,9 @@ const TableExpedientes = ({
                             <TableCell align="center" className=''>
                                 <span className='text-xs font-bold text-black'>Tareas</span>
                             </TableCell>
+                            <TableCell align="center" className=''>
+                                <span className='text-xs font-bold text-black'>Acciones</span>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -73,6 +120,9 @@ const TableExpedientes = ({
                                 key={expediente.id}
                                 expediente={expediente}
                                 openModalTarea={openModalTarea}
+                                handleDownload={handleDownload}
+                                handleUpdate={handleUpdate}
+
                             />
                         ))}
                     </TableBody>
@@ -82,9 +132,9 @@ const TableExpedientes = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={expedientes.length}  
-                rowsPerPage={itemsPerPage} 
-                page={currentPage - 1}  
+                count={expedientes.length}
+                rowsPerPage={itemsPerPage}
+                page={currentPage - 1}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
@@ -102,46 +152,30 @@ const TableExpedientes = ({
         </div>
     );
 }
-const parseDate = (dateStr) => {
-    if (!dateStr) {
-        return;
-    }
-
-    const monthMap = {
-        'ene.': '01',
-        'feb.': '02',
-        'mar.': '03',
-        'abr.': '04',
-        'may.': '05',
-        'jun.': '06',
-        'jul.': '07',
-        'ago.': '08',
-        'sep.': '09',
-        'oct.': '10',
-        'nov.': '11',
-        'dic.': '12'
-    };
-
-    const [day, month, year] = dateStr.split('/');
-    const monthNum = monthMap[month.toLowerCase()] || '01';
-    return new Date(`${year}-${monthNum}-${day}`);
-};
-
-const calculateDaysDifference = (dateStr) => {
-    const date = parseDate(dateStr);
-    const today = new Date();
-    const diffTime = Math.abs(today - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-};
 
 const Row = ({
     expediente,
-    openModalTarea
+    openModalTarea,
+    handleDownload,
+    handleUpdate
 }) => {
-
+    const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [hasTarea, setHasTarea] = useState(false);
     const { jwt } = useContext(Context);
+    const [downloadingDetails, setDownloadingDetails] = useState({});
+    const [open, setOpen] = useState(false);
+
+    const handleDownloadLoading = async (url, fecha, id) => {
+        setDownloadingDetails(prevState => ({ ...prevState, [id]: true }));
+        await handleDownload(url, fecha);
+        setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
+    };
+
+    const handleUpgradeLoading = async (numero, nombre, url, id) => {
+        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
+        await handleUpdate(numero, nombre, url);
+        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
+    };
 
     useEffect(() => {
         const fetchHasTarea = async () => {
@@ -225,7 +259,16 @@ const Row = ({
 
     return (
         <Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+         <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell>
+                    <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.num_credito}</span>
                 </TableCell>
@@ -280,7 +323,68 @@ const Row = ({
                         </button>
                     )}
                 </TableCell>
+                <TableCell align="left">
+                    <button
+                        onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
+                        type="button"
+                        className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                    >
+                        {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
+                    </button>
+                </TableCell>
             </TableRow>
+
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box sx={{ margin: 1 }}>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Detalles
+                            </Typography>
+                            <Table size="small" aria-label="details">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Descarga</TableCell>
+                                        <TableCell>Fecha</TableCell>
+                                        <TableCell>Etapa</TableCell>
+                                        <TableCell>Termino</TableCell>
+                                        <TableCell>Notificación</TableCell>
+
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {expediente.details.length > 1 ? (
+                                        expediente.details.map((detalle, idx) => (
+                                            detalle && (
+                                                <TableRow key={idx}>
+                                                    <TableCell align="left">
+                                                        <button
+                                                            onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
+                                                            type="button"
+                                                            className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                                        >
+                                                            {downloadingDetails[detalle.id] ? <Spinner size='sm' color="default" /> : 'PDF'}
+                                                        </button>
+                                                    </TableCell>
+                                                    <TableCell className="text-xs truncate">{detalle.fecha}</TableCell>
+                                                    <TableCell className="text-xs truncate">{detalle.etapa}</TableCell>
+                                                    <TableCell className="text-xs truncate">{detalle.termino}</TableCell>
+                                                    <TableCell className="text-xs truncate">{detalle.notificacion}</TableCell>
+                                                </TableRow>
+                                            )
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No hay detalles disponibles</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+
         </Fragment>
     );
 }

@@ -15,9 +15,12 @@ import useAgenda from '../../hooks/tareas/useAgenda.jsx';
 import useExpedientesSial from "../../hooks/expedientesial/useExpedienteSial.jsx";
 import getPositionByEtapa from '../../views/position/getPositionByEtapa.js';
 import getPositionFiltros from '../../views/position/getPositionFiltros.js';
+import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
 import { filtros } from "../../utils/Filtros.js"
+
 const Position = () => {
     const { registerNewTarea } = useAgenda()
+    const { updateExpediente, savePdfs, fetchFilename } = useExpedientes();
     const { etapas, loadingEtapas, errorEtapas } = useExpedientesSial();
     const { expedientes, loading, error, setExpedientes } = usePosition();
     const { abogados } = useAbogados()
@@ -38,6 +41,8 @@ const Position = () => {
     const { jwt } = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
+    const [openMenuIndex, setOpenMenuIndex] = useState(null);
+    const [isOpen, setIsOpen] = useState([]);
     const [formData, setFormData] = useState({
         tarea: '',
         fecha_entrega: '',
@@ -46,6 +51,15 @@ const Position = () => {
     });
 
 
+    const handleMenuToggle = (index) => {
+        setOpenMenuIndex(index === openMenuIndex ? null : index);
+
+        setIsOpen(prevState => {
+            const newState = [...prevState];
+            newState[index] = !newState[index];
+            return newState;
+        });
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -119,6 +133,92 @@ const Position = () => {
             closeModalTarea();
         }
     };
+
+
+
+    
+    const handleUpdate = async (numero, nombre, url) => {
+        setIsLoading(true);
+        if (!url) {
+            toast.error('La URL no existe para este expediente.');
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const { success, error } = await updateExpediente({
+                numero: numero,
+                nombre: nombre,
+                url: url,
+                setOriginalExpedientes
+
+            });
+
+            
+
+            if (success) {
+                toast.info('Se actualizó correctamente el Expediente', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    }
+                });
+
+                const expedientes = await getPositionExpedientes({ token: jwt })
+                setExpedientes(expedientes)
+            } else {
+                if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
+                    toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
+                } else {
+                    toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al actualizar el Expediente');
+        } finally {
+           setIsLoading(false);
+        }
+    };
+
+    const handleDownload = async (url, fecha) => {
+        try {
+            const { success: saveSuccess, fileName, error: saveError } = await savePdfs({ url, fecha });
+            if (!saveSuccess) {
+                toast.error(`Error al guardar el PDF: ${saveError}`);
+                return;
+            }
+    
+            console.log("Filename", fileName);
+            const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
+            if (!fetchSuccess) {
+                toast.error(`Error al obtener el archivo PDF: ${fetchError}`);
+                return;
+            }
+    
+            
+            const downloadUrl = URL.createObjectURL(data);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileName; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(downloadUrl)
+    
+            toast.info('PDF descargado con éxito.', {
+                icon: () => <img src={check} alt="Success Icon" />,
+                progressStyle: {
+                    background: '#1D4ED8',
+                },
+            });
+        } catch (error) {
+            console.error('Error al descargar el PDF:', error);
+            toast.error('Error al descargar el PDF.');
+        }
+    };
+    
+
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -697,7 +797,13 @@ const Position = () => {
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     onPageChange={onPageChange}
                     openModalTarea={openModalTarea}
-
+                    handleDownload={handleDownload}
+                    handleUpdate={handleUpdate}
+                    setOpenMenuIndex={setOpenMenuIndex}
+                    setIsOpen={setIsOpen}
+                    openMenuIndex={openMenuIndex}
+                    isOpen={isOpen}
+                    handleMenuToggle={handleMenuToggle}
 
                 />
             )}

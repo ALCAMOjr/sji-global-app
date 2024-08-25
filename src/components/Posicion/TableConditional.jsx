@@ -11,7 +11,14 @@ const TableConditional = ({
     handleChangePage,
     handleChangeRowsPerPage,
     onPageChange,
-    openModalTarea
+    openModalTarea,
+    handleDownload,
+    handleUpdate,
+    setOpenMenuIndex,
+    setIsOpen,
+    openMenuIndex,
+    isOpen,
+    handleMenuToggle
 }) => {
     const [shouldRenderTable, setShouldRenderTable] = useState(true); // Set to true by default
 
@@ -41,6 +48,13 @@ const TableConditional = ({
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             onPageChange={onPageChange}
             openModalTarea={openModalTarea}
+            handleDownload={handleDownload}
+            handleUpdate={handleUpdate}
+            setOpenMenuIndex={setOpenMenuIndex}
+            setIsOpen={setIsOpen}
+            openMenuIndex={openMenuIndex}
+            isOpen={isOpen}
+            handleMenuToggle={handleMenuToggle}
         />
     ) : (
         <Cards
@@ -53,6 +67,13 @@ const TableConditional = ({
             handleChangeRowsPerPage={handleChangeRowsPerPage}
             onPageChange={onPageChange}
             openModalTarea={openModalTarea}
+            handleDownload={handleDownload}
+            handleUpdate={handleUpdate}
+            setOpenMenuIndex={setOpenMenuIndex}
+            setIsOpen={setIsOpen}
+            openMenuIndex={openMenuIndex}
+            isOpen={isOpen}
+            handleMenuToggle={handleMenuToggle}
         />
     );
 };

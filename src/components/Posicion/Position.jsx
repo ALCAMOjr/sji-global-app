@@ -14,7 +14,8 @@ import getPositionExpedientes from '../../views/position/getPositionExpedientes.
 import useAgenda from '../../hooks/tareas/useAgenda.jsx';
 import useExpedientesSial from "../../hooks/expedientesial/useExpedienteSial.jsx";
 import getPositionByEtapa from '../../views/position/getPositionByEtapa.js';
-
+import getPositionFiltros from '../../views/position/getPositionFiltros.js';
+import { filtros } from "../../utils/Filtros.js"
 const Position = () => {
     const { registerNewTarea } = useAgenda()
     const { etapas, loadingEtapas, errorEtapas } = useExpedientesSial();
@@ -33,7 +34,7 @@ const Position = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
-    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
+    const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const { jwt } = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
@@ -44,7 +45,7 @@ const Position = () => {
         abogado_id: ''
     });
 
-   
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -61,23 +62,23 @@ const Position = () => {
     const handleCreateTarea = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-    
+
         const { tarea, fecha_entrega, observaciones, abogado_id } = formData;
-    
-    
+
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         const selectedDate = new Date(`${fecha_entrega}T00:00:00`);
         selectedDate.setHours(0, 0, 0, 0);
-        
-   
+
+
         if (selectedDate.getTime() < today.getTime()) {
             setFechaError('La fecha no puede estar en el pasado. Debes seleccionar hoy o una fecha futura.');
             setIsLoading(false);
             return;
         }
-        
+
 
         try {
             const { success, error } = await registerNewTarea({
@@ -105,7 +106,7 @@ const Position = () => {
                     toast.error('ID de abogado inválido o el usuario no es un abogado.');
                 } else if (error === 'El numero de expediente es inválido.') {
                     toast.error('El numero de expediente no existe en el tribunal virtual. Por favor crea el expediente en Expediente Tv e intente de nuevo.');
-                    
+
                 } else {
                     toast.error('Algo mal sucedió al crear la tarea: ' + error);
                 }
@@ -128,16 +129,16 @@ const Position = () => {
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage]);
-    
+
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage + 1); 
+        setCurrentPage(newPage + 1);
     };
-    
+
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
         setCurrentPage(1);
     };
-    
+
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
@@ -181,7 +182,7 @@ const Position = () => {
 
 
 
-     const handleSearchInputChange = async (e) => {
+    const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
     
@@ -197,16 +198,28 @@ const Position = () => {
             searcherExpediente(searchTerm);
         }
     
+        if (searchType === 'Filtros') {
+            if (searchTerm.trim() !== '') {
+                try {
+                    const parsedValue = JSON.parse(searchTerm);
+                    searcherExpediente(parsedValue); 
+                } catch (error) {
+                    console.error('Error al parsear el filtro:', error);
+                }
+            }
+        }
+    
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
             setExpedientes(originalExpedientes);
         }
     };
     
+
     const searcherExpediente = async (searchTerm) => {
         let filteredExpedientes = [];
         setisLoadingExpedientes(true);
-    
+
         if (searchType === 'Nombre') {
             const lowercaseSearchTerm = searchTerm.toLowerCase();
             filteredExpedientes = originalExpedientes.filter(expediente =>
@@ -216,7 +229,7 @@ const Position = () => {
             const lowercaseSearchTerm = searchTerm.toLowerCase();
             try {
                 const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
-    
+
                 if (expediente && expediente.length > 0) {
                     filteredExpedientes.push(expediente[0]);
                 } else {
@@ -232,7 +245,27 @@ const Position = () => {
         } else if (searchType === 'Etapa') {
             try {
                 const expedientes = await getPositionByEtapa({ etapa: searchTerm, token: jwt });
-    
+
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
+                } else {
+                    filteredExpedientes = [];
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    filteredExpedientes = [];
+                } else {
+                    console.error("Something went wrong", error);
+                }
+            }
+        } else if (searchType === 'Filtros') {
+            try {
+        
+                const { etapa, termino, notificacion } = searchTerm;
+
+            
+                const expedientes = await getPositionFiltros({ etapa: etapa, termino: termino, notificacion: notificacion, token: jwt });
+        
                 if (expedientes && expedientes.length > 0) {
                     filteredExpedientes = [...expedientes];
                 } else {
@@ -246,11 +279,11 @@ const Position = () => {
                 }
             }
         }
-    
+
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
     };
-    
+
     const handleSearchTypeChange = (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
@@ -422,6 +455,12 @@ const Position = () => {
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
+                                                Mas Filtros
+                                                {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
                                     </ul>
                                 </div>
                             )}
@@ -438,6 +477,21 @@ const Position = () => {
                                         {etapas.map((etapa, index) => (
                                             <option key={index} value={etapa.macroetapa_aprobada}>
                                                 {etapa.macroetapa_aprobada}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : searchType === "Filtros" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="filtros-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                        <option value="">Sin Filtro</option>
+                                        {filtros.map((filtro, index) => (
+                                            <option key={index} value={JSON.stringify(filtro.value)}>
+                                                {filtro.name}
                                             </option>
                                         ))}
                                     </select>
@@ -460,7 +514,7 @@ const Position = () => {
                                 )}
                                 <button
                                     type="button"
-                                    disabled={!isManualSearch && searchType !== "Etapa"}
+                                    disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
                                     className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
                                 >
@@ -482,6 +536,7 @@ const Position = () => {
                                     <span className="sr-only">Buscar</span>
                                 </button>
                             </div>
+
                         </div>
                     </div>
                 ) : (
@@ -523,24 +578,45 @@ const Position = () => {
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
+                                                Mas Filtros
+                                                {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
 
                                     </ul>
                                 </div>
                             )}
-                                   <div className="relative w-full">
+                            <div className="relative w-full">
                                 {searchType === "Etapa" ? (
                                     <select
                                         value={search}
                                         onChange={handleSearchInputChange}
                                         id="etapa-dropdown"
-                                        className="block p-2.5 w-full mr-32 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                       <option value="">Todas las Etapas</option>
+                                        <option value="">Todas las Etapas</option>
                                         {etapas.map((etapa, index) => (
                                             <option key={index} value={etapa.macroetapa_aprobada}>
                                                 {etapa.macroetapa_aprobada}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : searchType === "Filtros" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="filtros-dropdown"
+                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                       
+                                        <option value="">Sin Filtro</option>
+                                        {filtros.map((filtro, index) => (
+                                            <option key={index} value={JSON.stringify(filtro.value)}>
+                                                {filtro.name}
                                             </option>
                                         ))}
                                     </select>
@@ -563,7 +639,7 @@ const Position = () => {
                                 )}
                                 <button
                                     type="button"
-                                    disabled={!isManualSearch && searchType !== "Etapa"}
+                                    disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
                                     className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
                                 >
@@ -585,6 +661,7 @@ const Position = () => {
                                     <span className="sr-only">Buscar</span>
                                 </button>
                             </div>
+
                         </div>
                     </div>
                 )}

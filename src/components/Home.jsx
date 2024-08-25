@@ -34,7 +34,7 @@ function Home() {
 
   const handleDynamicClick = () => {
     if (userType === 'coordinador') {
-      navigate('/expedientes');
+      navigate('/positions');
     } else if (userType === 'abogado') {
       navigate('/tareas');
     }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "flowbite-react";
-import { colorMap } from "../../Colors.jsx"; // Import the shared colorMap
+import { colorMap } from "../../utils/Colors.js"; // Import the shared colorMap
 
 const Cards = ({ reportesDetalles }) => {
   return (

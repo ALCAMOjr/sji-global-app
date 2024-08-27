@@ -182,6 +182,7 @@ const Expedientes = () => {
 
         if (!nombre) {
             toast.error(`El Expediente con el número: ${numero} no ha sido encontrado`);
+            setIsLoading(false);
             return;
         }
 

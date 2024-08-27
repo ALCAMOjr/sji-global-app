@@ -117,7 +117,7 @@ const Expedientes = () => {
                 ...formData,
                 nombre: ''
             });
-            setErrorMsg(`Expediente con el número: ${formData.numero} no ha sido encontrado`);
+            setErrorMsg(`El Expediente con el número: ${formData.numero} no ha sido encontrado`);
             setIsSubmitDisabled(true);
         }
     };
@@ -179,6 +179,10 @@ const Expedientes = () => {
         setIsLoading(true);
 
         const { numero, nombre, url } = formData;
+
+        if (!nombre) {
+            toast.error(`El Expediente con el número: ${numero} no ha sido encontrado`);
+        }
 
         try {
             const { success, error } = await registerNewExpediente({ numero, nombre, url, setOriginalExpedientes });

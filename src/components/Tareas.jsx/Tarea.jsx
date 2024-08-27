@@ -113,7 +113,6 @@ const Tarea = () => {
             return;
         }
 
-        console.log(numero, nombre, url)
         try {
             const { success, error } = await updateExpediente({
                 numero: numero,

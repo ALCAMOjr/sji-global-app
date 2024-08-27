@@ -33,7 +33,7 @@ export default function useAbogados() {
             return { success: responseStatus === 204 };
         } catch (err) {
             console.error(err);
-            if (err.response && err.response.status === 400 && err.response.data.error === 'Cannot delete abogado with pending tasks') {
+            if (err.response && err.response.status === 400 && err.response.data.error === 'Cannot delete abogado with active tasks') {
                 return { success: false, error: 'El abogado tiene tareas pendientes sin completar' };
             }
             return { success: false, error: err.message || err };

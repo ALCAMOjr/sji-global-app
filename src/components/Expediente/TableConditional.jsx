@@ -20,22 +20,24 @@ const TableConditional = ({
     setOpenMenuIndex,
     setIsOpen
 }) => {
-    const [shouldRenderTable, setShouldRenderTable] = useState(true);
+    const [shouldRenderTable, setShouldRenderTable] = useState(window.innerWidth >= 1200);
 
     useEffect(() => {
-        const handleResize = () => {
+        const checkWindowSize = () => {
             if (window.innerWidth >= 1200) {
                 setShouldRenderTable(true);
             } else {
                 setShouldRenderTable(false);
             }
         };
-        window.addEventListener('resize', handleResize);
-        handleResize();
+
+        const intervalId = setInterval(checkWindowSize, 1000);
+
         return () => {
-            window.removeEventListener('resize', handleResize);
+            clearInterval(intervalId);
         };
-    }, []);
+    }, []); 
+
 
     return shouldRenderTable ? (
         <TableExpedientes

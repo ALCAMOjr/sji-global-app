@@ -659,109 +659,108 @@ const Position = () => {
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                                 </svg>
                             </button>
-                            {isSearchOpen && (
-                                <div
-                                    ref={menuRef}
-                                    id="dropdown"
-                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
-                                >
-                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Numero
-                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
-                                                MacroEtapa
-                                                {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Mas Filtros
-                                                {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
+                         {isSearchOpen && (
+                            <div
+                                ref={menuRef}
+                                id="dropdown"
+                                className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
+                            >
+                                <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                            Numero
+                                            {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
+                                            MacroEtapa
+                                            {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
+                                            Mas Filtros
+                                            {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
 
-                                    </ul>
-                                </div>
-                            )}
-                            <div className="relative w-full">
-                                {searchType === "Etapa" ? (
-                                    <select
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        id="etapa-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        required
-                                    >
-                                        <option value="">Todas las Etapas</option>
-                                        {etapas.map((etapa, index) => (
-                                            <option key={index} value={etapa.macroetapa_aprobada}>
-                                                {etapa.macroetapa_aprobada}
-                                            </option>
-                                        ))}
-                                    </select>
-                                ) : searchType === "Filtros" ? (
-                                    <select
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        id="filtros-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        required
-                                    >
-                                       
-                                        <option value="">Sin Filtro</option>
-                                        {filtros.map((filtro, index) => (
-                                            <option key={index} value={JSON.stringify(filtro.value)}>
-                                                {filtro.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    <input
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleManualSearch();
-                                            }
-                                        }}
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        type="search"
-                                        id="search-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        placeholder="Buscar Expedientes:"
-                                        required
-                                        style={{ width: "300px" }}
-                                    />
-                                )}
-                                <button
-                                    type="button"
-                                    disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
-                                    onClick={handleManualSearch}
-                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                >
-                                    <svg
-                                        className="w-4 h-4"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Buscar</span>
-                                </button>
+                                </ul>
                             </div>
-
+                        )}
+                           <div className="relative w-full">
+                            {searchType === "Etapa" ? (
+                                <select
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    id="etapa-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    required
+                                >
+                                    <option value="">Todas las Etapas</option>
+                                    {etapas.map((etapa, index) => (
+                                        <option key={index} value={etapa.macroetapa_aprobada}>
+                                            {etapa.macroetapa_aprobada}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : searchType === "Filtros" ? (
+                                <select
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    id="filtros-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    required
+                                >
+                                   
+                                    <option value="">Sin Filtro</option>
+                                    {filtros.map((filtro, index) => (
+                                        <option key={index} value={JSON.stringify(filtro.value)}>
+                                            {filtro.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "200px" }}
+                                />
+                            )}
+                            <button
+                                type="button"
+                                disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
+                                onClick={handleManualSearch}
+                                className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                                <span className="sr-only">Buscar</span>
+                            </button>
+                            </div>
                         </div>
                     </div>
                 )}

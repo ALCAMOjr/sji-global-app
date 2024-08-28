@@ -126,7 +126,7 @@ const ExpedientesSial = () => {
                 });
             
             } else {
-                toast.error(`Algo mal sucedió al subir los archivos: ${error}`);
+                toast.error(`Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.`);
             }
         } catch (error) {
             console.error(error);
@@ -138,6 +138,7 @@ const ExpedientesSial = () => {
             setErrors({});
         }
     };
+
     const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
 
     useEffect(() => {

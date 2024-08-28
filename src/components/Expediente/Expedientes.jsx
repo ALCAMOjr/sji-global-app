@@ -12,9 +12,9 @@ import Context from '../../context/abogados.context.jsx';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
 import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
-
+import agregar from "../../assets/agregar.png"
 const Expedientes = () => {
-    const { expedientes, loading, error, registerNewExpediente, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
+    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
@@ -31,6 +31,11 @@ const Expedientes = () => {
     const [currentExpedientes, setCurrentExpedientes] = useState([]);
     const [menuDirection, setMenuDirection] = useState('down');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenUpload, setIsModalOpenUpload] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [areFilesValid, setAreFilesValid] = useState(true);
+    const [errors, setErrors] = useState({});
+    const inputFileRef = useRef(null);
     const [ismodalOpenUpdate, setisModalOpenUpdate] = useState(false);
     const [isModalOpenDelete, setisModalOpenDelete] = useState(false);
     const [urlActive, setUrlActive] = useState(false);
@@ -41,6 +46,87 @@ const Expedientes = () => {
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
     const [ IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
 
+
+
+    const openModalUpload = () => {
+        setIsModalOpenUpload(true);
+    };
+
+    const closeModalUpload = () => {
+        setIsModalOpenUpload(false);
+        setSelectedFiles([]);
+    };
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        const validFiles = [];
+        let hasInvalidFile = false;
+
+        files.forEach(file => {
+            if (file.type === 'application/vnd.ms-excel' || file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                validFiles.push(file);
+            } else {
+                hasInvalidFile = true;
+            }
+        });
+        setSelectedFiles(prevSelectedFiles => [...prevSelectedFiles, ...files]);
+        if (hasInvalidFile) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: 'Uno o más archivos no son de tipo CSV. Por favor, seleccione solo archivos CSV.',
+            }));
+            setAreFilesValid(false);
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: '',
+            }));
+            setAreFilesValid(true);
+        }
+    };
+
+    const handleRemoveFile = (fileToRemove) => {
+        setSelectedFiles(prevSelectedFiles =>
+            prevSelectedFiles.filter(file => file !== fileToRemove)
+        );
+    };
+
+    const handleUploadFile = async () => {
+        if (selectedFiles.length === 0) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                uploadFile: 'No ha seleccionado ningún archivo aún.',
+            }));
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const { success, error } = await uploadFile(setOriginalExpedientes, selectedFiles);
+            if (success) {
+                toast.info('Archivos subidos correctamente.', {
+                    icon: () => <img src={check} alt="Success Icon" />,
+                    progressStyle: {
+                        background: '#1D4ED8',
+                    },
+                });
+            
+            } else {
+                toast.error(`Algo mal sucedió al subir los archivos: ${error}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Algo mal sucedió al subir los archivos');
+        } finally {
+            setIsLoading(false);
+            setIsModalOpenUpload(false);
+            setSelectedFiles([]);
+            setErrors({});
+        }
+    };
+
+    
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
@@ -458,12 +544,130 @@ const Expedientes = () => {
                     <DropdownMenu aria-label="Static Actions">
                         <DropdownItem onClick={openModal} key="new">Crear Expediente</DropdownItem>
                         <DropdownItem onClick={handleUpdateAllExpedientes} key="copy">Actualizar Expedientes</DropdownItem>
-
+                        <DropdownItem onClick={openModalUpload} key="copy">Subir Expedientes</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
 
 
             </div>
+
+
+
+            {isModalOpenUpload && (
+                <div
+                    id="verification-modal"
+                    tabIndex="-1"
+                    className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto bg-black bg-opacity-50"
+                >
+                    <div className="relative w-auto max-w-4xl max-h-[100vh] min-w-[40vw] flex items-center justify-center">
+                        <div className="relative rounded-lg shadow bg-white max-w-md w-full mx-auto">
+                            <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-white bg-gray-200">
+                                <h3 className="text-xl font-semibold text-primary/80">Subir Archivo</h3>
+                                <button
+                                    type="button"
+                                    className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    onClick={closeModalUpload}
+                                >
+                                    <svg
+                                        className="w-3 h-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 14 14"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                        />
+                                    </svg>
+                                    <span className="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <div className="p-6 space-y-6 flex flex-col items-center">
+                                <div className="flex flex-col items-center w-full max-w-xs">
+                                    <button
+                                        className="relative mb-2 w-full h-auto flex items-center justify-center bg-gray-200 rounded-xl border-2 border-dashed border-black text-white"
+                                        onClick={() => inputFileRef.current.click()}
+                                    >
+                                        <div className="flex flex-col items-center">
+                                            {isLoading ? (
+                                                <Spinner
+                                                    className="text-center mt-6 mb-8 text-sm"
+                                                    label="Cargando..."
+                                                    color="primary"
+                                                    size="lg"
+                                                    labelColor="primary"
+                                                />
+                                            ) : (
+                                                <>
+                                                    <img
+                                                        src={agregar}
+                                                        className="absolute h-8 w-8 mb-8 z-10"
+                                                        style={{ top: '30%', transform: 'translateY(-50%)' }}
+                                                        alt="Circulo Icon"
+                                                    />
+                                                    <span className="text-sm text-black text-center mt-24 mb-4 z-30">
+                                                        {selectedFiles.length > 0 ? (
+                                                            selectedFiles.map((file, index) => (
+                                                                <div key={index} className="flex justify-between items-center w-full">
+                                                                    <span>{file.name}</span>
+                                                                    <button
+                                                                        onClick={() => handleRemoveFile(file)}
+                                                                        className="text-black bg-transparent hover:bg-gray-300 hover:text-gray-900 rounded-lg text-sm w-6 h-6 inline-flex justify-center items-center"
+                                                                    >
+                                                                        <svg
+                                                                            className="w-3 h-3"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 14 14"
+                                                                        >
+                                                                            <path
+                                                                                stroke="currentColor"
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth="2"
+                                                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            'Click para subir archivos'
+                                                        )}
+                                                    </span>
+                                                    {errors.uploadFile && <p className="text-[#E16060] text-xs">{errors.uploadFile}</p>}
+                                                </>
+                                            )}
+                                        </div>
+                                    </button>
+                                    <input
+                                        type="file"
+                                        ref={inputFileRef}
+                                        style={{ display: 'none' }}
+                                        onChange={handleFileChange}
+                                        multiple
+                                    />
+                                </div>
+                                <div className="flex justify-end mt-4 w-full">
+                                    <button
+                                        disabled={isLoading || !areFilesValid}
+                                        onClick={handleUploadFile}
+                                        className="bg-primary text-white text-lg px-4 py-1 rounded-lg flex items-center justify-center mt-4"
+                                    >
+                                        Subir Archivos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             {IsLoadingUpdateAllExpedientes && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">

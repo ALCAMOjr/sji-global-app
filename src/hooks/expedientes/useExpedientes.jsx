@@ -5,6 +5,7 @@ import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
 import { updateExpedientes, deleteExpedientes, updateAllExpedientes } from '../../views/expedientes/optional.js';
 import getPdf from '../../views/expedientes/getPdf.js';
 import getFilename from '../../views/expedientes/getFilename.js';
+import UploadFile from "../../views/expedientes/UploadFile.js"
 
 export default function useExpedientes() {
     const { jwt } = useContext(Context);
@@ -160,9 +161,20 @@ const UpdateAllExpedientes = useCallback(async (setOriginalExpedientes) => {
     }, [jwt]);
     
 
- 
+    const uploadFile = useCallback(async (setOriginalExpedientes, files) => {
+        try {
+          const response = await UploadFile({ files, token: jwt }); 
+          setOriginalExpedientes([]);
+          const expedientes = await getAllExpedientes({ token: jwt });
+          setExpedientes(expedientes)
+          return { success: true, data: response.data };
+        } catch (error) {
+          console.error(error);
+          return { success: false, error: error.response?.data?.message || 'Error al cargar los archivos' };
+        }
+    }, [jwt]);
     
     
-    return { expedientes, loading, error, deleteExpediente, updateExpediente, registerNewExpediente, UpdateAllExpedientes, setExpedientes, savePdfs, fetchFilename };
+    return { expedientes, loading, error, deleteExpediente, updateExpediente, uploadFile, registerNewExpediente, UpdateAllExpedientes, setExpedientes, savePdfs, fetchFilename };
     
 }

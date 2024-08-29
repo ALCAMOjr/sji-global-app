@@ -4,10 +4,6 @@ const baseUrl = (import.meta.env.VITE_API || 'http://localhost:4000/api') + '/ta
 
 
 export default async function StartTarea({ id, token }) {
-
-    console.log("ID", id)
-
-
     try {
         const config = {
             headers: {
@@ -22,8 +18,6 @@ export default async function StartTarea({ id, token }) {
             return response
 
         }
-
-        console.log(response.status)
         return response.status;
 
 

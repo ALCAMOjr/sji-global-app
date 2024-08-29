@@ -31,6 +31,8 @@ export async function updateExpedientes({ numero, nombre, url, token }) {
 
 
 export async function updateAllExpedientes({ token }) {
+
+    console.log(token)
     try {
         const config = {
             headers: {
@@ -43,10 +45,11 @@ export async function updateAllExpedientes({ token }) {
          
         }, config);
 
-        if (response.status !== 200) {
+        if (response.status !== 202) {
             throw new Error('Response is NOT ok');
         }
 
+        console.log("Job id", response.data)
         return response.data;
 
     } catch (error) {
@@ -54,6 +57,28 @@ export async function updateAllExpedientes({ token }) {
     }
 }
 
+
+export async function getExpedienteJobStatus({ token, jobId }) {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        };
+
+        const response = await axios.get(`${baseUrl}/status/${jobId}`, config);
+
+        if (response.status !== 200) {
+            throw new Error('Response is NOT ok');
+        }
+
+        return response.data; 
+
+    } catch (error) {
+        throw error;
+    }
+}
 
 
 export async function deleteExpedientes({numero, token}) {

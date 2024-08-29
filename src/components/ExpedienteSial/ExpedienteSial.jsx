@@ -130,7 +130,7 @@ const ExpedientesSial = () => {
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al subir los archivos');
+            toast.error('Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.');
         } finally {
             setIsLoading(false);
             setIsModalOpen(false);
@@ -301,7 +301,7 @@ const ExpedientesSial = () => {
                                             {isLoading ? (
                                                 <Spinner
                                                     className="text-center mt-6 mb-8 text-sm"
-                                                    label="Cargando..."
+                                                    label="Subiendo Archivos..."
                                                     color="primary"
                                                     size="lg"
                                                     labelColor="primary"

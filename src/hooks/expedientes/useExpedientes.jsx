@@ -61,25 +61,30 @@ export default function useExpedientes() {
     }, [jwt]);
 
 
-const UpdateAllExpedientes = useCallback(async (setOriginalExpedientes) => {
-    try {
-        const response = await updateAllExpedientes({ token: jwt });
-
-        setOriginalExpedientes([]);
-        setExpedientes(response);
-        return { success: true, data: response };
-
-    } catch (error) {
-        console.error('Error updating all expedientes:', error);
-        let errorMessage = 'Error updating all expedientes';
-        
-        if (error.response && error.response.data) {
-            errorMessage = error.response.data.error || errorMessage;
+    const UpdateAllExpedientes = useCallback(async (setOriginalExpedientes) => {
+        try {
+            const response = await updateAllExpedientes({ token: jwt });
+            const { jobId } = response;
+    
+            if (!jobId) {
+                throw new Error('No jobId returned');
+            }
+    
+            setOriginalExpedientes([]);
+            return { success: true, jobId };
+    
+        } catch (error) {
+            console.error('Error updating all expedientes:', error);
+            let errorMessage = 'Error updating all expedientes';
+            
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data.error || errorMessage;
+            }
+            
+            return { success: false, error: errorMessage };
         }
-        
-        return { success: false, error: errorMessage };
-    }
-}, [jwt]);
+    }, [jwt]);
+    
 
     
     

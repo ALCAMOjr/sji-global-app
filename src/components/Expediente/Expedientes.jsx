@@ -12,6 +12,7 @@ import Context from '../../context/abogados.context.jsx';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
 import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
+import { getExpedienteJobStatus } from "../../views/expedientes/optional.js"
 import agregar from "../../assets/agregar.png"
 const Expedientes = () => {
     const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
@@ -21,7 +22,7 @@ const Expedientes = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const menuRef = useRef(null);
     const [search, setSearch] = useState('');
-    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
+    const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const [searchType, setSearchType] = useState('Numero');
     const [isManualSearch, setIsManualSearch] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(200);
@@ -44,7 +45,8 @@ const Expedientes = () => {
     const { jwt } = useContext(Context);
     const [errorMsg, setErrorMsg] = useState('');
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
-    const [ IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
+    const [IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
+    const [progress, setProgress] = useState(0);
 
 
 
@@ -111,13 +113,13 @@ const Expedientes = () => {
                         background: '#1D4ED8',
                     },
                 });
-            
+
             } else {
-                toast.error(`Algo mal sucedió al subir los archivos: ${error}`);
+                toast.error(`Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.`);
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al subir los archivos');
+            toast.error('Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.');
         } finally {
             setIsLoading(false);
             setIsModalOpenUpload(false);
@@ -126,29 +128,29 @@ const Expedientes = () => {
         }
     };
 
-    
+
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
         }
-       
+
         setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage]);
-    
-    
+
+
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage + 1); 
+        setCurrentPage(newPage + 1);
     };
-    
+
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
         setCurrentPage(1);
     };
-    
- 
+
+
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
@@ -231,33 +233,72 @@ const Expedientes = () => {
         setErrorMsg('');
     };
 
+    const monitorJobProgress = async (jobId) => {
+        try {
+            let progress = 0;
+            let result = null;
+            let state = '';
+    
+            while (progress < 100) {
+                const response = await getExpedienteJobStatus({ token: jwt, jobId });
+                state = response.state;
+                progress = response.progress;
+    
+                setProgress(progress);
+    
+                if (state === 'completed') {
+                    result = response.result;
+                    return { success: true, result };
+                } else if (state === 'failed') {
+                    throw new Error('Job failed');
+                }
+    
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            return { success: false, error: 'Trabajo no completado a tiempo.' };
+    
+        } catch (error) {
+            console.error('Error monitoring job progress:', error);
+            return { success: false, error: error.message };
+        }
+    };
+    
+
 
     const handleUpdateAllExpedientes = async (e) => {
         e.preventDefault();
         setIsLoadingUpdateAllExpedientes(true);
-
+        setProgress(0);
 
         try {
-            const { success, error } = await UpdateAllExpedientes(setOriginalExpedientes);
+            const { success, jobId, error } = await UpdateAllExpedientes(setOriginalExpedientes);
 
             if (success) {
-                toast.info('Se Actualizaron correctamente los expedientes', {
-                    icon: () => <img src={check} alt="Success Icon" />,
-                    progressStyle: {
-                        background: '#1D4ED8',
-                    }
-                });
+                const { success: monitorSuccess, result, error: monitorError } = await monitorJobProgress(jobId);
+
+                if (monitorSuccess) {
+                    toast.info('Se actualizaron correctamente los expedientes', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        }
+                    });
+                    setExpedientes(result);
+                } else {
+                    console.error(monitorError);
+                    toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
+                }
             } else {
-                    toast.error('Algo mal sucedió al crear el expediente: ' + error);
-              
+                toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al crear el expediente');
+            toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
         } finally {
             setIsLoadingUpdateAllExpedientes(false);
         }
     };
+
 
 
     const handleCreate = async (e) => {
@@ -453,7 +494,7 @@ const Expedientes = () => {
         setSearch('');
         setIsManualSearch(type === 'Numero');
         setExpedientes(originalExpedientes);
-    
+
     };
 
 
@@ -500,8 +541,8 @@ const Expedientes = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);   
-        setExpedientes(originalExpedientes);
+            setIsManualSearch(false);
+            setExpedientes(originalExpedientes);
         }
     }
 
@@ -596,7 +637,7 @@ const Expedientes = () => {
                                             {isLoading ? (
                                                 <Spinner
                                                     className="text-center mt-6 mb-8 text-sm"
-                                                    label="Cargando..."
+                                                    label="Subiendo Archivos..."
                                                     color="primary"
                                                     size="lg"
                                                     labelColor="primary"
@@ -672,8 +713,7 @@ const Expedientes = () => {
             {IsLoadingUpdateAllExpedientes && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
                     <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
-                    <Spinner className='text-center mt-16 mr-24 ml-24 mb-16  text-sm' label="Cargando..." color="primary" size='lg' labelColor="primary" />
-                                        
+                        <Spinner className='text-center mt-16 mr-24 ml-24 mb-16 text-sm' label={`Actualizando Expedientes... ${progress}%`} color="primary" size='lg' labelColor="primary" />
                     </div>
                 </div>
             )}
@@ -928,8 +968,8 @@ const Expedientes = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                ref={menuRef}
-                                id="dropdown"
+                                    ref={menuRef}
+                                    id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -939,17 +979,17 @@ const Expedientes = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                    
+
                                     </ul>
                                 </div>
                             )}
                             <div className="relative w-full">
                                 <input
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleManualSearch();
-                                    }
-                                }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -989,8 +1029,8 @@ const Expedientes = () => {
                     <div className="max-w-xs mx-auto mb-4 -ml-4 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                         <div className="flex">
                             <button
-                                    id="dropdown-button"
-                                    onClick={toggleDropdown}
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
                                 className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                 type="button"
                             >
@@ -1007,8 +1047,8 @@ const Expedientes = () => {
                             </button>
                             {isSearchOpen && (
                                 <div
-                                ref={menuRef}
-                                id="dropdown"
+                                    ref={menuRef}
+                                    id="dropdown"
                                     className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
                                 >
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
@@ -1018,7 +1058,7 @@ const Expedientes = () => {
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
-                                
+
 
                                     </ul>
                                 </div>
@@ -1026,10 +1066,10 @@ const Expedientes = () => {
                             <div className="relative w-full">
                                 <input
                                     onKeyDown={(e) => {
-                                       if (e.key === 'Enter') {
-                                           handleManualSearch();
-                                       }
-                                   }}
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"

@@ -31,8 +31,6 @@ export async function updateExpedientes({ numero, nombre, url, token }) {
 
 
 export async function updateAllExpedientes({ token }) {
-
-    console.log(token)
     try {
         const config = {
             headers: {
@@ -48,8 +46,6 @@ export async function updateAllExpedientes({ token }) {
         if (response.status !== 202) {
             throw new Error('Response is NOT ok');
         }
-
-        console.log("Job id", response.data)
         return response.data;
 
     } catch (error) {

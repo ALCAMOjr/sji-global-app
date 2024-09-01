@@ -3,7 +3,7 @@ import useTareas from '../../hooks/tareas/useTareas.jsx';
 import { Spinner } from "@nextui-org/react";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
-import Error from './Error.jsx';
+import Error from "../Error.jsx";
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
 import getTareasUserByExpediente from '../../views/tareas/getTareasUserByExpediente.js';
@@ -32,6 +32,8 @@ const Tarea = () => {
     const { jwt } = useContext(Context);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
+
+
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -74,8 +76,7 @@ const Tarea = () => {
                 toast.error(`Error al guardar el PDF: ${saveError}`);
                 return;
             }
-    
-            console.log("Filename", fileName);
+
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
                 toast.error(`Error al obtener el archivo PDF: ${fetchError}`);
@@ -246,7 +247,6 @@ const Tarea = () => {
            if (searchType === 'Numero') {
                 try {
                     const expediente = await getTareasUserByExpediente({ numero: lowercaseSearchTerm, token: jwt });
-                    console.log("Tareas", expediente)
                     if (expediente) {
                         filteredExpedientes.push(expediente[0]);
                     } else {

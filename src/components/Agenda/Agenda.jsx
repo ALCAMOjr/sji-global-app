@@ -4,7 +4,7 @@ import useAbogados from '../../hooks/abogados/useAbogados.jsx';
 import { Spinner } from "@nextui-org/react";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
-import Error from './Error.jsx';
+import Error from "../Error.jsx";
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
 import getTareaByAbogado from '../../views/tareas/getTareabyAbogado.js';
@@ -33,6 +33,8 @@ const Agenda = () => {
     const [isManualSearch, setIsManualSearch] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
+
+    console.log("Tareas", currentExpedientes)
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -460,7 +462,7 @@ const Agenda = () => {
                                 </div>
                             )}
                                    <div className="relative w-full">
-                                {searchType === "Etapa" ? (
+                                {searchType === "Abogado" ? (
                                     <select
                                         value={search}
                                         onChange={handleSearchInputChange}

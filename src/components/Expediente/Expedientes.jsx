@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext, useEffect } from 'react';
 import useExpedientes from "../../hooks/expedientes/useExpedientes.jsx";
 import { Spinner } from "@nextui-org/react";
-import Error from "./Error.jsx";
+import Error from "../Error.jsx";
 import { IoMdCheckmark } from "react-icons/io";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";

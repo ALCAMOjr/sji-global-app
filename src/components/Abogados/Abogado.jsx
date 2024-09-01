@@ -2,7 +2,7 @@ import React, { Fragment, useState, useContext, useEffect } from 'react';
 import useAbogados from "../../hooks/abogados/useAbogados.jsx";
 import logo_admin from "../../assets/admin.jpg"
 import logo_advisor from "../../assets/advisor.jpg"
-import Error from "./Error.jsx";
+import Error from "../Error.jsx";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'

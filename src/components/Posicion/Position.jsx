@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner, Tooltip, Button } from "@nextui-org/react";
-import Error from "./Error.jsx";
+import Error from "../Error.jsx";
 import { toast } from 'react-toastify';
 import TableConditional from './TableConditional.jsx';
 import { useMediaQuery } from 'react-responsive';
@@ -188,8 +188,6 @@ const Position = () => {
                 toast.error(`Error al guardar el PDF: ${saveError}`);
                 return;
             }
-    
-            console.log("Filename", fileName);
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
                 toast.error(`Error al obtener el archivo PDF: ${fetchError}`);

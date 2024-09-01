@@ -1,7 +1,7 @@
 import React from 'react';
 import useReportes from '../../hooks/reportes/useReportes.jsx';
 import { Spinner } from "@nextui-org/react";
-import Error from './Error.jsx';
+import Error from "../Error.jsx";
 import TableConditional from './TableConditional.jsx';
 
 const Reporte = () => {

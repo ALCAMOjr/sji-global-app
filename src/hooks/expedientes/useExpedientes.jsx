@@ -157,10 +157,7 @@ export default function useExpedientes() {
     
             if (response) {
                 return { success: true, data: response };
-            } else {
-                return { success: false, error: 'Error inesperado, archivo no encontrado.' };
-            }
-    
+            } 
         } catch (error) {
             if (error.response) {
                 const errorMessage = error.response.data.error;

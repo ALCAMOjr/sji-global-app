@@ -118,7 +118,7 @@ const Row = ({
     const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [TaskStartLoading, setTaskStartLoading] = useState({});
     const [TaskCompleteLoading, setTaskCompleteLoading] = useState({});
-    
+
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text)
@@ -154,6 +154,10 @@ const Row = ({
         await handleCompleteTarea(id);
         setTaskCompleteLoading(prevState => ({ ...prevState, [id]: false }));
     };
+
+
+    const isAnyDownloadInProgress = Object.values(downloadingDetails).some(isDownloading => isDownloading);
+    const isAnyUpgradeInProgress = Object.values(UpgradeLoading).some(isUpgrading => isUpgrading);
 
 
     return (
@@ -193,7 +197,8 @@ const Row = ({
                 <TableCell className="max-w-xs">{expediente.juzgado}</TableCell>
                 <TableCell align="left">
                     <button
-                        onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero )}
+                        disabled={isAnyDownloadInProgress || isAnyUpgradeInProgress}
+                        onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero)}
                         type="button"
                         className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                     >
@@ -241,7 +246,7 @@ const Row = ({
                                                                     type="button"
                                                                     className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                     {TaskStartLoading[tarea.tareaId]  ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                    {TaskStartLoading[tarea.tareaId] ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
                                                                 </button>
                                                             )}
                                                             {tarea.estado_tarea === 'Iniciada' && (
@@ -250,7 +255,7 @@ const Row = ({
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                     {TaskCompleteLoading[tarea.tareaId] ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                                    {TaskCompleteLoading[tarea.tareaId] ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
                                                                 </button>
                                                             )}
                                                         </TableCell>
@@ -294,6 +299,7 @@ const Row = ({
                                                                                 <TableRow key={idx}>
                                                                                     <TableCell align="left">
                                                                                         <button
+                                                                                            disabled={isAnyUpgradeInProgress || isAnyDownloadInProgress}
                                                                                             onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
                                                                                             type="button"
                                                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"

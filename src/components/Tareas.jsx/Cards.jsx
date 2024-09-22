@@ -51,7 +51,13 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
         setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
         await handleUpdate(numero, nombre, url);
         setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
+
     };
+
+
+    const isAnyDownloadInProgress = Object.values(downloadingDetails).some(isDownloading => isDownloading);
+    const isAnyUpgradeInProgress = Object.values(UpgradeLoading).some(isUpgrading => isUpgrading);
+
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -149,6 +155,8 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
 
                                         <li className="flex items-center">
                                             <a
+                                                disabled={isAnyUpgradeInProgress || isAnyDownloadInProgress}
+                                                                                 
                                                 onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero)}
                                                 className="block text-sm mb-2 font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                                             >
@@ -306,7 +314,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                                     selectedExpedienteDetails.details.map((detalle, index) => (
                                                         <tr key={index}>
                                                             <td className="px-6 py-4">
-                                                                <button
+                                                                <button                   
                                                                     onClick={() => handleDownloadLoading(selectedExpedienteDetails.url, detalle.fecha, detalle.id)}
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"

@@ -69,21 +69,29 @@ const Tarea = () => {
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
+
     const handleDownload = async (url, fecha) => {
         try {
             const { success: saveSuccess, fileName, error: saveError } = await savePdfs({ url, fecha });
+            
             if (!saveSuccess) {
-                toast.error(`Error al guardar el PDF: ${saveError}`);
+                if (saveError === 'Tribunal no funciono') {
+                    toast.error('El Tribunal Virtual falló al devolver el PDF. Intente más tarde.');
+                } else {
+                    toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
+                }
                 return;
             }
-
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
-                toast.error(`Error al obtener el archivo PDF: ${fetchError}`);
+                if (fetchError === 'PDF no encontrado.') {
+                    toast.error('El PDF solicitado no se encontró en el Tribunal Virtual. Intente de nuevo');
+                } else {
+                    toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
+                }
                 return;
             }
     
-            
             const downloadUrl = URL.createObjectURL(data);
             const link = document.createElement('a');
             link.href = downloadUrl;
@@ -91,7 +99,7 @@ const Tarea = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(downloadUrl)
+            URL.revokeObjectURL(downloadUrl);
     
             toast.info('PDF descargado con éxito.', {
                 icon: () => <img src={check} alt="Success Icon" />,
@@ -101,10 +109,11 @@ const Tarea = () => {
             });
         } catch (error) {
             console.error('Error al descargar el PDF:', error);
-            toast.error('Error al descargar el PDF.');
+            toast.error('Error al descargar el PDF, Intente de nuevo');
         }
     };
     
+
     
     const handleUpdate = async (numero, nombre, url) => {
         setIsLoading(true);
@@ -120,11 +129,8 @@ const Tarea = () => {
                 nombre: nombre,
                 url: url,
                 setOriginalExpedientes
-
             });
-
-            
-
+    
             if (success) {
                 toast.info('Se actualizó correctamente el Expediente', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -132,20 +138,22 @@ const Tarea = () => {
                         background: '#1D4ED8',
                     }
                 });
-
-            const expedientes = await getTareasUser({token: jwt});
-            setExpedientes(expedientes)
             } else {
                 if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
                     toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
-                } else {
+                     
+                }   else if (error === 'Tribunal no funciono') {
+                    toast.error('El Tribunal Virtual fallo al devolver los datos. Intente de nuevo.');
+                } 
+                 else {
                     toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
                 }
             }
+    
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al actualizar el Expediente');
-        } finally {
+        }finally {
            setIsLoading(false);
         }
     };

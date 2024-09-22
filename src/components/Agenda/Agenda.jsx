@@ -34,8 +34,6 @@ const Agenda = () => {
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const { jwt } = useContext(Context);
 
-    console.log("Tareas", currentExpedientes)
-
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);

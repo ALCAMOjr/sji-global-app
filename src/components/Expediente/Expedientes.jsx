@@ -245,40 +245,38 @@ const Expedientes = () => {
             while (progress < 100) {
                 const response = await getExpedienteJobStatus({ token: jwt, jobId });
                 state = response.state;
-                progress = response.progress;
-    
+                progress = response.progress
                 setProgress(progress);
-    
                 if (state === 'completed') {
                     result = response.result;
                     return { success: true, result };
                 } else if (state === 'failed') {
                     result = response.result;
-                    return { success: false, result };
+                        return { success: false, error: "Something was wrong." };
                 }
     
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
-            return { success: false, error: 'Trabajo no completado a tiempo.' };
+    
+            return { success: false, error: 'Something was wrong.' };
     
         } catch (error) {
             return { success: false, error: error.message };
         }
     };
     
-
-
+    
     const handleUpdateAllExpedientes = async (e) => {
         e.preventDefault();
         setIsLoadingUpdateAllExpedientes(true);
         setProgress(0);
-
+    
         try {
             const { success, jobId } = await UpdateAllExpedientes(setOriginalExpedientes);
-
+    
             if (success) {
-                const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
-
+                const { success: monitorSuccess, result, error } = await monitorJobProgress(jobId);
+    
                 if (monitorSuccess) {
                     toast.info('Se actualizaron correctamente los expedientes', {
                         icon: () => <img src={check} alt="Success Icon" />,
@@ -286,10 +284,12 @@ const Expedientes = () => {
                             background: '#1D4ED8',
                         }
                     });
-                    setExpedientes(result);
-                } 
-                else {
-                    toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
+                    setExpedientes(result.expedientesConDetalles);
+                } else {
+                    if (error) {
+                        console.error(error)
+                        toast.error("El Tribunal Virtual falló. Por favor intente más tarde o comuníquese con soporte técnico.");
+                    }
                 }
             }
         } catch (error) {
@@ -299,7 +299,8 @@ const Expedientes = () => {
             setIsLoadingUpdateAllExpedientes(false);
         }
     };
-
+    
+    
 
 
     const handleCreate = async (e) => {

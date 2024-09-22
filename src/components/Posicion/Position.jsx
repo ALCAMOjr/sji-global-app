@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef, useMemo } from 'react';
 import usePosition from "../../hooks/posicion/usePositions.jsx";
-import { Spinner, Tooltip, Button } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import Error from "../Error.jsx";
 import { toast } from 'react-toastify';
 import TableConditional from './TableConditional.jsx';
@@ -152,10 +152,7 @@ const Position = () => {
                 url: url,
                 setOriginalExpedientes
 
-            });
-
-            
-
+            });  
             if (success) {
                 toast.info('Se actualizó correctamente el Expediente', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -163,16 +160,18 @@ const Position = () => {
                         background: '#1D4ED8',
                     }
                 });
-
-                const expedientes = await getPositionExpedientes({ token: jwt })
-                setExpedientes(expedientes)
             } else {
                 if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
                     toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
-                } else {
+                     
+                }   else if (error === 'Tribunal no funciono') {
+                    toast.error('El Tribunal Virtual fallo al devolver los datos. Intente de nuevo.');
+                } 
+                 else {
                     toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
                 }
             }
+    
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al actualizar el Expediente');
@@ -184,17 +183,26 @@ const Position = () => {
     const handleDownload = async (url, fecha) => {
         try {
             const { success: saveSuccess, fileName, error: saveError } = await savePdfs({ url, fecha });
+            
             if (!saveSuccess) {
-                toast.error(`Error al guardar el PDF: ${saveError}`);
-                return;
-            }
-            const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
-            if (!fetchSuccess) {
-                toast.error(`Error al obtener el archivo PDF: ${fetchError}`);
+                if (saveError === 'Tribunal no funciono') {
+                    toast.error('El Tribunal Virtual falló al devolver el PDF. Intente más tarde.');
+                } else {
+                    toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
+                }
                 return;
             }
     
-            
+            const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
+            if (!fetchSuccess) {
+                if (fetchError === 'PDF no encontrado.') {
+                    toast.error('El PDF solicitado no se encontró en el Tribunal Virtual. Intente de nuevo');
+                } else {
+                    toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
+                }
+                return;
+            }
+    
             const downloadUrl = URL.createObjectURL(data);
             const link = document.createElement('a');
             link.href = downloadUrl;
@@ -202,7 +210,7 @@ const Position = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(downloadUrl)
+            URL.revokeObjectURL(downloadUrl);
     
             toast.info('PDF descargado con éxito.', {
                 icon: () => <img src={check} alt="Success Icon" />,
@@ -212,7 +220,7 @@ const Position = () => {
             });
         } catch (error) {
             console.error('Error al descargar el PDF:', error);
-            toast.error('Error al descargar el PDF.');
+            toast.error('Error al descargar el PDF, Intente de nuevo');
         }
     };
     
@@ -422,7 +430,7 @@ const Position = () => {
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                     Agendar nueva Tarea
                                 </h3>
-                                <button onClick={closeModalTarea} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                                <button onClick={closeModalTarea} disabled={isLoading} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
@@ -801,6 +809,7 @@ const Position = () => {
                     openMenuIndex={openMenuIndex}
                     isOpen={isOpen}
                     handleMenuToggle={handleMenuToggle}
+                    isLoading={isLoading}
 
                 />
             )}

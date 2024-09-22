@@ -18,7 +18,8 @@ const TableConditional = ({
     setIsOpen,
     openMenuIndex,
     isOpen,
-    handleMenuToggle
+    handleMenuToggle,
+    isLoading
 }) => {
     const [shouldRenderTable, setShouldRenderTable] = useState(window.innerWidth >= 1200);
 
@@ -56,6 +57,7 @@ const TableConditional = ({
             openMenuIndex={openMenuIndex}
             isOpen={isOpen}
             handleMenuToggle={handleMenuToggle}
+            isLoading={isLoading}
         />
     ) : (
         <Cards
@@ -75,6 +77,7 @@ const TableConditional = ({
             openMenuIndex={openMenuIndex}
             isOpen={isOpen}
             handleMenuToggle={handleMenuToggle}
+            isLoading={isLoading}
         />
     );
 };

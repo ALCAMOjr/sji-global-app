@@ -37,7 +37,7 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea, handleDownload, handleUpdate, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea, handleDownload, handleUpdate, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, isLoading }) => {
     const { jwt } = useContext(Context);
     const [tasksStatus, setTasksStatus] = useState({});
     const [showModalDetails, setShowModalDetails] = useState(false);
@@ -48,9 +48,23 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
 
 
     const handleDownloadLoading = async (url, fecha, id) => {
-        setDownloadingDetails(prevState => ({ ...prevState, [id]: true }));
+        setDownloadingDetails(prevState => {
+            const newState = { ...prevState };
+            Object.keys(newState).forEach(key => {
+                newState[key] = true;
+            });
+            newState[id] = true;
+            return newState;
+        });
+
         await handleDownload(url, fecha);
-        setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
+        setDownloadingDetails(prevState => {
+            const newState = { ...prevState };
+            Object.keys(newState).forEach(key => {
+                newState[key] = false;
+            });
+            return newState;
+        });
     };
 
     const handleUpgradeLoading = async (numero, nombre, url, id) => {
@@ -222,7 +236,13 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                     <ul>
                                                         <li className="flex items-center">
                                                             <a
-                                                                onClick={() => OpenModalDetails(expediente)}
+                                                                disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails}
+
+                                                                onClick={() => {
+                                                                    if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
+                                                                        OpenModalDetails(expediente);
+                                                                    }
+                                                                }}
                                                                 className="block text-sm mb-1 font-medium text-black hover:underline dark:text-black cursor-pointer"
                                                             >
                                                                 Ver Detalles
@@ -231,8 +251,12 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
 
                                                         <li className="flex items-center">
                                                             <a
-                                                                onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
-                                                                className="block text-sm mb-2 font-medium text-primary hover:underline dark:text-primary cursor-pointer"
+                                                                disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails}
+                                                                onClick={() => {
+                                                                    if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
+                                                                        handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito);
+                                                                    }
+                                                                }}        className="block text-sm mb-2 font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                                                             >
                                                                 Actualizar Expediente
                                                             </a>
@@ -244,17 +268,22 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                 <button
                                                     type="button"
                                                     className="text-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center"
-                                                    disabled
+
                                                 >
                                                     Ya Asignada
                                                 </button>
                                             ) : (
                                                 <a
-                                                    onClick={() => openModalTarea(expediente)}
-                                                    className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
-                                                >
+                                                    disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) && showModalDetails}
+                                                    onClick={() => {
+                                                        if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
+                                                            openModalTarea(expediente);
+                                                        }
+                                                    }}
+                                                    className={`text-sm font-medium text-primary hover:underline dark:text-primary ${Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}        >
                                                     Nueva Tarea
                                                 </a>
+
                                             )}
 
                                         </div>
@@ -332,12 +361,19 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                     Detalles del Expediente #{selectedExpedienteDetails.numero}
                                 </h3>
-                                <button type="button" onClick={() => CloseModalDetails()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
+                                <button
+                                    type="button"
+                                    onClick={() => CloseModalDetails()}
+                                    className={`text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white ${Object.values(downloadingDetails).some(isDownloading => isDownloading) ? 'cursor-not-allowed opacity-50' : ''}`}
+                                    disabled={Object.values(downloadingDetails).some(isDownloading => isDownloading)}
+                                    data-modal-toggle="timeline-modal"
+                                >
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                     </svg>
                                     <span className="sr-only">Close modal</span>
                                 </button>
+
                             </div>
                             <div className="p-4 md:p-5">
                                 <div className="overflow-x-auto">
@@ -359,12 +395,14 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                         <tr key={index}>
                                                             <td className="px-6 py-4">
                                                                 <button
+                                                                    disabled={Object.values(downloadingDetails).some(isDownloading => isDownloading)}
                                                                     onClick={() => handleDownloadLoading(selectedExpedienteDetails.url, detalle.fecha, detalle.id)}
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
                                                                     {downloadingDetails[detalle.id] ? <Spinner size="sm" color="default" /> : 'PDF'}
                                                                 </button>
+
                                                             </td>
                                                             <td className="px-6 py-4">{detalle.fecha}</td>
                                                             <td className="px-6 py-4">{detalle.etapa}</td>

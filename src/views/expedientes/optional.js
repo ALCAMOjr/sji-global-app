@@ -46,6 +46,7 @@ export async function updateAllExpedientes({ token }) {
         if (response.status !== 202) {
             throw new Error('Response is NOT ok');
         }
+        console.log(response.data)
         return response.data;
 
     } catch (error) {

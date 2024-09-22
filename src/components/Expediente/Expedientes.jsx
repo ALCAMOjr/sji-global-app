@@ -47,7 +47,7 @@ const Expedientes = () => {
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
     const [IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
     const [progress, setProgress] = useState(0);
-
+    
 
 
     const openModalUpload = () => {
@@ -133,13 +133,16 @@ const Expedientes = () => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
         }
-
         setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+
+        const reversedExpedientes = [...expedientes].reverse();
+
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
 
+        setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
+    }, [expedientes, itemsPerPage, currentPage]);
+    
 
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1);
@@ -250,7 +253,8 @@ const Expedientes = () => {
                     result = response.result;
                     return { success: true, result };
                 } else if (state === 'failed') {
-                    throw new Error('Job failed');
+                    result = response.result;
+                    return { success: false, result };
                 }
     
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -258,7 +262,6 @@ const Expedientes = () => {
             return { success: false, error: 'Trabajo no completado a tiempo.' };
     
         } catch (error) {
-            console.error('Error monitoring job progress:', error);
             return { success: false, error: error.message };
         }
     };
@@ -271,10 +274,10 @@ const Expedientes = () => {
         setProgress(0);
 
         try {
-            const { success, jobId, error } = await UpdateAllExpedientes(setOriginalExpedientes);
+            const { success, jobId } = await UpdateAllExpedientes(setOriginalExpedientes);
 
             if (success) {
-                const { success: monitorSuccess, result, error: monitorError } = await monitorJobProgress(jobId);
+                const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
 
                 if (monitorSuccess) {
                     toast.info('Se actualizaron correctamente los expedientes', {
@@ -284,12 +287,10 @@ const Expedientes = () => {
                         }
                     });
                     setExpedientes(result);
-                } else {
-                    console.error(monitorError);
+                } 
+                else {
                     toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
                 }
-            } else {
-                toast.error('Algo salió mal durante la actualización de los expedientes. Intenta nuevo');
             }
         } catch (error) {
             console.error(error);
@@ -327,7 +328,11 @@ const Expedientes = () => {
                     toast.error('El número de expediente ya existe. Intente con otro número.');
                 } else if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
                     toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
-                } else {
+                }
+                else if (error === 'Tribunal no funciono') {
+                toast.error('El Tribunal Virtual fallo al devolver los datos. Intente de nuevo.');
+            }  
+                else {
                     toast.error('Algo mal sucedió al crear el expediente: ' + error);
                 }
             }
@@ -366,16 +371,21 @@ const Expedientes = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
+    
+        if (!formData.url) {
+            toast.error('La URL no existe. Por favor, agrega una URL e intenta de nuevo.');
+            setIsLoading(false);
+            return; 
+        }
+    
         try {
             const { success, error } = await updateExpediente({
                 numero: formData.numero,
                 nombre: formData.nombre,
                 url: formData.url,
                 setOriginalExpedientes
-
             });
-
+    
             if (success) {
                 toast.info('Se actualizó correctamente el Expediente', {
                     icon: () => <img src={check} alt="Success Icon" />,
@@ -386,20 +396,24 @@ const Expedientes = () => {
             } else {
                 if (error === 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.') {
                     toast.error('La URL proporcionada es incorrecta. Intente de nuevo.');
-                } else {
+                     
+                }   else if (error === 'Tribunal no funciono') {
+                    toast.error('El Tribunal Virtual fallo al devolver los datos. Intente de nuevo.');
+                } 
+                 else {
                     toast.error('Algo mal sucedió al actualizar el Expediente: ' + error);
                 }
             }
+    
         } catch (error) {
             console.error(error);
             toast.error('Algo mal sucedió al actualizar el Expediente');
         } finally {
             setisModalOpenUpdate(false);
-
             setIsLoading(false);
         }
     };
-
+    
 
     const openModalDelete = (expediente) => {
         setFormData({
@@ -606,6 +620,7 @@ const Expedientes = () => {
                                 <h3 className="text-xl font-semibold text-primary/80">Subir Archivo</h3>
                                 <button
                                     type="button"
+                                    disabled={isLoading}
                                     className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                     onClick={closeModalUpload}
                                 >
@@ -725,7 +740,7 @@ const Expedientes = () => {
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                 Crear Nuevo Expediente
                             </h3>
-                            <button onClick={closeModal} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                            <button onClick={closeModal} disabled={isLoading} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                 <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
@@ -790,7 +805,7 @@ const Expedientes = () => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={isSubmitDisabled}
+                                disabled={isSubmitDisabled || isLoading}
                                 className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
                             >
                                 {isLoading ? (
@@ -815,9 +830,9 @@ const Expedientes = () => {
                     <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Actualizar Expedientes
+                                Actualizar Expediente
                             </h3>
-                            <button onClick={closeModalUpdate} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                            <button onClick={closeModalUpdate} disabled={isLoading}  type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                 <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
@@ -876,7 +891,7 @@ const Expedientes = () => {
                                     onChange={handleChange}
                                     className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer ${urlActive ? '' : 'pointer-events-none'}`}
                                     placeholder=" "
-                                    readOnly={!urlActive}
+                                    readOnly={!urlActive || isLoading}
                                 />
                                 <label
                                     htmlFor="floating_url"
@@ -903,7 +918,8 @@ const Expedientes = () => {
 
 
                             <div>
-                                <button
+                                 <button
+                                    disabled={isLoading}
                                     type="submit"
                                     className="w-full mt-4 rounded border border-primary bg-primary p-3 text-white transition hover:bg-opacity-90"
                                 >
@@ -938,7 +954,7 @@ const Expedientes = () => {
                         <button onClick={handleDelete} type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
                             {isDeleting ? <Spinner size='sm' color="default" /> : 'Si, estoy seguro'}
                         </button>
-                        <button onClick={closeModalDelete} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100">No, cancelar</button>
+                        <button  onClick={closeModalDelete} disabled={isDeleting} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100">No, cancelar</button>
                     </div>
                 </div>
             </div>

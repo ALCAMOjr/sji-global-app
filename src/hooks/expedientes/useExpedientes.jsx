@@ -53,7 +53,11 @@ export default function useExpedientes() {
         } catch (error) {
             if (error.response && error.response.status === 500 && error.response.data.error === 'Scraping failed for the provided URL.') {
                 return { success: false, error: 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.' };
-            } else {
+            }  else if (error.response && error.response.status === 500 && error.response.data.error === 'Tribunal doesn\'t work') {
+                return { success: false, error: 'Tribunal no funciono' };
+      
+            }
+            else {
                 console.error(error);
                 return { success: false, error: 'Error al actualizar el expediente' };
             }
@@ -93,7 +97,8 @@ export default function useExpedientes() {
         try {
             const newExpediente = await createExpediente({ numero, nombre, url, token: jwt });
             setOriginalExpedientes([]);
-            setExpedientes(prevExpedientes => [newExpediente, ...prevExpedientes]);
+            setExpedientes(prevExpedientes => [...prevExpedientes, newExpediente]);
+
             return { success: true, data: newExpediente };
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -107,7 +112,12 @@ export default function useExpedientes() {
             } else if (error.response && error.response.status === 500 && error.response.data.error === 'Scraping failed for the provided URL.') {
                 console.error(error);
                 return { success: false, error: 'No se pudo obtener la información de la URL proporcionada. Intente de nuevo.' };
-            } else {
+            }
+            else if (error.response && error.response.status === 500 && error.response.data.error === 'Tribunal doesn\'t work') {
+                return { success: false, error: 'Tribunal no funciono' };
+      
+            }
+            else {
                 console.error(error);
                 return { success: false, error: 'Error al crear el expediente' };
             }
@@ -131,8 +141,8 @@ export default function useExpedientes() {
                 
                 if (error.response.status === 404 && errorMessage === 'PDF not found.') {
                     return { success: false, error: 'PDF no encontrado.' };
-                } else if (error.response.status === 500 && errorMessage === 'Scraping failed for the provided URL.') {
-                    return { success: false, error: 'PDF no encontrado.' };
+                } else if (error.response.status === 500 && errorMessage === 'Tribunal doesn\'t work') {
+                    return { success: false, error: 'Tribunal no funciono' };
                 }
             }
             console.error(error);

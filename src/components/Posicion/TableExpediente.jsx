@@ -63,7 +63,8 @@ const TableExpedientes = ({
     handleChangeRowsPerPage,
     openModalTarea,
     handleDownload,
-    handleUpdate
+    handleUpdate,
+    isLoading
 }) => {
 
 
@@ -122,6 +123,7 @@ const TableExpedientes = ({
                                 openModalTarea={openModalTarea}
                                 handleDownload={handleDownload}
                                 handleUpdate={handleUpdate}
+                                isLoading={isLoading}
 
                             />
                         ))}
@@ -157,7 +159,8 @@ const Row = ({
     expediente,
     openModalTarea,
     handleDownload,
-    handleUpdate
+    handleUpdate,
+    isLoading
 }) => {
     const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [hasTarea, setHasTarea] = useState(false);
@@ -315,6 +318,7 @@ const Row = ({
                         </button>
                     ) : (
                         <button
+                            disabled={isLoading}
                             onClick={() => openModalTarea(expediente)}
                             type="button"
                             className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -325,6 +329,7 @@ const Row = ({
                 </TableCell>
                 <TableCell align="left">
                     <button
+                        disabled={isLoading}
                         onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
                         type="button"
                         className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
@@ -359,6 +364,7 @@ const Row = ({
                                                 <TableRow key={idx}>
                                                     <TableCell align="left">
                                                         <button
+                                                           disabled={isLoading}
                                                             onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
                                                             type="button"
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"

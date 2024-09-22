@@ -45,7 +45,7 @@ const ExpedientesSial = () => {
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage]);
     
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = (newPage) => {
         setCurrentPage(newPage + 1); 
     };
     
@@ -270,6 +270,7 @@ const ExpedientesSial = () => {
                                 <h3 className="text-xl font-semibold text-primary/80">Subir Archivo</h3>
                                 <button
                                     type="button"
+                                    disabled={isLoading}
                                     className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                     onClick={closeModal}
                                 >

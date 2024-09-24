@@ -17,6 +17,7 @@ import getPositionByEtapa from '../../views/position/getPositionByEtapa.js';
 import getPositionFiltros from '../../views/position/getPositionFiltros.js';
 import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
 import { filtros } from "../../utils/Filtros.js"
+import getPositionByFecha from '../../views/position/getPositionbyFecha.js';
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
@@ -373,12 +374,14 @@ const Position = () => {
                 }
             }
         } else if (searchType === 'Fecha') {
-            const lowercaseSearchTerm = searchTerm.toLowerCase();
+            const format_fecha = formatDate(searchTerm);
             try {
-                const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
-
-                if (expediente && expediente.length > 0) {
-                    filteredExpedientes.push(expediente[0]);
+                const expedientesResponse = await getPositionByFecha({ fecha: format_fecha, token: jwt });
+    
+                const expedientes = expedientesResponse.data;
+        
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
                 } else {
                     filteredExpedientes = [];
                 }

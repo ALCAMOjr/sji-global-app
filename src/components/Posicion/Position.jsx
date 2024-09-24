@@ -318,31 +318,31 @@ const Position = () => {
             setIsManualSearch(true);
         }
         if (searchType === 'Fecha' && searchTerm.trim() !== '') {
-          setIsManualSearch(true);
-            }
-            if (searchType === 'Nombre' && searchTerm.trim() !== '') {
-                searcherExpediente(searchTerm);
-            }
+            setIsManualSearch(true);
+        }
+        if (searchType === 'Nombre' && searchTerm.trim() !== '') {
+            searcherExpediente(searchTerm);
+        }
 
-            if (searchType === 'Etapa' && searchTerm.trim() !== '') {
-                searcherExpediente(searchTerm);
-            }
+        if (searchType === 'Etapa' && searchTerm.trim() !== '') {
+            searcherExpediente(searchTerm);
+        }
 
-            if (searchType === 'Filtros') {
-                if (searchTerm.trim() !== '') {
-                    try {
-                        const parsedValue = JSON.parse(searchTerm);
-                        searcherExpediente(parsedValue);
-                    } catch (error) {
-                        console.error('Error al parsear el filtro:', error);
-                    }
+        if (searchType === 'Filtros') {
+            if (searchTerm.trim() !== '') {
+                try {
+                    const parsedValue = JSON.parse(searchTerm);
+                    searcherExpediente(parsedValue);
+                } catch (error) {
+                    console.error('Error al parsear el filtro:', error);
                 }
             }
-            
-            if (searchTerm.trim() === '') {
-                setIsManualSearch(false);
-                setExpedientes(originalExpedientes);
-            }
+        }
+
+        if (searchTerm.trim() === '') {
+            setIsManualSearch(false);
+            setExpedientes(originalExpedientes);
+        }
     };
 
 
@@ -564,61 +564,61 @@ const Position = () => {
                 {isDesktopOrLaptop ? (
                     <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
                         <div className="flex">
-                           
-                                <button
-                                    id="dropdown-button"
-                                    onClick={toggleDropdown}
-                                    className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                                    type="button"
+
+                            <button
+                                id="dropdown-button"
+                                onClick={toggleDropdown}
+                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                                type="button"
+                            >
+                                Filtrar por:
+                                <svg
+                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
                                 >
-                                    Filtrar por:
-                                    <svg
-                                        className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 10 6"
-                                    >
-                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                                    </svg>
-                                </button>
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
 
-                                {isSearchOpen && (
-                                    <div
-                                        ref={menuRef}
-                                        id="dropdown"
-                                        className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
-                                    >
-                                        <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                    Numero
-                                                    {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Fecha")}>
-                                                    Fecha
-                                                    {searchType === "Fecha" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
-                                                    MacroEtapa
-                                                    {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                    Mas Filtros
-                                                    {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
+                            {isSearchOpen && (
+                                <div
+                                    ref={menuRef}
+                                    id="dropdown"
+                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
+                                >
+                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                                Numero
+                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Fecha")}>
+                                                Fecha Tv
+                                                {searchType === "Fecha" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
+                                                MacroEtapa
+                                                {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
+                                                Mas Filtros
+                                                {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
 
-                             
+
 
 
 
@@ -662,10 +662,10 @@ const Position = () => {
                                         }}
                                         value={search}
                                         onChange={handleSearchInputChange}
-                                        type={searchType === "Fecha" ? "date" : "search"} 
+                                        type={searchType === "Fecha" ? "date" : "search"}
                                         id="search-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                          placeholder={searchType === "Fecha" ? "" : "Buscar Expedientes:"} 
+                                        className="block p-2.5 w-full  z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        placeholder={searchType === "Fecha" ? "" : "Buscar Expedientes:"}
                                         required
                                         style={{ width: "300px" }}
                                     />
@@ -674,8 +674,8 @@ const Position = () => {
                                     type="button"
                                     disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
-                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                >
+                                    className={`absolute top-0 ml-4 p-2.5 text-sm font-medium h-full text-white ${searchType === "Fecha" ? "left-[280px]" : "right-0"} ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                                    >
                                     <svg
                                         className="w-4 h-4"
                                         aria-hidden="true"
@@ -731,11 +731,11 @@ const Position = () => {
                                             </button>
                                         </li>
                                         <li>
-                                                <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Fecha")}>
-                                                    Fecha
-                                                    {searchType === "Fecha" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                                </button>
-                                            </li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Fecha")}>
+                                            Fecha Tv
+                                                {searchType === "Fecha" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
                                                 MacroEtapa
@@ -793,10 +793,10 @@ const Position = () => {
                                         }}
                                         value={search}
                                         onChange={handleSearchInputChange}
-                                        type={searchType === "Fecha" ? "date" : "search"} 
+                                        type={searchType === "Fecha" ? "date" : "search"}
                                         id="search-dropdown"
                                         className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        placeholder={searchType === "Fecha" ? "" : "Buscar Expedientes:"} 
+                                        placeholder={searchType === "Fecha" ? "" : "Buscar Expedientes:"}
                                         required
                                         style={{ width: "200px" }}
                                     />
@@ -805,8 +805,8 @@ const Position = () => {
                                     type="button"
                                     disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
-                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                >
+                                    className={`absolute top-0 ml-4 p-2.5 text-sm font-medium h-full text-white ${searchType === "Fecha" ? "left-[180px]" : "right-0"} ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                                    >
                                     <svg
                                         className="w-4 h-4"
                                         aria-hidden="true"

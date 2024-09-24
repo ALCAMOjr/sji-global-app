@@ -278,7 +278,7 @@ const Expedientes = () => {
                 const { success: monitorSuccess, result, error } = await monitorJobProgress(jobId);
     
                 if (monitorSuccess) {
-                    toast.info('Se actualizaron correctamente los expedientes', {
+                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                         icon: () => <img src={check} alt="Success Icon" />,
                         progressStyle: {
                             background: '#1D4ED8',
@@ -287,9 +287,12 @@ const Expedientes = () => {
                     setExpedientes(result.expedientesConDetalles);
                 } else {
                     if (error) {
-                        console.error(error)
-                        toast.error("El Tribunal Virtual falló. Por favor intente más tarde o comuníquese con soporte técnico.");
-                    }
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });   }
                 }
             }
         } catch (error) {
@@ -730,6 +733,7 @@ const Expedientes = () => {
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
                     <div className="relative p-4 mx-auto mt-20 max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-700">
                         <Spinner className='text-center mt-16 mr-24 ml-24 mb-16 text-sm' label={`Actualizando Expedientes... ${progress}%`} color="primary" size='lg' labelColor="primary" />
+                        <h3 className="text-sm text-center font-semibold text-primary/80">Se le notificará por correo electrónico cuando se complete el proceso.</h3>
                     </div>
                 </div>
             )}

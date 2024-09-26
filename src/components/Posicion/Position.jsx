@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useRef, useMemo } from 'react';
+import { useState, useContext, useEffect, useRef} from 'react';
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner } from "@nextui-org/react";
 import Error from "../Error.jsx";

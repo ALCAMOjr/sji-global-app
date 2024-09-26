@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import useUser from "../hooks/auth.jsx";
-import logo from "../assets/logoGde.png"
+import logo from "../assets/logoGde.png";
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { Spinner } from "@nextui-org/react";
 import FooterPageLogin from './Footer_Login.jsx';
 import { useNavigate } from 'react-router-dom';
-
 
 function Login({ onLogin }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +17,9 @@ function Login({ onLogin }) {
     const { isLoginLoading, hasLoginError, setHasLoginError, login, isLogged, isCoordinador } = useUser();
     const navigate = useNavigate();
     const [shouldRenderFooter, setShouldRenderFooter] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+    const [email, setEmail] = useState(""); // Para el input del correo en el modal
+    const [emailError, setEmailError] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -28,18 +30,12 @@ function Login({ onLogin }) {
             }
         };
 
-        // Add event listener to handle window resize
         window.addEventListener('resize', handleResize);
-
-        // Call handleResize initially to determine whether to render footer
         handleResize();
-
-        // Remove event listener on component unmount
         return () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
 
     useEffect(() => {
         setIsLoading(true);
@@ -55,10 +51,8 @@ function Login({ onLogin }) {
         if (isLogged) {
             navigate('/');
             onLogin && onLogin();
-        } // No hay más else
+        }
     }, [isLogged, isCoordinador, navigate, onLogin]);
-
-
 
     const handleShowPassword = (event) => {
         event.preventDefault();
@@ -94,6 +88,26 @@ function Login({ onLogin }) {
         }
     };
 
+    const handleForgotPassword = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEmail("");
+        setEmailError(false);
+    };
+
+    const handleSendPasswordReset = () => {
+        if (email.trim() === "") {
+            setEmailError(true);
+        } else {
+            // Aquí iría la lógica para enviar el correo
+            console.log("Enviando correo de recuperación a:", email);
+            closeModal();
+        }
+    };
+
     const showPasswordError = formSubmitted && passwordError;
 
     if (isLoading) {
@@ -103,9 +117,10 @@ function Login({ onLogin }) {
             </div>
         );
     }
+
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 z-99">
-            <div className="max-w-lg mb-auto relative " style={{ width: '100%', maxWidth: '500px', marginTop: '80px' }}>
+            <div className="max-w-lg mb-auto relative" style={{ width: '100%', maxWidth: '500px', marginTop: '80px' }}>
                 <div className="flex justify-center mb-8">
                     <img src={logo} className="h-24 w-44 me-3" />
                 </div>
@@ -127,7 +142,7 @@ function Login({ onLogin }) {
                             />
                             {formSubmitted && usernameError && <span className="text-red-500 text-xs">Este campo es obligatorio</span>}
                         </div>
-                        <div className="w-full">
+                        <div className="w-full relative">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 className={`w-full border py-2 px-4 rounded-md outline-none ${showPasswordError ? 'border-red-500' : ''}`}
@@ -137,7 +152,7 @@ function Login({ onLogin }) {
                             />
                             <button
                                 onClick={handleShowPassword}
-                                className="absolute right-10 top-[64%] transform -translate-y-1/2"
+                                className="absolute right-2 top-[50%] transform -translate-y-1/2"
                             >
                                 {showPassword ? <FiEyeOff /> : <FiEye />}
                             </button>
@@ -148,28 +163,59 @@ function Login({ onLogin }) {
                                 type="submit"
                                 className="w-full bg-primary py-2 px-4 text-white rounded-md hover:bg-[#e6534e] transition-colors"
                             >
-                                {isLoginLoading ?
-                                    <div className='justiify-center'>
-                                        <Spinner size='sm' color="default" />
-                                    </div>
-                                    : 'Iniciar sesión'}
+                                {isLoginLoading ? <Spinner size="sm" color="default" /> : 'Iniciar sesión'}
                             </button>
-
                         </div>
                     </form>
+                    <div className="w-full text-center mt-4">
+                        <button
+                            onClick={handleForgotPassword}
+                            className="text-sm text-gray-500 hover:text-primary transition-colors"
+                        >
+                            ¿Olvidó Contraseña?
+                        </button>
+                    </div>
                     {formSubmitted && hasLoginError && (
-    <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-1 sm:-bottom-3 md:bottom-1 lg:bottom-1 text-sm sm:text-base md:text-base lg:text-base">
-        <strong>Usuario o contraseña inválido</strong>
-    </div>
-)}
-
+                        <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-1 sm:-bottom-3 md:bottom-1 lg:bottom-1 text-sm">
+                            <strong>Usuario o contraseña inválido</strong>
+                        </div>
+                    )}
                 </div>
             </div>
             {shouldRenderFooter && <FooterPageLogin />}
+
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-96">
+                        <h2 className="text-xl mb-4">Recuperar contraseña</h2>
+                        <input
+                            type="email"
+                            className={`w-full border py-2 px-4 rounded-md outline-none ${emailError ? 'border-red-500' : ''}`}
+                            placeholder="Escribe tu correo electrónico"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        {emailError && <span className="text-red-500 text-xs">Este campo es obligatorio</span>}
+                        <div className="flex justify-end gap-4 mt-4">
+                            <button
+                                className="px-4 py-2 bg-gray-300 rounded-md"
+                                onClick={closeModal}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-primary text-white rounded-md"
+                                onClick={handleSendPasswordReset}
+                            >
+                                Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-
-
 }
 
 export default Login;

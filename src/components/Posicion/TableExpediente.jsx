@@ -323,7 +323,7 @@ const Row = ({
                             type="button"
                             className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                         >
-                            Asignar Tarea
+                            Asignar Exp
                         </button>
                     )}
                 </TableCell>

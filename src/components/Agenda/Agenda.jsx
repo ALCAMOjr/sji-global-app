@@ -534,8 +534,8 @@ const Agenda = () => {
                                 <path fillRule="evenodd" clipRule="evenodd" d="M32 27.7402C32 23.322 35.5817 19.7402 40 19.7402H79.1717C83.59 19.7402 87.1717 23.322 87.1717 27.7402V74.3389C87.1717 78.7572 83.59 82.3389 79.1717 82.3389H40C35.5817 82.3389 32 78.7572 32 74.3389V27.7402ZM57.1717 42.7402C57.1717 46.6062 53.8138 49.7402 49.6717 49.7402C45.5296 49.7402 42.1717 46.6062 42.1717 42.7402C42.1717 38.8742 45.5296 35.7402 49.6717 35.7402C53.8138 35.7402 57.1717 38.8742 57.1717 42.7402ZM36.1717 60.8153C37.2808 58.3975 40.7688 54.8201 45.7381 54.3677C51.977 53.7997 55.3044 57.8295 56.5522 60.0094C59.8797 55.4423 67.0336 46.8724 72.3575 45.9053C77.6814 44.9381 81.7853 48.4574 83.1717 50.338V72.6975C83.1717 75.4825 80.914 77.7402 78.1289 77.7402H41.2144C38.4294 77.7402 36.1717 75.4825 36.1717 72.6975V60.8153Z" fill="#D2D9EE"></path>
                             </svg>
                         </div>
-                        <p className="text-gray-500">No hay tareas para ningún expedientes todavía</p>
-                        <p className="text-gray-400 text-sm mb-4 text-center">Ve a Position de Expedientes y crea un nueva tarea para comenzar.</p>
+                        <p className="text-gray-500">No hay expedientes asignados todavía</p>
+                        <p className="text-gray-400 text-sm mb-4 text-center">Ve a Position de Expedientes y asigna un nuevo Expediente para comenzar.</p>
                     </div>
 
                 </div>

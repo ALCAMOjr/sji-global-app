@@ -213,7 +213,7 @@ const Row = ({
                             <Collapse in={open} timeout="auto" unmountOnExit>
                                 <Box sx={{ margin: 1 }}>
                                     <Typography variant="h6" gutterBottom component="div">
-                                        Tarea del Espediente
+                                    Gestion del Expediente
                                     </Typography>
                                     <Table size="small" aria-label="details">
                                         <TableHead>
@@ -246,7 +246,7 @@ const Row = ({
                                                                     type="button"
                                                                     className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {TaskStartLoading[tarea.tareaId] ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                    {TaskStartLoading[tarea.tareaId] ? <Spinner size='sm' color="primary" /> : 'Iniciar Gestion'}
                                                                 </button>
                                                             )}
                                                             {tarea.estado_tarea === 'Iniciada' && (
@@ -255,7 +255,7 @@ const Row = ({
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {TaskCompleteLoading[tarea.tareaId] ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                                    {TaskCompleteLoading[tarea.tareaId] ? <Spinner size='sm' color="default" /> : 'Finalizar Gestion'}
                                                                 </button>
                                                             )}
                                                         </TableCell>

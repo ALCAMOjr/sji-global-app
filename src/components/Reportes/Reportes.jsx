@@ -31,7 +31,7 @@ const Reporte = () => {
                             </svg>
                         </div>
                         <p className="text-gray-500">No hay ningun reporte todavía</p>
-                        <p className="text-gray-400 text-sm mb-4 text-center">Ve a Position de Expedientes y crea una nueva tarea para comenzar.</p>
+                        <p className="text-gray-400 text-sm mb-4 text-center">Ve a Position de Expedientes y asigna un nuevo expediente para comenzar.</p>
                     </div>
                 </div>
             ) : (

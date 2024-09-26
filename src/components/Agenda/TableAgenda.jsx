@@ -143,12 +143,12 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                                 <Typography variant="h6" gutterBottom component="div">
-                                    Tareas del Expediente
+                                Gestion del Expediente
                                 </Typography>
                                 <Table size="small" aria-label="details">
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell>Tarea</TableCell>
+                                            <TableCell>Gestión</TableCell>
                                             <TableCell>Fecha de Asignación</TableCell>
                                             {expediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
                                                 <>
@@ -239,7 +239,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                                             onClick={() => openModal(tarea.tareaId)}
                                                         >
-                                                            Cancelar Tarea
+                                                            Cancelar Gestión
                                                         </button>
                                                     ) : tarea.estado_tarea === "Terminada" || tarea.estado_tarea === "Cancelada" ? (
                                                         <button
@@ -247,7 +247,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                                             onClick={() => openModalDelete(tarea.tareaId)}
                                                         >
-                                                            Eliminar Tarea
+                                                            Eliminar Gestión
                                                         </button>
                                                     ) : null}
                                                 </TableCell>

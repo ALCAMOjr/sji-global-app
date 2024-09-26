@@ -141,7 +141,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                                 onClick={() => OpenModal(expediente)}
                                                 className="block text-sm mb-1 font-medium text-black hover:underline dark:text-black cursor-pointer"
                                             >
-                                                Ver Tareas
+                                                Ver Gestion
                                             </a>
                                         </li>
                                         <li className="flex items-center">
@@ -208,7 +208,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Tareas del Expediente #{selectedExpediente.numero}
+                                Gestion del Expediente #{selectedExpediente.numero}
                                 </h3>
                                 <button type="button" onClick={() => CloseModal()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -250,7 +250,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                                                     type="button"
                                                                     className="text-primary bg-white border border-primary hover:bg-gray-100 focus:outline-none focus:ring-4 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {isLoading ? <Spinner size='sm' color="primary" /> : 'Iniciar Tarea'}
+                                                                    {isLoading ? <Spinner size='sm' color="primary" /> : 'Iniciar Gestion'}
                                                                 </button>
                                                             )}
                                                             {tarea.estado_tarea === 'Iniciada' && (
@@ -259,7 +259,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                                                     type="button"
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
                                                                 >
-                                                                    {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Tarea'}
+                                                                    {isLoading ? <Spinner size='sm' color="default" /> : 'Finalizar Gestion'}
 
                                                                 </button>
                                                             )}

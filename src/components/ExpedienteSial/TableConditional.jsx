@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
-import TableExpedientes from './TableExpedienteSial.jsx'; // Cambiado a TableExpedientes
+import TableExpedientes from './TableExpedienteSial.jsx';
 
 const TableConditional = ({
     currentExpedientes,
@@ -12,6 +12,8 @@ const TableConditional = ({
     handleChangeRowsPerPage,
     onPageChange,
 }) => {
+
+   
 
     const [shouldRenderTable, setShouldRenderTable] = useState(window.innerWidth >= 1200);
 

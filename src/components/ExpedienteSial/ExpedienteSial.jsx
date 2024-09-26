@@ -45,9 +45,10 @@ const ExpedientesSial = () => {
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage]);
     
-    const handleChangePage = (newPage) => {
-        setCurrentPage(newPage + 1); 
+    const handleChangePage = (event, newPage) => {
+        setCurrentPage(newPage + 1);
     };
+
     
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));

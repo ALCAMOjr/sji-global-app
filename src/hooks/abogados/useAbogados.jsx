@@ -41,9 +41,9 @@ export default function useAbogados() {
   }, [jwt]);
   
   
-  const updateAbogado = useCallback(async ({ id, username, password, nombre, apellido, cedula, email, telefono, userType }) => {
+  const updateAbogado = useCallback(async ({ id, username, nombre, apellido, cedula, email, telefono, userType }) => {
       try {
-          const updatedAbogado = await updateAbogados({ id, username, password, nombre, apellido, cedula, email, telefono, userType, token: jwt });
+          const updatedAbogado = await updateAbogados({ id, username, nombre, apellido, cedula, email, telefono, userType, token: jwt });
           setAbogados(prevAbogados => prevAbogados.map(abogado => abogado.id === id ? updatedAbogado : abogado));
           return { success: true, data: updatedAbogado }; 
       } catch (err) {
@@ -52,9 +52,9 @@ export default function useAbogados() {
       }
   }, [jwt]);
 
-  const registerNewAbogado = useCallback(async ({ username, password, userType, nombre, apellido, cedula, email, telefono }) => {
+  const registerNewAbogado = useCallback(async ({ username, userType, nombre, apellido, cedula, email, telefono }) => {
     try {
-        const newAbogado = await register({ username, password, userType, nombre, apellido, cedula, email, telefono, token: jwt });
+        const newAbogado = await register({ username, userType, nombre, apellido, cedula, email, telefono, token: jwt });
         setAbogados(prevAbogados => [...prevAbogados, newAbogado]);
         return { success: true, data: newAbogado };
     } catch (error) {

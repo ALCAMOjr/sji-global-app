@@ -113,9 +113,9 @@ const TableExpedientes = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={expedientes.length}  
-                rowsPerPage={itemsPerPage} 
-                page={currentPage - 1}  
+                count={expedientes.length}
+                rowsPerPage={itemsPerPage}
+                page={currentPage - 1}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"

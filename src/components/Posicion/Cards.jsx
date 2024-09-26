@@ -281,7 +281,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                         }
                                                     }}
                                                     className={`text-sm font-medium text-primary hover:underline dark:text-primary ${Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}        >
-                                                    Nueva Tarea
+                                                    Asignar Exp
                                                 </a>
 
                                             )}

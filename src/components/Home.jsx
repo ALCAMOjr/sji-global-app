@@ -36,7 +36,7 @@ function Home() {
     if (userType === 'coordinador') {
       navigate('/positions');
     } else if (userType === 'abogado') {
-      navigate('/tareas');
+      navigate('/gestion');
     }
   };
 

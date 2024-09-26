@@ -470,7 +470,7 @@ const Position = () => {
                         <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-white border-b rounded-t dark:border-gray-600">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Agendar nueva Tarea
+                                Asignar Expediente
                                 </h3>
                                 <button onClick={closeModalTarea} disabled={isLoading} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -489,7 +489,7 @@ const Position = () => {
                                         value={formData.tarea}
                                         onChange={handleInputChange}
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                                        placeholder="Ingresa la Tarea"
+                                        placeholder="Ingresa Gestión"
                                         required
                                     ></textarea>
                                 </div>
@@ -554,7 +554,7 @@ const Position = () => {
                                             <span className="sr-only">Cargando...</span>
                                         </div>
                                     ) : (
-                                        'Crear Tarea'
+                                        'Asignar Expediente'
                                     )}
                                 </button>
                             </form>
@@ -646,8 +646,8 @@ const Position = () => {
                                         value={search}
                                         onChange={handleSearchInputChange}
                                         id="filtros-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        required
+                                        className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                       required
                                     >
                                         <option value="">Sin Filtro</option>
                                         {filtros.map((filtro, index) => (

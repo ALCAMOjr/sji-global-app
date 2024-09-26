@@ -6,9 +6,7 @@ import Error from "../Error.jsx";
 import { toast } from 'react-toastify';
 import check from "../../assets/check.png";
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { RiChatNewLine } from "react-icons/ri";
 import { Listbox, Transition } from '@headlessui/react'
-import { FiEye, FiEyeOff } from 'react-icons/fi';
 import masicon from "../../assets/mas.png"
 import { Spinner, Tooltip, Button } from "@nextui-org/react";
 
@@ -23,30 +21,23 @@ const options = [
 
 const Abogados = () => {
     const { abogados, loading, error, deteleAbogado, updateAbogado, registerNewAbogado } = useAbogados();
-    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1200);
     const [showModal, setShowModal] = useState(false);
     const [selectedAbogado, setSelectedAbogado] = useState(null);
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     const [usertypeError, setusertypeError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
     const [nombreActive, setNombreActive] = useState(false);
     const [apellidoActive, setApellidoActive] = useState(false);
     const [cedulaActive, setCedulaActive] = useState(false);
     const [emailActive, setEmailActive] = useState(false);
     const [telefonoActive, setTelefonoActive] = useState(false);
 
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
 
     const [formData, setFormData] = useState({
         id: '',
         username: '',
-        password: '',
         user_type: '',
         nombre: '',
         apellido: '',
@@ -73,27 +64,6 @@ const Abogados = () => {
             user_type: value
         });
     };
-
-
-    const handleMouseEnter = () => {
-        setIsTooltipVisible(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsTooltipVisible(false);
-    };
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsLargeScreen(window.innerWidth >= 1200);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
     const handleDelete = async () => {
         setIsDeleting(true);
 
@@ -106,8 +76,10 @@ const Abogados = () => {
                         background: '#1D4ED8',
                     }
                 });
+            } else if (error == "El abogado tiene tareas pendientes sin completar"){
+                toast.error(`El abogado tiene gestiones pendientes sin completar, Por favor cancela las gestiones e intenta de nuevo`);
             } else {
-                toast.error(`Algo mal sucedió al eliminar el abogado: ${error}`);
+                toast.error("Algo mal sucedió al eliminar el abogado", error)
             }
         } catch (error) {
             console.error(error);
@@ -135,7 +107,6 @@ const Abogados = () => {
         setFormData({
             id: abogado.id,
             username: abogado.username,
-            password: abogado.password,
             user_type: abogado.user_type,
             nombre: abogado.nombre,
             apellido: abogado.apellido,
@@ -162,7 +133,6 @@ const Abogados = () => {
             const { success, error } = await updateAbogado({
                 id: formData.id, 
                 username: formData.username,
-                password: formData.password,
                 nombre: formData.nombre,
                 apellido: formData.apellido,
                 cedula: formData.cedula,
@@ -218,7 +188,6 @@ const Abogados = () => {
 
             const { success, error } = await registerNewAbogado({
                 username: formData.username,
-                password: formData.password,
                 userType: formData.user_type,
                 nombre: formData.nombre,
                 apellido: formData.apellido,
@@ -271,7 +240,6 @@ const Abogados = () => {
         setFormData({
             id: '',
             username: '',
-            password: '',
             user_type: '',
             nombre: '',
             apellido: '',
@@ -281,7 +249,6 @@ const Abogados = () => {
 
         });
         setIsModalOpenCreate(true)
-        setIsTooltipVisible(false);
     }
 
 

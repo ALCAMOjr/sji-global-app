@@ -70,7 +70,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                     onClick={() => OpenModal(expediente)}
                                     className="text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer"
                                 >
-                                    Ver Tareas
+                                    Ver Gestion de Expedientes
                                 </a>
                             </div>
                             <div className="flow-root">
@@ -115,7 +115,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Tareas del Expediente #{selectedExpediente.numero}
+                                 Gestion del Expediente #{selectedExpediente.numero}
                                 </h3>
                                 <button type="button" onClick={() => CloseModal()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -131,7 +131,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                         <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                             <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-600 sticky top-0">
                                                 <tr>
-                                                    <th scope="col" className="px-6 py-3">Tarea</th>
+                                                    <th scope="col" className="px-6 py-3"> Gestión</th>
                                                     <th scope="col" className="px-6 py-3">Fecha de Asignación</th>
                                                     {selectedExpediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
                                                         <>
@@ -222,7 +222,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                                                     onClick={() => openModalEdit(tarea.tareaId)}
                                                                 >
-                                                                    Cancelar Tarea
+                                                                    Cancelar Gestión
                                                                 </button>
                                                             ) : tarea.estado_tarea === "Terminada" || tarea.estado_tarea === "Cancelada" ? (
                                                                 <button
@@ -230,7 +230,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                                     className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                                                     onClick={() => openModalDeleteEdit(tarea.tareaId)}
                                                                 >
-                                                                    Eliminar Tarea
+                                                                    Eliminar Gestión
                                                                 </button>
                                                             ) : null}
                                                         </td>

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3000/api') + '/abogados/register';
 
-export default async function register({ username, password, userType, nombre, apellido, cedula, email, telefono, token }) {
+export default async function register({ username, userType, nombre, apellido, cedula, email, telefono, token }) {
     try {
         const config = {
             headers: {
@@ -13,7 +13,6 @@ export default async function register({ username, password, userType, nombre, a
 
         const response = await axios.post(baseUrl, {
             username,
-            password,
             userType,
             nombre,
             apellido,

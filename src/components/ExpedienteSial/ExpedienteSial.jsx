@@ -126,8 +126,10 @@ const ExpedientesSial = () => {
                     },
                 });
             
+            } else if (error == "Campos inválidos en los archivos.") {
+                toast.error(`Los campos de los archivos CSV son incorrectos. Revísalos y vuelve a intentarlo.`);
             } else {
-                toast.error(`Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.`);
+                toast.error('Algo mal sucedió al subir los archivos. Error:', error);
             }
         } catch (error) {
             console.error(error);

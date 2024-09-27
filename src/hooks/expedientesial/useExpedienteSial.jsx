@@ -53,10 +53,13 @@ export default function useExpedientesSial() {
           setExpedientes(response.data); 
           return { success: true, data: response.data };
         } catch (error) {
-          console.error(error);
-          return { success: false, error: error.response?.data?.message || 'Error al cargar los archivos' };
-        }
-    }, [jwt]);
+            const errorMessage = error.response?.data?.message || 'Error al cargar los archivos';
+            if (error.response?.status === 400 && errorMessage === 'Invalid Fields in the files') {
+              return { success: false, error: 'Campos inválidos en los archivos.' };
+            }
+            return { success: false, error: errorMessage };
+          }
+        }, [jwt]);
 
     return { 
         expedientes, 

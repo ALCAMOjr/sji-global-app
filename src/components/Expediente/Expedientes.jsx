@@ -121,17 +121,25 @@ const Expedientes = () => {
                     const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
     
                     if (monitorSuccess) {
+                        if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
                         toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                             icon: () => <img src={check} alt="Success Icon" />,
                             progressStyle: {
                                 background: '#1D4ED8',
                             }
                         });
-                        if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
-                            setExpedientes(result.expedientesConDetalles);
-                        } else {
-                            window.location.reload();
-                        }
+                        setExpedientes(result.expedientesConDetalles);
+                    } else {
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                       window.location.reload()
+                    }
+                    
+                      
                     } else {
                         toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                             icon: () => <img src={check} alt="Success Icon" />,
@@ -316,29 +324,35 @@ const Expedientes = () => {
             const { success, jobId } = await UpdateAllExpedientes(setOriginalExpedientes);
 
             if (success) {
-                const { success: monitorSuccess, result, error } = await monitorJobProgress(jobId);
+                const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
 
                 if (monitorSuccess) {
+                    if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
                     toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                         icon: () => <img src={check} alt="Success Icon" />,
                         progressStyle: {
                             background: '#1D4ED8',
                         }
                     });
-                    if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
-                        setExpedientes(result.expedientesConDetalles);
-                    } else {
-                        window.location.reload();
-                    }
+                    setExpedientes(result.expedientesConDetalles);
                 } else {
-                    if (error) {
-                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                            icon: () => <img src={check} alt="Success Icon" />,
-                            progressStyle: {
-                                background: '#1D4ED8',
-                            }
-                        });
-                    }
+                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        }
+                    });
+                   window.location.reload()
+                }
+                
+                  
+                } else {
+                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        }
+                    });
                     window.location.reload();
                 }
             }

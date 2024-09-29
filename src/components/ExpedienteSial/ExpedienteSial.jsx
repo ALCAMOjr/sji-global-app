@@ -11,7 +11,7 @@ import Context from '../../context/abogados.context.jsx';
 import getExpedienteByNumeroSial from '../../views/expedientesial/getExpedientebyNumero.js';
 import { IoMdCheckmark } from "react-icons/io";
 import masicon from "../../assets/mas.png"
-
+import getAllExpedientesSial from '../../views/expedientesial/getAllExpedienteSial.js';
 
 const ExpedientesSial = () => {
     const { expedientes, loadingExpedientes, errorExpedientes, uploadFile, setExpedientes } = useExpedientesSial();
@@ -43,7 +43,7 @@ const ExpedientesSial = () => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
+    }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
     
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1);
@@ -163,13 +163,20 @@ const ExpedientesSial = () => {
     }, [isSearchOpen]);
 
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        setExpedientes(originalExpedientes);
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getAllExpedientesSial({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
 
 
@@ -204,7 +211,7 @@ const ExpedientesSial = () => {
 
 
 
-    const handleSearchInputChange = (e) => {
+    const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
 
@@ -218,9 +225,16 @@ const ExpedientesSial = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);
-            setExpedientes(originalExpedientes);      
-        
+            setIsManualSearch(false);     
+                setisLoadingExpedientes(true)
+                try {
+                const expedientes = await getAllExpedientesSial({ token: jwt });
+                setExpedientes(expedientes);
+                } catch (error) {
+                    console.error("Something was wrong", error)
+                } 
+             setisLoadingExpedientes(false)
+            
         }
     }
 

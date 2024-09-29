@@ -14,8 +14,9 @@ import masicon from "../../assets/mas.png"
 import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
 import { getExpedienteJobStatus } from "../../views/expedientes/optional.js"
 import agregar from "../../assets/agregar.png"
+import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
 const Expedientes = () => {
-    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
+    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes, get } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
@@ -190,7 +191,7 @@ const Expedientes = () => {
         const endIndex = startIndex + itemsPerPage;
 
         setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
+    }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
 
 
     const handleChangePage = (event, newPage) => {
@@ -531,6 +532,7 @@ const Expedientes = () => {
         } finally {
             setIsDeleting(false);
             setisModalOpenDelete(false);
+
         }
     };
 
@@ -572,12 +574,19 @@ const Expedientes = () => {
         };
     }, [isSearchOpen]);
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
-        setExpedientes(originalExpedientes);
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getAllExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
 
     };
 
@@ -612,7 +621,7 @@ const Expedientes = () => {
 
 
 
-    const handleSearchInputChange = (e) => {
+    const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
 
@@ -626,8 +635,16 @@ const Expedientes = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setIsManualSearch(false);     
+                setisLoadingExpedientes(true)
+                try {
+                const expedientes = await getAllExpedientes({ token: jwt });
+                setExpedientes(expedientes);
+                } catch (error) {
+                    console.error("Something was wrong", error)
+                } 
+             setisLoadingExpedientes(false)
+            
         }
     }
 

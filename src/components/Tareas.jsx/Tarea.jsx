@@ -44,7 +44,7 @@ const Tarea = () => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
+    }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
     
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1); 
@@ -236,14 +236,21 @@ const Tarea = () => {
     }, [isSearchOpen]);
 
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
        
-        setExpedientes(originalExpedientes);
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getTareasUser({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
 
 
@@ -280,7 +287,7 @@ const Tarea = () => {
 
 
 
-    const handleSearchInputChange = (e) => {
+    const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
 
@@ -291,7 +298,15 @@ const Tarea = () => {
 
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setisLoadingExpedientes(true)
+            try {
+                const expedientes = await getTareasUser({ token: jwt });
+                setExpedientes(expedientes);
+            } catch (error) {
+                console.error("Something was wrong", error)
+            }
+            setisLoadingExpedientes(false)
+
         }
     }
 

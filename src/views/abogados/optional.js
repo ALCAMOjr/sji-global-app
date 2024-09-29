@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseUrl = (import.meta.env.VITE_API || 'http://localhost:3000/api') + '/abogados';
 
-export async function updateAbogados({ id, username, password, nombre, apellido, cedula, email, telefono, userType, token }) {
+export async function updateAbogados({ id, username, nombre, apellido, cedula, email, telefono, userType, token }) {
     try {
         const config = {
             headers: {
@@ -13,7 +13,6 @@ export async function updateAbogados({ id, username, password, nombre, apellido,
 
         const response = await axios.patch(`${baseUrl}/${id}`, {
             username,
-            password,
             userType,
             nombre,
             apellido,

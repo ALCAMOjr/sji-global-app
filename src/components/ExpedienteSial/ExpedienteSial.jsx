@@ -199,6 +199,7 @@ const ExpedientesSial = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
+        setCurrentPage(1);
     };
 
 

@@ -85,7 +85,7 @@ const Tarea = () => {
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
                 if (fetchError === 'PDF no encontrado.') {
-                    toast.error('El PDF solicitado no se encontró en el Tribunal Virtual. Intente de nuevo');
+                    toast.error('El PDF solicitado no se encontró o no se tienen los permisos necesarios en el Tribunal Virtual. Revisa e intente de nuevo');
                 } else {
                     toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
                 }
@@ -169,19 +169,19 @@ const Tarea = () => {
 
             });
             if (success) {
-                toast.info('Se inicio correctamente la tarea', {
+                toast.info('Se inicio correctamente la gestión', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al iniciar la tarea: ${error}`);
+                toast.error(`Algo mal sucedió al iniciar la gestión: ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al iniciar la tarea');
+            toast.error('Algo mal sucedió al iniciar la gestión');
         } finally {
             setIsLoading(false);
         }
@@ -196,19 +196,19 @@ const Tarea = () => {
 
             });
             if (success) {
-                toast.info('Se completo correctamente la tarea', {
+                toast.info('Se completo correctamente la gestión', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al completar la tarea: ${error}`);
+                toast.error(`Algo mal sucedió al completar la gestión: ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al completar la tarea');
+            toast.error('Algo mal sucedió al completar la gestión');
         } finally {
             setIsLoading(false);
         }

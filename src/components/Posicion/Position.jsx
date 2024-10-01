@@ -150,9 +150,9 @@ const Position = () => {
                 setExpedientes(expedientes)
             } else {
                 if (error === 'Ya existe una tarea asignada a este expediente.') {
-                    toast.error('Ya existe una tarea asignada a este expediente.');
+                    toast.error('Ya se le asigno este expediente a un abogado.');
                 } else if (error === 'ID de abogado inválido o el usuario no es un abogado.') {
-                    toast.error('ID de abogado inválido o el usuario no es un abogado.');
+                    toast.error('El usuario no es un abogado.');
                 } else if (error === 'El numero de expediente es inválido.') {
                     toast.error('El numero de expediente no existe en el tribunal virtual. Por favor crea el expediente en Expediente Tv e intente de nuevo.');
 
@@ -231,7 +231,7 @@ const Position = () => {
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
                 if (fetchError === 'PDF no encontrado.') {
-                    toast.error('El PDF solicitado no se encontró en el Tribunal Virtual. Intente de nuevo');
+                    toast.error('El PDF solicitado no se encontró o no se tienen los permisos necesarios en el Tribunal Virtual. Intente de nuevo');
                 } else {
                     toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
                 }
@@ -351,12 +351,21 @@ const Position = () => {
                 }
             }
         }
-
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setisLoadingExpedientes(true)
+            try {
+                const expedientes = await getPositionExpedientes({ token: jwt });
+                setExpedientes(expedientes);
+            } catch (error) {
+                console.error("Something was wrong", error)
+            }
+            setisLoadingExpedientes(false)
+
         }
     };
+
+
 
 
     const searcherExpediente = async (searchTerm) => {
@@ -444,9 +453,10 @@ const Position = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
+        setCurrentPage(1);
     };
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
@@ -458,6 +468,14 @@ const Position = () => {
             handleOpenModal();
         }
 
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getPositionExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
   
 
@@ -501,7 +519,7 @@ const Position = () => {
                         <div className="pt-16 p-4 mx-auto">
                             <form className="space-y-4" onSubmit={handleCreateTarea}>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Tarea</label>
+                                    <label className="block text-sm font-medium text-gray-700">¿Qué se le asigna al abogado?</label>
                                     <textarea
                                         name="tarea"
                                         value={formData.tarea}

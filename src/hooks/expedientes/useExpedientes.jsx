@@ -173,20 +173,29 @@ export default function useExpedientes() {
     }, [jwt]);
     
 
-    const uploadFile = useCallback(async (setOriginalExpedientes, files) => {
+    const uploadFile = useCallback(async (setOriginalExpedientes, files, isUpdatable) => {
         try {
-          const response = await UploadFile({ files, token: jwt }); 
-          setOriginalExpedientes([]);
-          const expedientes = await getAllExpedientes({ token: jwt });
-          setExpedientes(expedientes);
-          return { success: true, data: response.data };
+            const response = await UploadFile({ files, token: jwt, isUpdatable: isUpdatable });
+            const { jobId } = response;
+    
+            if (isUpdatable && !jobId) {
+                throw new Error('No jobId returned');
+            }
+    
+            setOriginalExpedientes([]);
+            const expedientes = await getAllExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+    
+            return { success: true, jobId: jobId || null }; 
         } catch (error) {
-          const errorMessage = error.response?.data?.message || 'Error al cargar los archivos';
-          if (error.response?.status === 400 && errorMessage === 'Invalid Fields in the files') {
-            return { success: false, error: 'Campos inválidos en los archivos.' };
-          }
-        
-          return { success: false, error: errorMessage };
+            const errorMessage = error.response?.data?.message || 'Error al cargar los archivos';
+            if (error.response?.status === 400 && errorMessage === 'Invalid Fields in the files') {
+                return { success: false, error: 'Campos inválidos en los archivos.' };
+            } else if (error.response?.status === 400 && errorMessage === 'Invalid file format. Only CSV files are allowed.') {
+                return { success: false, error: 'Formato de archivo no válido. Solo se permiten archivos .csv' };
+            }
+    
+            return { success: false, error: errorMessage };
         }
     }, [jwt]);
     

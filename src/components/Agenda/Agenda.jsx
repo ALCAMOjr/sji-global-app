@@ -11,6 +11,7 @@ import getTareaByAbogado from '../../views/tareas/getTareabyAbogado.js';
 import getTareaByExpediente from '../../views/tareas/getTareaByExpediente.js';
 import Context from '../../context/abogados.context.jsx';
 import { IoMdCheckmark } from "react-icons/io";
+import getTareas from '../../views/tareas/getTareas.js';
 
 const Agenda = () => {
     const { expedientes, loading, error, setExpedientes, cancelTarea, deteleTarea } = useAgenda();
@@ -43,7 +44,7 @@ const Agenda = () => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
+    }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
     
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1); 
@@ -171,13 +172,20 @@ const Agenda = () => {
 
 
    
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        setExpedientes(originalExpedientes);
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getTareas({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
 
     const searcherExpediente = async (searchTerm) => {
@@ -244,8 +252,16 @@ const Agenda = () => {
         }
     
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setIsManualSearch(false);     
+                setisLoadingExpedientes(true)
+                try {
+                const expedientes = await getTareas({ token: jwt });
+                setExpedientes(expedientes);
+                } catch (error) {
+                    console.error("Something was wrong", error)
+                } 
+             setisLoadingExpedientes(false)
+            
         }
     };
     

@@ -21,7 +21,7 @@ export default function useExpedientesSial() {
             setLoadingExpedientes(true);
             getAllExpedientesSial({ token: jwt })
                 .then(data => {
-                    setExpedientes(data.data); 
+                    setExpedientes(data); 
                     setLoadingExpedientes(false);
                 })
                 .catch(err => {

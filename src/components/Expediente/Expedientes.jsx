@@ -14,8 +14,9 @@ import masicon from "../../assets/mas.png"
 import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
 import { getExpedienteJobStatus } from "../../views/expedientes/optional.js"
 import agregar from "../../assets/agregar.png"
+import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
 const Expedientes = () => {
-    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
+    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes, get } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
@@ -47,7 +48,13 @@ const Expedientes = () => {
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
     const [IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
     const [progress, setProgress] = useState(0);
+    const [isCheckedUpdate, setIsCheckedUpdate] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false); 
 
+
+    const handleCheckboxUpdateChange = (event) => {
+        setIsCheckedUpdate(event.target.checked);
+    };
 
 
     const openModalUpload = () => {
@@ -100,27 +107,67 @@ const Expedientes = () => {
                 uploadFile: 'No ha seleccionado ningún archivo aún.',
             }));
             return;
-        }
-
+        }    
+    
         setIsLoading(true);
-
+        setIsUpdating(false); 
+        setProgress(0); 
+        
         try {
-            const { success, error } = await uploadFile(setOriginalExpedientes, selectedFiles);
+            const { success, jobId, error } = await uploadFile(setOriginalExpedientes, selectedFiles, isCheckedUpdate);
+    
             if (success) {
-                toast.info('Archivos subidos correctamente.', {
-                    icon: () => <img src={check} alt="Success Icon" />,
-                    progressStyle: {
-                        background: '#1D4ED8',
-                    },
-                });
-
-            } else if (error == "Campos inválidos en los archivos.") {
-                toast.error(`Los campos de los archivos CSV son incorrectos. Revísalos y vuelve a intentarlo.`);
-            } else {
-                toast.error('Algo mal sucedió al subir los archivos. Error:', error);
+                if (isCheckedUpdate && jobId) {
+                    setIsUpdating(true);
+                    const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
+    
+                    if (monitorSuccess) {
+                        if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                        setExpedientes(result.expedientesConDetalles);
+                    } else {
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                       window.location.reload()
+                    }
+                    
+                      
+                    } else {
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                        window.location.reload();
+                    }
+                } else {
+                    toast.info('Archivos subidos correctamente.', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        },
+                    });
+                }
+            } else if (error === "Campos inválidos en los archivos.") {
+                toast.error('Los campos de los archivos CSV son incorrectos. Revísalos y vuelve a intentarlo.');
+            } else if (error === "Formato de archivo no válido. Solo se permiten archivos .csv") {
+                toast.error('Formato de archivo no válido. Solo se permiten archivos .csv, Cambia el formato e intente de nuevo.');
+            }
+             else {
+                toast.error(`Algo mal sucedió al subir los archivos. Intente de nuevo`);
             }
         } catch (error) {
-            console.error(error);
+            console.error('Error al subir los archivos:', error);
             toast.error('Algo mal sucedió al subir los archivos. Verifique los campos e intente de nuevo.');
         } finally {
             setIsLoading(false);
@@ -129,7 +176,8 @@ const Expedientes = () => {
             setErrors({});
         }
     };
-
+    
+    
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -143,7 +191,7 @@ const Expedientes = () => {
         const endIndex = startIndex + itemsPerPage;
 
         setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
-    }, [expedientes, itemsPerPage, currentPage]);
+    }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
 
 
     const handleChangePage = (event, newPage) => {
@@ -277,9 +325,10 @@ const Expedientes = () => {
             const { success, jobId } = await UpdateAllExpedientes(setOriginalExpedientes);
 
             if (success) {
-                const { success: monitorSuccess, result, error } = await monitorJobProgress(jobId);
+                const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
 
                 if (monitorSuccess) {
+                    if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
                     toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                         icon: () => <img src={check} alt="Success Icon" />,
                         progressStyle: {
@@ -288,14 +337,24 @@ const Expedientes = () => {
                     });
                     setExpedientes(result.expedientesConDetalles);
                 } else {
-                    if (error) {
-                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                            icon: () => <img src={check} alt="Success Icon" />,
-                            progressStyle: {
-                                background: '#1D4ED8',
-                            }
-                        });
-                    }
+                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        }
+                    });
+                   window.location.reload()
+                }
+                
+                  
+                } else {
+                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                        icon: () => <img src={check} alt="Success Icon" />,
+                        progressStyle: {
+                            background: '#1D4ED8',
+                        }
+                    });
+                    window.location.reload();
                 }
             }
         } catch (error) {
@@ -460,7 +519,12 @@ const Expedientes = () => {
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al eliminar el expediente: ${error}`);
+                if (error == "El expediente tiene tareas pendientes sin completar")
+                toast.error(`No se puede eliminar el expediente, El expediente tiene tareas pendientes sin completar`);
+                else {
+                    toast.error(`Algo mal sucedió al eliminar el expediente`, error);
+           
+                }
             }
         } catch (error) {
             console.error(error);
@@ -468,6 +532,7 @@ const Expedientes = () => {
         } finally {
             setIsDeleting(false);
             setisModalOpenDelete(false);
+
         }
     };
 
@@ -509,12 +574,19 @@ const Expedientes = () => {
         };
     }, [isSearchOpen]);
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
-        setExpedientes(originalExpedientes);
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getAllExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
 
     };
 
@@ -544,11 +616,12 @@ const Expedientes = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false)
+        setCurrentPage(1);
     };
 
 
 
-    const handleSearchInputChange = (e) => {
+    const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
 
@@ -562,8 +635,16 @@ const Expedientes = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setIsManualSearch(false);     
+                setisLoadingExpedientes(true)
+                try {
+                const expedientes = await getAllExpedientes({ token: jwt });
+                setExpedientes(expedientes);
+                } catch (error) {
+                    console.error("Something was wrong", error)
+                } 
+             setisLoadingExpedientes(false)
+            
         }
     }
 
@@ -627,7 +708,7 @@ const Expedientes = () => {
                                 <h3 className="text-xl font-semibold text-primary/80">Subir Archivo</h3>
                                 <button
                                     type="button"
-                                    disabled={isLoading}
+                                    disabled={isLoading || isUpdating}
                                     className="text-black bg-transparent hover:bg-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                                     onClick={closeModalUpload}
                                 >
@@ -652,18 +733,28 @@ const Expedientes = () => {
                             <div className="p-6 space-y-6 flex flex-col items-center">
                                 <div className="flex flex-col items-center w-full max-w-xs">
                                     <button
+                                        disabled={isUpdating || isLoading}
                                         className="relative mb-2 w-full h-auto flex items-center justify-center bg-gray-200 rounded-xl border-2 border-dashed border-black text-white"
                                         onClick={() => inputFileRef.current.click()}
                                     >
                                         <div className="flex flex-col items-center">
                                             {isLoading ? (
-                                                <Spinner
+                                                  <div className="flex flex-col items-center">
+                                                  <Spinner
                                                     className="text-center mt-6 mb-8 text-sm"
-                                                    label="Subiendo Archivos..."
+                                                    label={isUpdating ? `Actualizando Expedientes... ${progress}%` : `Subiendo Archivos...`}
                                                     color="primary"
                                                     size="lg"
                                                     labelColor="primary"
-                                                />
+                                                  />
+                                                  
+                                                  {isUpdating && (
+                                                    <h3 className="text-sm text-center font-semibold text-primary/80">
+                                                      Se le notificará por correo electrónico cuando se complete el proceso.
+                                                    </h3>
+                                                  )}
+                                                </div>
+                                              
                                             ) : (
                                                 <>
                                                     <img
@@ -718,22 +809,29 @@ const Expedientes = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <div className="flex">
-                                        <input type="checkbox" id="acceptMessages" className="mr-2" />
-                                        <label htmlFor="acceptMessages">
+                                        <input
+                                            type="checkbox"
+                                            id="acceptMessages"
+                                            className="mr-2"
+                                            checked={isCheckedUpdate}
+                                            disabled={isUpdating}
+                                            onChange={handleCheckboxUpdateChange} 
+                                        />
+                                        <label className='-mt-1' htmlFor="acceptMessages">
                                             Actualizar Expedientes
                                         </label>
                                     </div>
                                 </div>
                                 <div className="flex justify-end mt-4 w-full">
                                     <button
-                                        disabled={isLoading || !areFilesValid}
+                                        disabled={isLoading || !areFilesValid || isUpdating}
                                         onClick={handleUploadFile}
                                         className="bg-primary text-white text-lg px-4 py-1 rounded-lg flex items-center justify-center mt-4"
                                     >
                                         Subir Archivos
                                     </button>
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>

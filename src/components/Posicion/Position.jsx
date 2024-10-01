@@ -1,4 +1,5 @@
-import { useState, useContext, useEffect, useRef} from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
+import FullScreenModal from './FullScreenModal.jsx'
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner } from "@nextui-org/react";
 import Error from "../Error.jsx";
@@ -50,6 +51,17 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
+    
+    const [isModalOpen, setIsModalOpen] = useState(false); // Para controlar el modal
+    
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
 
     // Función para formatear la fecha
     const monthNames = {
@@ -377,9 +389,9 @@ const Position = () => {
             const format_fecha = formatDate(searchTerm);
             try {
                 const expedientesResponse = await getPositionByFecha({ fecha: format_fecha, token: jwt });
-    
+
                 const expedientes = expedientesResponse.data;
-        
+
                 if (expedientes && expedientes.length > 0) {
                     filteredExpedientes = [...expedientes];
                 } else {
@@ -441,7 +453,13 @@ const Position = () => {
         setIsManualSearch(type === 'Numero' && type === 'Fecha');
 
         setExpedientes(originalExpedientes);
+
+        if (type === 'Filtros Multiples') {
+            handleOpenModal();
+        }
+
     };
+  
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
@@ -470,7 +488,7 @@ const Position = () => {
                         <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-white border-b rounded-t dark:border-gray-600">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Asignar Expediente
+                                    Asignar Expediente
                                 </h3>
                                 <button onClick={closeModalTarea} disabled={isLoading} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -617,6 +635,12 @@ const Position = () => {
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros Multiples")}>
+                                                Filtros Múltiples
+                                                {searchType === "Filtros Multiples" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
                                     </ul>
                                 </div>
                             )}
@@ -647,7 +671,7 @@ const Position = () => {
                                         onChange={handleSearchInputChange}
                                         id="filtros-dropdown"
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                       required
+                                        required
                                     >
                                         <option value="">Sin Filtro</option>
                                         {filtros.map((filtro, index) => (
@@ -678,7 +702,7 @@ const Position = () => {
                                     disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
                                     className={`absolute top-0 ml-4 p-2.5 text-sm font-medium h-full text-white ${searchType === "Fecha" ? "left-[280px]" : "right-0"} ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                    >
+                                >
                                     <svg
                                         className="w-4 h-4"
                                         aria-hidden="true"
@@ -735,7 +759,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Fecha")}>
-                                            Fecha Tv
+                                                Fecha Tv
                                                 {searchType === "Fecha" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -809,7 +833,7 @@ const Position = () => {
                                     disabled={!isManualSearch && searchType !== "Etapa" && searchType !== "Filtros"}
                                     onClick={handleManualSearch}
                                     className={`absolute top-0 ml-4 p-2.5 text-sm font-medium h-full text-white ${searchType === "Fecha" ? "left-[180px]" : "right-0"} ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                    >
+                                >
                                     <svg
                                         className="w-4 h-4"
                                         aria-hidden="true"

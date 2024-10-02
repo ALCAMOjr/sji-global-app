@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect, useRef } from 'react';
+import FullScreenModal from './FullScreenModal.jsx'
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner } from "@nextui-org/react";
 import Error from "../Error.jsx";
@@ -50,6 +51,18 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
+
+    const [isModalOpen, setIsModalOpen] = useState(false); // Para controlar el modal
+
+    const handleOpenModal = () => {
+        console.log('Opening Modal');
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
 
     // Función para formatear la fecha
     const monthNames = {
@@ -142,9 +155,9 @@ const Position = () => {
                 setExpedientes(expedientes)
             } else {
                 if (error === 'Ya existe una tarea asignada a este expediente.') {
-                    toast.error('Ya se le asigno este expediente a un abogado.');
+                    toast.error('Ya existe una tarea asignada a este expediente.');
                 } else if (error === 'ID de abogado inválido o el usuario no es un abogado.') {
-                    toast.error('El usuario no es un abogado.');
+                    toast.error('ID de abogado inválido o el usuario no es un abogado.');
                 } else if (error === 'El numero de expediente es inválido.') {
                     toast.error('El numero de expediente no existe en el tribunal virtual. Por favor crea el expediente en Expediente Tv e intente de nuevo.');
 
@@ -223,7 +236,7 @@ const Position = () => {
             const { success: fetchSuccess, data, error: fetchError } = await fetchFilename(fileName);
             if (!fetchSuccess) {
                 if (fetchError === 'PDF no encontrado.') {
-                    toast.error('El PDF solicitado no se encontró o no se tienen los permisos necesarios en el Tribunal Virtual. Intente de nuevo');
+                    toast.error('El PDF solicitado no se encontró en el Tribunal Virtual. Intente de nuevo');
                 } else {
                     toast.error(`Error al descargar el PDF del Tribunal Virtual, Intente de nuevo`);
                 }
@@ -343,21 +356,12 @@ const Position = () => {
                 }
             }
         }
+
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setisLoadingExpedientes(true)
-            try {
-                const expedientes = await getPositionExpedientes({ token: jwt });
-                setExpedientes(expedientes);
-            } catch (error) {
-                console.error("Something was wrong", error)
-            }
-            setisLoadingExpedientes(false)
-
+            setExpedientes(originalExpedientes);
         }
     };
-
-
 
 
     const searcherExpediente = async (searchTerm) => {
@@ -445,23 +449,21 @@ const Position = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
-        setCurrentPage(1);
     };
 
-    const handleSearchTypeChange = async (type) => {
+    const handleSearchTypeChange = (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero' && type === 'Fecha');
-        setisLoadingExpedientes(true)
-        try {
-            const expedientes = await getPositionExpedientes({ token: jwt });
-            setExpedientes(expedientes);
-        } catch (error) {
-            console.error("Something was wrong", error)
+        setExpedientes(originalExpedientes);
+
+        if (type === 'Filtros Multiples') {
+            handleOpenModal(); // Esto debe abrir el modal
         }
-        setisLoadingExpedientes(false)
     };
+
+
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
@@ -503,7 +505,7 @@ const Position = () => {
                         <div className="pt-16 p-4 mx-auto">
                             <form className="space-y-4" onSubmit={handleCreateTarea}>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">¿Qué se le asigna al abogado?</label>
+                                    <label className="block text-sm font-medium text-gray-700">Tarea</label>
                                     <textarea
                                         name="tarea"
                                         value={formData.tarea}
@@ -583,9 +585,16 @@ const Position = () => {
                 </div>
             )}
 
+            {/* Modal para Filtros Múltiples */}
+            <FullScreenModal isOpen={isModalOpen} onClose={handleCloseModal} />
+
+            {/* Resto del código de tu componente */}
+
+
             <>
                 {isDesktopOrLaptop ? (
                     <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+
                         <div className="flex">
 
                             <button
@@ -637,8 +646,15 @@ const Position = () => {
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros Multiples")}>
+                                                Filtros Múltiples
+                                                {searchType === "Filtros Multiples" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
                                     </ul>
                                 </div>
+
                             )}
 
 

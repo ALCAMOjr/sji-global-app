@@ -19,12 +19,15 @@ import getPositionFiltros from '../../views/position/getPositionFiltros.js';
 import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
 import { filtros } from "../../utils/Filtros.js"
 import getPositionByFecha from '../../views/position/getPositionbyFecha.js';
+import useJuzgados from '../../hooks/juzgados/useJuzgados.jsx';
+import getPositionFilteredRecords from '../../views/position/getPositionFilteredRecords.js';
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
     const { updateExpediente, savePdfs, fetchFilename } = useExpedientes();
     const { etapas, loadingEtapas, errorEtapas } = useExpedientesSial();
     const { expedientes, loading, error, setExpedientes } = usePosition();
+    const { juzgados, juzgados_error, juzgados_loading } = useJuzgados()
     const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -52,10 +55,8 @@ const Position = () => {
         abogado_id: ''
     });
 
-    const [isModalOpen, setIsModalOpen] = useState(false); // Para controlar el modal
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const handleOpenModal = () => {
-        console.log('Opening Modal');
         setIsModalOpen(true);
     };
 
@@ -63,32 +64,22 @@ const Position = () => {
         setIsModalOpen(false);
     };
 
-
-    // Función para formatear la fecha
-    const monthNames = {
-        '01': 'ene.',
-        '02': 'feb.',
-        '03': 'mar.',
-        '04': 'abr.',
-        '05': 'may.',
-        '06': 'jun.',
-        '07': 'jul.',
-        '08': 'ago.',
-        '09': 'sep.',
-        '10': 'oct.',
-        '11': 'nov.',
-        '12': 'dic.',
+    const handleSearchFromModal = (filters) => {
+        searcherExpediente({
+            ...filters,
+        });
     };
+
 
     const formatDate = (date) => {
         const isMySQLFormat = /^\d{4}-\d{2}-\d{2}$/.test(date);
         if (isMySQLFormat) {
-            return date; 
+            return date;
         }
         const [year, month, day] = date.split('-');
-        return `${year}-${month}-${parseInt(day).toString().padStart(2, '0')}`; 
+        return `${year}-${month}-${parseInt(day).toString().padStart(2, '0')}`;
     };
-    
+
 
 
     const handleMenuToggle = (index) => {
@@ -459,6 +450,46 @@ const Position = () => {
             }
         }
 
+        if (searchType === 'Filtros Multiples') {
+            try {
+                const { desde, hasta, juzgado, acuerdo } = searchTerm;
+            
+                let etapa = null;
+                let termino = null;
+                let notificacion = null;
+        
+                if (acuerdo && acuerdo.trim() !== "") {
+                    const acuerdo_objeto = JSON.parse(acuerdo);
+                    etapa = acuerdo_objeto.etapa || null;
+                    termino = acuerdo_objeto.termino || null;
+                    notificacion = acuerdo_objeto.notificacion || null;
+                }
+            
+                const expedientes = await getPositionFilteredRecords({
+                    desde,
+                    hasta,
+                    juzgado,
+                    etapa,
+                    termino,
+                    notificacion,
+                    token: jwt
+                });
+            
+    
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
+                } else {
+                    filteredExpedientes = [];
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    filteredExpedientes = [];
+                } else {
+                    console.error("Something went wrong", error);
+                }
+            }
+        }
+
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
         setCurrentPage(1);
@@ -485,7 +516,7 @@ const Position = () => {
         }
         setisLoadingExpedientes(false)
     };
-  
+
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
@@ -495,15 +526,16 @@ const Position = () => {
 
 
 
-    if (loading || loadingEtapas || isLoadingExpedientes) return (
+    if (loading || loadingEtapas || isLoadingExpedientes || juzgados_loading) return (
         <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
     );
 
 
-    if (error || errorEtapas) return <Error message={error.message} />;
-
+    if (error) return <Error message={error.message} />;
+    if (errorEtapas) return <Error message={errorEtapas.message} />;
+    if (juzgados_error) return <Error message={juzgados_error.message} />;
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -605,11 +637,13 @@ const Position = () => {
                     </div>
                 </div>
             )}
-
-            <FullScreenModal isOpen={isModalOpen} onClose={handleCloseModal} />
-
-
-
+            <FullScreenModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                juzgados={juzgados}
+                acuerdos={filtros}
+                onSearch={handleSearchFromModal}  
+            />
 
             <>
                 {isDesktopOrLaptop ? (
@@ -662,7 +696,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                               Acuerdos
+                                                Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -726,6 +760,7 @@ const Position = () => {
                                         className="block p-2.5 w-full  z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         placeholder={searchType === "Fecha" ? "" : "Buscar Expedientes:"}
                                         required
+                                        disabled={searchType === "Filtros Multiples"}
                                         style={{ width: "300px" }}
                                     />
                                 )}
@@ -803,7 +838,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                            Acuerdos
+                                                Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

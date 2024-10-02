@@ -307,6 +307,12 @@ const Row = ({
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
                 </TableCell>
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.expediente}</span>
+                </TableCell>
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.juzgado}</span>
+                </TableCell>
                 
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.fecha}</span>

@@ -302,19 +302,19 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                             })}
                                         </p>
                                         <p className="text-sm text-gray-700">
-                                            <span className="font-bold">Est:</span> {expediente.fecha}
+                                            <span className="font-bold">Est:</span> {expediente.estatus}
                                         </p>
                                         <p className="text-sm text-gray-700">
-                                            <span className="font-bold">D:</span> {expediente.fecha}
+                                            <span className="font-bold">D:</span> {expediente.bloquear_gestion_por_estrategia_dual}
                                         </p>
                                     </div>
                                     <hr className="border-gray-300" />
                                     <div className="p-4">
                                     <p className="text-sm text-gray-700">
-                                            <span className="font-bold">Exp:</span> {expediente.fecha}
+                                            <span className="font-bold">Exp:</span> {expediente.expediente}
                                         </p>
                                         <p className="text-sm text-gray-700">
-                                            <span className="font-bold">Juzg:</span> {expediente.fecha}
+                                            <span className="font-bold">Juzg:</span> {expediente.juzgado}
                                         </p>
                                         <p className="text-sm text-gray-700">
                                             <span className="font-bold">Fecha:</span> {expediente.fecha}

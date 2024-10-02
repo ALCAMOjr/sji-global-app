@@ -358,8 +358,8 @@ const Row = ({
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {expediente.details.length > 1 ? (
-                                        expediente.details.map((detalle, idx) => (
+                                    {expediente.detalles.length > 1 ? (
+                                        expediente.detalles.map((detalle, idx) => (
                                             detalle && (
                                                 <TableRow key={idx}>
                                                     <TableCell align="left">

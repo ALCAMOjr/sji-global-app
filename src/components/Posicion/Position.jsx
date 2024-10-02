@@ -80,10 +80,16 @@ const Position = () => {
         '12': 'dic.',
     };
 
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split('-');
-        return `${parseInt(day)}/${monthNames[month]}/${year}`;
+    const formatDate = (date) => {
+        const isMySQLFormat = /^\d{4}-\d{2}-\d{2}$/.test(date);
+        if (isMySQLFormat) {
+            return date; 
+        }
+        const [year, month, day] = date.split('-');
+        return `${year}-${month}-${parseInt(day).toString().padStart(2, '0')}`; 
     };
+    
+
 
     const handleMenuToggle = (index) => {
         setOpenMenuIndex(index === openMenuIndex ? null : index);
@@ -350,12 +356,24 @@ const Position = () => {
                 }
             }
         }
-
+        if (searchType === 'Filtros Multiples' && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setisLoadingExpedientes(true)
+            try {
+                const expedientes = await getPositionExpedientes({ token: jwt });
+                setExpedientes(expedientes);
+            } catch (error) {
+                console.error("Something was wrong", error)
+            }
+            setisLoadingExpedientes(false)
+
         }
     };
+
+
 
 
     const searcherExpediente = async (searchTerm) => {
@@ -443,28 +461,37 @@ const Position = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
+        setCurrentPage(1);
     };
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero' && type === 'Fecha');
+
         setExpedientes(originalExpedientes);
 
         if (type === 'Filtros Multiples') {
-            handleOpenModal(); // Esto debe abrir el modal
+            handleOpenModal();
         }
+
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getPositionExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
-
-
+  
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
             searcherExpediente(search);
         }
     };
-
 
 
 
@@ -636,7 +663,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Mas Filtros
+                                               Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -777,7 +804,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Mas Filtros
+                                            Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

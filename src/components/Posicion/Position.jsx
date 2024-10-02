@@ -356,12 +356,24 @@ const Position = () => {
                 }
             }
         }
-
+        if (searchType === 'Filtros Multiples' && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setExpedientes(originalExpedientes);
+            setisLoadingExpedientes(true)
+            try {
+                const expedientes = await getPositionExpedientes({ token: jwt });
+                setExpedientes(expedientes);
+            } catch (error) {
+                console.error("Something was wrong", error)
+            }
+            setisLoadingExpedientes(false)
+
         }
     };
+
+
 
 
     const searcherExpediente = async (searchTerm) => {
@@ -449,28 +461,37 @@ const Position = () => {
 
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
+        setCurrentPage(1);
     };
 
-    const handleSearchTypeChange = (type) => {
+    const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero' && type === 'Fecha');
+
         setExpedientes(originalExpedientes);
 
         if (type === 'Filtros Multiples') {
-            handleOpenModal(); // Esto debe abrir el modal
+            handleOpenModal();
         }
+
+        setisLoadingExpedientes(true)
+        try {
+            const expedientes = await getPositionExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
     };
-
-
+  
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
             searcherExpediente(search);
         }
     };
-
 
 
 

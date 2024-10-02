@@ -61,6 +61,9 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange }) =>
                                                     <span className="text-black font-bold">Estado:</span> {expediente.estado}
                                                 </p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    <span className="text-black font-bold">Dual:</span> {expediente.bloquear_gestion_por_estrategia_dual}
+                                                </p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
                                                     <span className="text-black font-bold">Municipio:</span> {expediente.municipio}
                                                 </p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">

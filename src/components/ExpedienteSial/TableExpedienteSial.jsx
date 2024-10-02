@@ -42,6 +42,9 @@ const TableExpedientes = ({
                                 <span className='text-sm font-bold text-black'>Estado</span>
                             </TableCell>
                             <TableCell>
+                                <span className='text-sm font-bold text-black'>Dual</span>
+                            </TableCell>
+                            <TableCell>
                                 <span className='text-sm font-bold text-black'>Municipio</span>
                             </TableCell>
                             <TableCell>
@@ -148,6 +151,7 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{expediente.acreditado}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.omisos}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.estado}</TableCell>
+                <TableCell className="max-w-xs truncate">{expediente.bloquear_gestion_por_estrategia_dual}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.municipio}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.calle_y_numero}</TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.fraccionamiento_o_colonia}</TableCell>

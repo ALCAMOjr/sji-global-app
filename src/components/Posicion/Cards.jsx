@@ -291,19 +291,31 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                             <span className="font-bold">MacroEtapa</span> {expediente.macroetapa_aprobada}
                                         </p>
                                         <p className="text-sm font-medium text-gray-700">
-                                            <span className="font-bold">Ultima Etapa Aprobada:</span> {expediente.ultima_etapa_aprobada}
+                                            <span className="font-bold">Ultima E A:</span> {expediente.ultima_etapa_aprobada}
                                         </p>
                                         <p className="text-sm font-medium text-gray-700">
-                                            <span className="font-bold">Fecha Etapa Aprobada:</span>
+                                            <span className="font-bold">Fecha:</span>
                                             {new Date(expediente.fecha_ultima_etapa_aprobada).toLocaleDateString('es-ES', {
                                                 day: '2-digit',
                                                 month: '2-digit',
                                                 year: 'numeric'
                                             })}
                                         </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Est:</span> {expediente.fecha}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">D:</span> {expediente.fecha}
+                                        </p>
                                     </div>
                                     <hr className="border-gray-300" />
                                     <div className="p-4">
+                                    <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Exp:</span> {expediente.fecha}
+                                        </p>
+                                        <p className="text-sm text-gray-700">
+                                            <span className="font-bold">Juzg:</span> {expediente.fecha}
+                                        </p>
                                         <p className="text-sm text-gray-700">
                                             <span className="font-bold">Fecha:</span> {expediente.fecha}
                                         </p>

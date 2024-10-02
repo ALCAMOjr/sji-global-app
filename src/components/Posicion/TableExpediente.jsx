@@ -76,7 +76,7 @@ const TableExpedientes = ({
                         <TableRow>
                         <TableCell />
                             <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Numero</span>
+                                <span className='text-xs font-bold text-black'>Crédito</span>
                             </TableCell>
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>MacroEtapa</span>
@@ -86,6 +86,18 @@ const TableExpedientes = ({
                             </TableCell>
                             <TableCell className='bg-green-200'>
                                 <span className='text-xs font-bold text-black'>Fecha</span>
+                            </TableCell>
+                            <TableCell className='bg-green-200'>
+                                <span className='text-xs font-bold text-black'>Est</span>
+                            </TableCell>
+                            <TableCell className='bg-green-200'>
+                                <span className='text-xs font-bold text-black'>D</span>
+                            </TableCell>
+                            <TableCell className='bg-blue-200'>
+                                <span className='text-xs font-bold text-black'>Exp</span>
+                            </TableCell>
+                            <TableCell className='bg-blue-200'>
+                                <span className='text-xs font-bold text-black'>Juzg</span>
                             </TableCell>
 
                             <TableCell className='bg-blue-200'>
@@ -289,6 +301,13 @@ const Row = ({
                             year: 'numeric'
                         })}</span>
                 </TableCell>
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.estatus}</span>
+                </TableCell>
+                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                    <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
+                </TableCell>
+                
                 <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                     <span className="text-xs">{expediente.fecha}</span>
                 </TableCell>

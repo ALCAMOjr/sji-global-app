@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext, useEffect } from 'react';
+import { useRef, useState, useContext, useEffect } from 'react';
 import useExpedientes from "../../hooks/expedientes/useExpedientes.jsx";
 import { Spinner } from "@nextui-org/react";
 import Error from "../Error.jsx";

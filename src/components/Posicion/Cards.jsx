@@ -390,8 +390,8 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {selectedExpedienteDetails.details.length > 1 ? (
-                                                    selectedExpedienteDetails.details.map((detalle, index) => (
+                                                {selectedExpedienteDetails.detalles.length > 1 ? (
+                                                    selectedExpedienteDetails.detalles.map((detalle, index) => (
                                                         <tr key={index}>
                                                             <td className="px-6 py-4">
                                                                 <button

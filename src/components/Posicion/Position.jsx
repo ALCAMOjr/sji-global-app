@@ -67,11 +67,15 @@ const Position = () => {
         '12': 'dic.',
     };
 
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split('-');
-        return `${parseInt(day)}/${monthNames[month]}/${year}`;
+    const formatDate = (date) => {
+        const isMySQLFormat = /^\d{4}-\d{2}-\d{2}$/.test(date);
+        if (isMySQLFormat) {
+            return date; 
+        }
+        const [year, month, day] = date.split('-');
+        return `${year}-${month}-${parseInt(day).toString().padStart(2, '0')}`; 
     };
-
+    
 
 
     const handleMenuToggle = (index) => {
@@ -629,7 +633,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Mas Filtros
+                                               Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -763,7 +767,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Mas Filtros
+                                            Acuerdos
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

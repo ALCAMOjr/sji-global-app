@@ -606,10 +606,9 @@ const Position = () => {
                 </div>
             )}
 
-            {/* Modal para Filtros Múltiples */}
             <FullScreenModal isOpen={isModalOpen} onClose={handleCloseModal} />
 
-            {/* Resto del código de tu componente */}
+
 
 
             <>

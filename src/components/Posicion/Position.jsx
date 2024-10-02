@@ -781,6 +781,12 @@ const Position = () => {
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros Multiples")}>
+                                                Filtros Múltiples
+                                                {searchType === "Filtros Multiples" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
 
                                     </ul>
                                 </div>

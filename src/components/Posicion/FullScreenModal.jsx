@@ -7,9 +7,10 @@ const FullScreenModal = ({ isOpen, onClose, children }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="relative bg-white w-1/3 h-auto lg:w-1/3 lg:h-1/2 rounded-lg shadow-lg p-6 overflow-auto">
+      {/* Cambié la altura del modal a 3/4 (75%) de la pantalla */}
+      <div className="relative bg-white w-full sm:w-3/4 md:w-2/3 lg:w-1/3 h-[490px] rounded-lg shadow-lg p-8 overflow-auto">
         <button 
-          className="absolute top-4 right-4 text-gray-500 hover:text-black"
+          className="absolute top-4 right-4 text-gray-500 hover:text-black text-3xl h-12 w-12 flex justify-center items-center"
           onClick={onClose}
         >
           &times; {/* Botón de cierre */}
@@ -17,7 +18,8 @@ const FullScreenModal = ({ isOpen, onClose, children }) => {
 
         {/* Contenido del modal */}
         <div className="flex flex-col space-y-4">
-          <h1 className='text-black font-bold'>Filtros Multiples </h1>
+          <h1 className="text-black font-bold text-center">Filtros Múltiples</h1>
+
           {/* Campo "Desde" */}
           <div className="flex flex-col w-full">
             <label htmlFor="desde" className="text-gray-700 font-medium">Desde</label>
@@ -63,12 +65,12 @@ const FullScreenModal = ({ isOpen, onClose, children }) => {
           </div>
 
           {/* Botón Enviar */}
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mt-12">
             <button 
               type="submit"
               className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
             >
-              Enviar
+              Buscar
             </button>
           </div>
 

@@ -25,7 +25,7 @@ const Agenda = () => {
     const [showModal, setShowModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showModalDelete, setShowModalDelete] = useState(false);
-    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
+    const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const menuRef = useRef(null);
@@ -45,16 +45,16 @@ const Agenda = () => {
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
-    
+
     const handleChangePage = (event, newPage) => {
-        setCurrentPage(newPage + 1); 
+        setCurrentPage(newPage + 1);
     };
-    
+
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
         setCurrentPage(1);
     };
-    
+
 
 
     const onPageChange = (page) => {
@@ -67,7 +67,7 @@ const Agenda = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const {success, error} = await cancelTarea({
+            const { success, error } = await cancelTarea({
                 id: SelectedTarea,
                 setOriginalExpedientes
 
@@ -96,7 +96,7 @@ const Agenda = () => {
         e.preventDefault();
         setIsDeleting(true);
         try {
-            const {success, error} = await deteleTarea({
+            const { success, error } = await deteleTarea({
                 id: SelectedTarea,
                 setOriginalExpedientes
 
@@ -171,27 +171,20 @@ const Agenda = () => {
     }, [isSearchOpen]);
 
 
-   
+
     const handleSearchTypeChange = async (type) => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        setisLoadingExpedientes(true)
-        try {
-            const expedientes = await getTareas({ token: jwt });
-            setExpedientes(expedientes);
-        } catch (error) {
-            console.error("Something was wrong", error)
-        }
-        setisLoadingExpedientes(false)
+        await handleGetExpedientes()
     };
 
     const searcherExpediente = async (searchTerm) => {
         let filteredExpedientes = [];
         setisLoadingExpedientes(true);
-    
+
         if (searchType === 'Nombre') {
             const lowercaseSearchTerm = searchTerm.toLowerCase();
             filteredExpedientes = originalExpedientes.filter(expediente =>
@@ -201,7 +194,7 @@ const Agenda = () => {
             const lowercaseSearchTerm = searchTerm.toLowerCase();
             try {
                 const expediente = await getTareaByExpediente({ numero: lowercaseSearchTerm, token: jwt });
-    
+
                 if (expediente && expediente.length > 0) {
                     filteredExpedientes.push(expediente[0]);
                 } else {
@@ -230,7 +223,7 @@ const Agenda = () => {
                 }
             }
         }
-    
+
         setExpedientes(filteredExpedientes);
         setisLoadingExpedientes(false);
     };
@@ -241,36 +234,40 @@ const Agenda = () => {
     const handleSearchInputChange = async (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
-    
+
         if (searchType === 'Numero' && searchTerm.trim() !== '') {
             setIsManualSearch(true);
         }
-    
-    
+
+
         if (searchType === 'Abogado' && searchTerm.trim() !== '') {
             searcherExpediente(searchTerm);
         }
-    
+
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);     
-                setisLoadingExpedientes(true)
-                try {
-                const expedientes = await getTareas({ token: jwt });
-                setExpedientes(expedientes);
-                } catch (error) {
-                    console.error("Something was wrong", error)
-                } 
-             setisLoadingExpedientes(false)
-            
+            setIsManualSearch(false);
+            await handleGetExpedientes()
+
         }
     };
-    
+
 
     const handleManualSearch = () => {
         if (search.trim() !== '') {
             searcherExpediente(search);
         }
     };
+
+    const handleGetExpedientes = async () => {
+        try {
+            setisLoadingExpedientes(true)
+            const expedientes = await getTareas({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
+    }
 
 
 
@@ -296,11 +293,11 @@ const Agenda = () => {
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                             <h3 class="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres cancelar esta Tarea??</h3>
-                            <button 
-                             disabled={isLoading}
-                             onClick={handleCancelTarea} type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
+                            <button
+                                disabled={isLoading}
+                                onClick={handleCancelTarea} type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
                                 {isLoading ? <Spinner size='sm' color="default" /> : 'Si, estoy seguro'}
-                                
+
                             </button>
                             <button onClick={closeModal} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100">No, cancelar</button>
                         </div>
@@ -317,8 +314,8 @@ const Agenda = () => {
                             </svg>
                             <h3 class="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres eliminar esta Tarea??</h3>
                             <button
-                             disabled={isDeleting}
-                             onClick={handleDeleteTarea} type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
+                                disabled={isDeleting}
+                                onClick={handleDeleteTarea} type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
                                 {isDeleting ? <Spinner size='sm' color="default" /> : 'Si, estoy seguro'}
                             </button>
                             <button onClick={closeModalDelete} type="button" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary focus:z-10 focus:ring-4 focus:ring-gray-100">No, cancelar</button>
@@ -328,216 +325,216 @@ const Agenda = () => {
             )}
 
 
-{isDesktopOrLaptop ? (
-                    <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
-                        <div className="flex">
-                            <button
-                                id="dropdown-button"
-                                onClick={toggleDropdown}
-                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
-                                type="button"
+            {isDesktopOrLaptop ? (
+                <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
+                    <div className="flex">
+                        <button
+                            id="dropdown-button"
+                            onClick={toggleDropdown}
+                            className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                            type="button"
+                        >
+                            Filtrar por:
+                            <svg
+                                className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 10 6"
                             >
-                                Filtrar por:
-                                <svg
-                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
-                                >
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                                </svg>
-                            </button>
-                            {isSearchOpen && (
-                                <div
-                                    ref={menuRef}
-                                    id="dropdown"
-                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
-                                >
-                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Numero
-                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                            </svg>
+                        </button>
+                        {isSearchOpen && (
+                            <div
+                                ref={menuRef}
+                                id="dropdown"
+                                className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 absolute mt-8"
+                            >
+                                <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                            Numero
+                                            {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
                                             Abogado
-                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            )}
-                            <div className="relative w-full">
-                                {searchType === "Abogado" ? (
-                                    <select
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        id="etapa-dropdown"
-                                        className="block p-2.5 w-full mr-32 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        required
-                                    >
-                                        <option value="">Todos los Abogados</option>
-                                        {abogados
-                                            .filter(abogado => abogado.user_type === 'abogado')
-                                            .map((abogado) => (
-                                                <option key={abogado.id} value={abogado.username}>
-                                                    {abogado.username}
-                                                </option>
-                                            ))}
-                                    </select>
-                                ) : (
-                                    <input
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleManualSearch();
-                                            }
-                                        }}
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        type="search"
-                                        id="search-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        placeholder="Buscar Expedientes:"
-                                        required
-                                        style={{ width: "300px" }}
-                                    />
-                                )}
-                                <button
-                                    type="button"
-                                    disabled={!isManualSearch && searchType !== "Etapa"}
-                                    onClick={handleManualSearch}
-                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                >
-                                    <svg
-                                        className="w-4 h-4"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Buscar</span>
-                                </button>
+                                            {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="max-w-xs mx-auto mb-4 -ml-8 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                        <div className="flex">
+                        )}
+                        <div className="relative w-full">
+                            {searchType === "Abogado" ? (
+                                <select
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    id="etapa-dropdown"
+                                    className="block p-2.5 w-full mr-32 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    required
+                                >
+                                    <option value="">Todos los Abogados</option>
+                                    {abogados
+                                        .filter(abogado => abogado.user_type === 'abogado')
+                                        .map((abogado) => (
+                                            <option key={abogado.id} value={abogado.username}>
+                                                {abogado.username}
+                                            </option>
+                                        ))}
+                                </select>
+                            ) : (
+                                <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "300px" }}
+                                />
+                            )}
                             <button
-                                id="dropdown-button"
-                                onClick={toggleDropdown}
-                                className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
                                 type="button"
+                                disabled={!isManualSearch && searchType !== "Etapa"}
+                                onClick={handleManualSearch}
+                                className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
                             >
-                                Filtrar por:
                                 <svg
-                                    className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                    className="w-4 h-4"
                                     aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
-                                    viewBox="0 0 10 6"
+                                    viewBox="0 0 20 20"
                                 >
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
-                                </svg>
-                            </button>
-                            {isSearchOpen && (
-                                <div
-                                    ref={menuRef}
-                                    id="dropdown"
-                                    className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
-                                >
-                                    <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Numero
-                                                {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
-                                                Abogado
-                                                {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
-                                            </button>
-                                        </li>
-
-
-                                    </ul>
-                                </div>
-                            )}
-                                   <div className="relative w-full">
-                                {searchType === "Abogado" ? (
-                                    <select
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        id="etapa-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        required
-                                    >
-                                       <option value="">Todos los Abogados</option>
-                                       {abogados
-                                            .filter(abogado => abogado.user_type === 'abogado')
-                                            .map((abogado) => (
-                                                <option key={abogado.id} value={abogado.username}>
-                                                    {abogado.username}
-                                                </option>
-                                            ))}
-                                    </select>
-                                ) : (
-                                    <input
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                handleManualSearch();
-                                            }
-                                        }}
-                                        value={search}
-                                        onChange={handleSearchInputChange}
-                                        type="search"
-                                        id="search-dropdown"
-                                        className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
-                                        placeholder="Buscar Expedientes:"
-                                        required
-                                        style={{ width: "200px" }}
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                                     />
-                                )}
-                                <button
-                                    type="button"
-                                    disabled={!isManualSearch && searchType !== "Etapa"}
-                                    onClick={handleManualSearch}
-                                    className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
-                                >
-                                    <svg
-                                        className="w-4 h-4"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path
-                                            stroke="currentColor"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                        />
-                                    </svg>
-                                    <span className="sr-only">Buscar</span>
-                                </button>
-                            </div>
+                                </svg>
+                                <span className="sr-only">Buscar</span>
+                            </button>
                         </div>
                     </div>
-                )}
-    
+                </div>
+            ) : (
+                <div className="max-w-xs mx-auto mb-4 -ml-8 fixed top-28 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="flex">
+                        <button
+                            id="dropdown-button"
+                            onClick={toggleDropdown}
+                            className="flex-shrink-0 z-10 inline-flex items-center py-1 px-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+                            type="button"
+                        >
+                            Filtrar por:
+                            <svg
+                                className={`w-2 h-2 ms-1 transition-transform ${isSearchOpen ? "rotate-180" : ""}`}
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 10 6"
+                            >
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
+                            </svg>
+                        </button>
+                        {isSearchOpen && (
+                            <div
+                                ref={menuRef}
+                                id="dropdown"
+                                className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-36 dark:bg-gray-700 absolute mt-8"
+                            >
+                                <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
+                                            Numero
+                                            {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Abogado")}>
+                                            Abogado
+                                            {searchType === "Abogado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                        </button>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                        )}
+                        <div className="relative w-full">
+                            {searchType === "Abogado" ? (
+                                <select
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    id="etapa-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    required
+                                >
+                                    <option value="">Todos los Abogados</option>
+                                    {abogados
+                                        .filter(abogado => abogado.user_type === 'abogado')
+                                        .map((abogado) => (
+                                            <option key={abogado.id} value={abogado.username}>
+                                                {abogado.username}
+                                            </option>
+                                        ))}
+                                </select>
+                            ) : (
+                                <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
+                                    value={search}
+                                    onChange={handleSearchInputChange}
+                                    type="search"
+                                    id="search-dropdown"
+                                    className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                    placeholder="Buscar Expedientes:"
+                                    required
+                                    style={{ width: "200px" }}
+                                />
+                            )}
+                            <button
+                                type="button"
+                                disabled={!isManualSearch && searchType !== "Etapa"}
+                                onClick={handleManualSearch}
+                                className={`absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white ${!isManualSearch ? "bg-gray-400 border-gray-400 cursor-not-allowed" : "bg-primary border-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary dark:bg-primary-dark dark:hover:bg-primary-dark dark:focus:ring-primary"}`}
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                                <span className="sr-only">Buscar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
 
 

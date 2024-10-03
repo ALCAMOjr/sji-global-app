@@ -2,29 +2,68 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-const FullScreenModal = ({ isOpen, onClose, juzgados, acuerdos, onSearch }) => {
-  const [desde, setDesde] = useState('');
-  const [hasta, setHasta] = useState('');
-  const [juzgado, setJuzgado] = useState('');
-  const [acuerdo, setAcuerdo] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+const FullScreenModal = ({
+  isOpen, 
+  onClose, 
+  juzgados, 
+  acuerdos, 
+  desde, 
+  setDesde, 
+  hasta, 
+  setHasta, 
+  juzgado, 
+  setJuzgado, 
+  acuerdo, 
+  setAcuerdo, 
+  onSearch 
+}) => {
+  const [desdeError, setDesdeError] = useState('');
+  const [hastaError, setHastaError] = useState('');
+
+  const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
 
   const handleSearch = () => {
+    let hasError = false;
 
-    if (!desde || !hasta) {
-      setErrorMessage('Los campos "Desde" y "Hasta" son obligatorios.');
-      return;
+    if (!desde) {
+      setDesdeError('Este campo es obligatorio.');
+      hasError = true;
+    } else if (!dateFormatRegex.test(desde)) {
+      setDesdeError('La fecha debe seguir el formato DD-MM-YYYY.');
+      hasError = true;
     }
 
-    if (new Date(hasta) < new Date(desde)) {
-      setErrorMessage('La fecha "Hasta" no puede ser anterior a la fecha "Desde".');
-      return;
+    if (!hasta) {
+      setHastaError('Este campo es obligatorio.');
+      hasError = true;
+    } else if (!dateFormatRegex.test(hasta)) {
+      setHastaError('La fecha debe seguir el formato DD-MM-YYYY.');
+      hasError = true;
     }
 
-    setErrorMessage('');
+    if (desde && hasta && new Date(hasta) < new Date(desde)) {
+      setHastaError('La fecha "Hasta" no puede ser anterior a la fecha "Desde".');
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     onSearch({ desde, hasta, juzgado, acuerdo });
-    // onClose();
+    onClose();
+  };
+
+  const handleDesdeChange = (e) => {
+    setDesde(e.target.value);
+    if (desdeError) {
+      setDesdeError('');
+    }
+  };
+
+  const handleHastaChange = (e) => {
+    setHasta(e.target.value);
+    if (hastaError) {
+      setHastaError('');
+    }
   };
 
   if (!isOpen) return null;
@@ -49,9 +88,10 @@ const FullScreenModal = ({ isOpen, onClose, juzgados, acuerdos, onSearch }) => {
               id="desde"
               value={desde}
               required
-              onChange={(e) => setDesde(e.target.value)}
-              className={`border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-primary focus:border-primary ${errorMessage ? 'border-red-500' : ''}`}
+              onChange={handleDesdeChange}
+              className={`border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-primary focus:border-primary ${desdeError ? 'border-red-500' : ''}`}
             />
+            {desdeError && <p className="text-red-500 text-sm">{desdeError}</p>}
           </div>
 
           <div className="flex flex-col w-full">
@@ -61,13 +101,11 @@ const FullScreenModal = ({ isOpen, onClose, juzgados, acuerdos, onSearch }) => {
               id="hasta"
               value={hasta}
               required
-              onChange={(e) => setHasta(e.target.value)}
-              className={`border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-primary focus:border-primary ${errorMessage ? 'border-red-500' : ''}`}
+              onChange={handleHastaChange}
+              className={`border border-gray-300 rounded-md p-2 mt-1 focus:outline-none focus:ring-primary focus:border-primary ${hastaError ? 'border-red-500' : ''}`}
             />
+            {hastaError && <p className="text-red-500 text-sm">{hastaError}</p>}
           </div>
-
-
-          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
           <div className="flex flex-col w-full">
             <label htmlFor="select1" className="text-gray-700 font-medium">Juzgado</label>
@@ -119,12 +157,19 @@ const FullScreenModal = ({ isOpen, onClose, juzgados, acuerdos, onSearch }) => {
   );
 };
 
-
 FullScreenModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   juzgados: PropTypes.array.isRequired,
   acuerdos: PropTypes.array.isRequired,
+  desde: PropTypes.string.isRequired,
+  setDesde: PropTypes.func.isRequired,
+  hasta: PropTypes.string.isRequired,
+  setHasta: PropTypes.func.isRequired,
+  juzgado: PropTypes.string.isRequired,
+  setJuzgado: PropTypes.func.isRequired,
+  acuerdo: PropTypes.string.isRequired,
+  setAcuerdo: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired
 };
 

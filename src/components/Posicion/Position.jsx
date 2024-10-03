@@ -20,6 +20,7 @@ import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
 import { filtros } from "../../utils/Filtros.js"
 import getPositionByFecha from '../../views/position/getPositionbyFecha.js';
 import useJuzgados from '../../hooks/juzgados/useJuzgados.jsx';
+import getPositionByJuzgado from '../../views/position/getPositionByJuzgado.js';
 import getPositionFilteredRecords from '../../views/position/getPositionFilteredRecords.js';
 
 const Position = () => {
@@ -48,6 +49,11 @@ const Position = () => {
     const [fechaError, setFechaError] = useState('');
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [desde, setDesde] = useState('');
+    const [hasta, setHasta] = useState('');
+    const [juzgado, setJuzgado] = useState('');
+    const [acuerdo, setAcuerdo] = useState('');
     const [formData, setFormData] = useState({
         tarea: '',
         fecha_entrega: '',
@@ -55,7 +61,6 @@ const Position = () => {
         abogado_id: ''
     });
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const handleOpenModal = () => {
         setIsModalOpen(true);
     };
@@ -337,6 +342,10 @@ const Position = () => {
             searcherExpediente(searchTerm);
         }
 
+        if (searchType === 'Juzgado' && searchTerm.trim() !== '') {
+            searcherExpediente(searchTerm);
+        }
+
         if (searchType === 'Filtros') {
             if (searchTerm.trim() !== '') {
                 try {
@@ -352,15 +361,7 @@ const Position = () => {
         }
         if (searchTerm.trim() === '') {
             setIsManualSearch(false);
-            setisLoadingExpedientes(true)
-            try {
-                const expedientes = await getPositionExpedientes({ token: jwt });
-                setExpedientes(expedientes);
-            } catch (error) {
-                console.error("Something was wrong", error)
-            }
-            setisLoadingExpedientes(false)
-
+            await handleGetExpedientes()
         }
     };
 
@@ -396,9 +397,7 @@ const Position = () => {
         } else if (searchType === 'Fecha') {
             const format_fecha = formatDate(searchTerm);
             try {
-                const expedientesResponse = await getPositionByFecha({ fecha: format_fecha, token: jwt });
-
-                const expedientes = expedientesResponse.data;
+                const expedientes = await getPositionByFecha({ fecha: format_fecha, token: jwt });
 
                 if (expedientes && expedientes.length > 0) {
                     filteredExpedientes = [...expedientes];
@@ -415,6 +414,22 @@ const Position = () => {
         } else if (searchType === 'Etapa') {
             try {
                 const expedientes = await getPositionByEtapa({ etapa: searchTerm, token: jwt });
+
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
+                } else {
+                    filteredExpedientes = [];
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    filteredExpedientes = [];
+                } else {
+                    console.error("Something went wrong", error);
+                }
+            }
+        } else if (searchType === 'Juzgado') {
+            try {
+                const expedientes = await getPositionByJuzgado({ juzgado: searchTerm, token: jwt });
 
                 if (expedientes && expedientes.length > 0) {
                     filteredExpedientes = [...expedientes];
@@ -449,22 +464,21 @@ const Position = () => {
                 }
             }
         }
-
         if (searchType === 'Filtros Multiples') {
             try {
                 const { desde, hasta, juzgado, acuerdo } = searchTerm;
-            
+
                 let etapa = null;
                 let termino = null;
                 let notificacion = null;
-        
+
                 if (acuerdo && acuerdo.trim() !== "") {
                     const acuerdo_objeto = JSON.parse(acuerdo);
                     etapa = acuerdo_objeto.etapa || null;
                     termino = acuerdo_objeto.termino || null;
                     notificacion = acuerdo_objeto.notificacion || null;
                 }
-            
+
                 const expedientes = await getPositionFilteredRecords({
                     desde,
                     hasta,
@@ -474,8 +488,8 @@ const Position = () => {
                     notificacion,
                     token: jwt
                 });
-            
-    
+
+
                 if (expedientes && expedientes.length > 0) {
                     filteredExpedientes = [...expedientes];
                 } else {
@@ -500,21 +514,10 @@ const Position = () => {
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero' && type === 'Fecha');
-
-        setExpedientes(originalExpedientes);
-
         if (type === 'Filtros Multiples') {
             handleOpenModal();
         }
-
-        setisLoadingExpedientes(true)
-        try {
-            const expedientes = await getPositionExpedientes({ token: jwt });
-            setExpedientes(expedientes);
-        } catch (error) {
-            console.error("Something was wrong", error)
-        }
-        setisLoadingExpedientes(false)
+        await handleGetExpedientes()
     };
 
 
@@ -523,6 +526,17 @@ const Position = () => {
             searcherExpediente(search);
         }
     };
+
+    const handleGetExpedientes = async () => {
+        try {
+            setisLoadingExpedientes(true)
+            const expedientes = await getPositionExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
+    }
 
 
 
@@ -637,13 +651,21 @@ const Position = () => {
                     </div>
                 </div>
             )}
-            <FullScreenModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                juzgados={juzgados}
-                acuerdos={filtros}
-                onSearch={handleSearchFromModal}  
-            />
+       <FullScreenModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        juzgados={juzgados}
+        acuerdos={filtros}
+        desde={desde}
+        setDesde={setDesde}
+        hasta={hasta}
+        setHasta={setHasta}
+        juzgado={juzgado}
+        setJuzgado={setJuzgado}
+        acuerdo={acuerdo}
+        setAcuerdo={setAcuerdo}
+        onSearch={handleSearchFromModal}
+      />
 
             <>
                 {isDesktopOrLaptop ? (
@@ -689,6 +711,12 @@ const Position = () => {
                                             </button>
                                         </li>
                                         <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Juzgado")}>
+                                                Juzgados
+                                                {searchType === "Juzgado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
                                                 MacroEtapa
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
@@ -731,6 +759,21 @@ const Position = () => {
                                             </option>
                                         ))}
                                     </select>
+                                ) : searchType === "Juzgado" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="filtros-dropdown"
+                                        className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                        <option value="">Todos los Juzgados</option>
+                                        {juzgados.map((juzgado, index) => (
+                                            <option key={index} value={juzgado.juspos}>
+                                                {juzgado.juspos}
+                                            </option>
+                                        ))}
+                                    </select>
                                 ) : searchType === "Filtros" ? (
                                     <select
                                         value={search}
@@ -739,7 +782,7 @@ const Position = () => {
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Sin Filtro</option>
+                                        <option value="">Todos los Acuerdos</option>
                                         {filtros.map((filtro, index) => (
                                             <option key={index} value={JSON.stringify(filtro.value)}>
                                                 {filtro.name}
@@ -831,6 +874,12 @@ const Position = () => {
                                             </button>
                                         </li>
                                         <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Juzgado")}>
+                                                Juzgados
+                                                {searchType === "Juzgado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
                                                 MacroEtapa
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
@@ -865,6 +914,21 @@ const Position = () => {
                                         {etapas.map((etapa, index) => (
                                             <option key={index} value={etapa.macroetapa_aprobada}>
                                                 {etapa.macroetapa_aprobada}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : searchType === "Juzgado" ? (
+                                    <select
+                                        value={search}
+                                        onChange={handleSearchInputChange}
+                                        id="filtros-dropdown"
+                                        className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
+                                        required
+                                    >
+                                        <option value="">Todos los Juzgados</option>
+                                        {juzgados.map((juzgado, index) => (
+                                            <option key={index} value={juzgado.juspos}>
+                                                {juzgado.juspos}
                                             </option>
                                         ))}
                                     </select>

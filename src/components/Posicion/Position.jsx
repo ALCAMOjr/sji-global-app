@@ -651,21 +651,21 @@ const Position = () => {
                     </div>
                 </div>
             )}
-       <FullScreenModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        juzgados={juzgados}
-        acuerdos={filtros}
-        desde={desde}
-        setDesde={setDesde}
-        hasta={hasta}
-        setHasta={setHasta}
-        juzgado={juzgado}
-        setJuzgado={setJuzgado}
-        acuerdo={acuerdo}
-        setAcuerdo={setAcuerdo}
-        onSearch={handleSearchFromModal}
-      />
+            <FullScreenModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                juzgados={juzgados}
+                acuerdos={filtros}
+                desde={desde}
+                setDesde={setDesde}
+                hasta={hasta}
+                setHasta={setHasta}
+                juzgado={juzgado}
+                setJuzgado={setJuzgado}
+                acuerdo={acuerdo}
+                setAcuerdo={setAcuerdo}
+                onSearch={handleSearchFromModal}
+            />
 
             <>
                 {isDesktopOrLaptop ? (
@@ -767,12 +767,13 @@ const Position = () => {
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Todos los Juzgados</option>
+                                        <option value="">Selecciona un juzgado</option>
                                         {juzgados.map((juzgado, index) => (
                                             <option key={index} value={juzgado.juspos}>
-                                                {juzgado.juspos}
+                                                {juzgado.juspos} - {juzgado.abreviaciones}
                                             </option>
                                         ))}
+
                                     </select>
                                 ) : searchType === "Filtros" ? (
                                     <select
@@ -925,12 +926,13 @@ const Position = () => {
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Todos los Juzgados</option>
+                                        <option value="">Selecciona un juzgado</option>
                                         {juzgados.map((juzgado, index) => (
                                             <option key={index} value={juzgado.juspos}>
-                                                {juzgado.juspos}
+                                                {juzgado.juspos} - {juzgado.abreviaciones}
                                             </option>
                                         ))}
+
                                     </select>
                                 ) : searchType === "Filtros" ? (
                                     <select

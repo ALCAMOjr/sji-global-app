@@ -3,19 +3,19 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 const FullScreenModal = ({
-  isOpen, 
-  onClose, 
-  juzgados, 
-  acuerdos, 
-  desde, 
-  setDesde, 
-  hasta, 
-  setHasta, 
-  juzgado, 
-  setJuzgado, 
-  acuerdo, 
-  setAcuerdo, 
-  onSearch 
+  isOpen,
+  onClose,
+  juzgados,
+  acuerdos,
+  desde,
+  setDesde,
+  hasta,
+  setHasta,
+  juzgado,
+  setJuzgado,
+  acuerdo,
+  setAcuerdo,
+  onSearch
 }) => {
   const [desdeError, setDesdeError] = useState('');
   const [hastaError, setHastaError] = useState('');
@@ -118,9 +118,11 @@ const FullScreenModal = ({
               <option value="">Selecciona un juzgado</option>
               {juzgados.map((juzgado, index) => (
                 <option key={index} value={juzgado.juspos}>
-                  {juzgado.juspos}
+                  {juzgado.juspos} - {juzgado.abreviaciones}
                 </option>
               ))}
+
+
             </select>
           </div>
 

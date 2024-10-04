@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Cards from './Cards.jsx'; 
 import TableExpedientes from './TableExpediente.jsx';
 
@@ -19,7 +19,9 @@ const TableConditional = ({
     openMenuIndex,
     isOpen,
     handleMenuToggle,
-    isLoading
+    isLoading,
+    isReversed 
+
 }) => {
     const [shouldRenderTable, setShouldRenderTable] = useState(window.innerWidth >= 1200);
 
@@ -58,6 +60,7 @@ const TableConditional = ({
             isOpen={isOpen}
             handleMenuToggle={handleMenuToggle}
             isLoading={isLoading}
+            isReversed={isReversed}
         />
     ) : (
         <Cards
@@ -78,6 +81,7 @@ const TableConditional = ({
             isOpen={isOpen}
             handleMenuToggle={handleMenuToggle}
             isLoading={isLoading}
+            isReversed={isReversed}
         />
     );
 };

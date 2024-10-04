@@ -1,4 +1,6 @@
 import { useState, useContext, useEffect, useRef } from 'react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import masicon from "../../assets/mas.png"
 import FullScreenModal from './FullScreenModal.jsx'
 import usePosition from "../../hooks/posicion/usePositions.jsx";
 import { Spinner } from "@nextui-org/react";
@@ -45,11 +47,12 @@ const Position = () => {
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
-    const { jwt } = useContext(Context);
+    const { jwt, isCoordinador} = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);
+    const [isReversed, setIsReversed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [desde, setDesde] = useState('');
     const [hasta, setHasta] = useState('');
@@ -571,8 +574,40 @@ const Position = () => {
     if (errorEtapas) return <Error message={errorEtapas.message} />;
     if (juzgados_error) return <Error message={juzgados_error.message} />;
 
+    // Función para cambiar el estado de las columnas
+    const handleToggleColumns = () => {
+        setIsReversed(!isReversed);
+    };
+
     return (
         <div className="flex flex-col min-h-screen">
+
+
+            <div className="relative">
+
+
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button
+                            color='primary'
+                            className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
+                            isIconOnly
+                            aria-label="Mas"
+                        >
+                            <img src={masicon} alt="Mas" className='w-4 h-4' />
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                        {/* Al hacer clic, invoca la función para cambiar el orden */}
+                        <DropdownItem key="new" onClick={handleToggleColumns}>Cambiar Posicion</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+
+
+            </div>
+
+
+
             {isOpenModal && (
                 <div id="crud-modal" tabIndex="-1" aria-hidden="true" className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50">
                     <div className="relative max-w-md w-full bg-white rounded-lg shadow-lg dark:bg-gray-700">
@@ -1066,6 +1101,7 @@ const Position = () => {
                     isOpen={isOpen}
                     handleMenuToggle={handleMenuToggle}
                     isLoading={isLoading}
+                    isReversed={isReversed}
 
                 />
             )}

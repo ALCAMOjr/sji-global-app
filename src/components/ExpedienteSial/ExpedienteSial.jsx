@@ -29,7 +29,7 @@ const ExpedientesSial = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [selectedFiles, setSelectedFiles] = useState([]);
-    const [ isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
+    const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
     const [errors, setErrors] = useState({});
     const inputFileRef = useRef(null);
     const { jwt } = useContext(Context);
@@ -44,19 +44,19 @@ const ExpedientesSial = () => {
         const endIndex = startIndex + itemsPerPage;
         setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
-    
+
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1);
     };
 
-    
+
     const handleChangeRowsPerPage = (event) => {
         setItemsPerPage(parseInt(event.target.value, 10));
         setCurrentPage(1);
     };
-    
 
-   
+
+
     const onPageChange = (page) => {
         setCurrentPage(page);
     };
@@ -125,7 +125,7 @@ const ExpedientesSial = () => {
                         background: '#1D4ED8',
                     },
                 });
-            
+
             } else if (error == "Campos inválidos en los archivos.") {
                 toast.error(`Los campos de los archivos CSV son incorrectos. Revísalos y vuelve a intentarlo.`);
             } else {
@@ -169,14 +169,7 @@ const ExpedientesSial = () => {
         setSearch('');
         setIsManualSearch(type === 'Numero');
 
-        setisLoadingExpedientes(true)
-        try {
-            const expedientes = await getAllExpedientesSial({ token: jwt });
-            setExpedientes(expedientes);
-        } catch (error) {
-            console.error("Something was wrong", error)
-        }
-        setisLoadingExpedientes(false)
+        await handleGetExpedientes()
     };
 
 
@@ -225,16 +218,8 @@ const ExpedientesSial = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);     
-                setisLoadingExpedientes(true)
-                try {
-                const expedientes = await getAllExpedientesSial({ token: jwt });
-                setExpedientes(expedientes);
-                } catch (error) {
-                    console.error("Something was wrong", error)
-                } 
-             setisLoadingExpedientes(false)
-            
+            setIsManualSearch(false);
+            await handleGetExpedientes()
         }
     }
 
@@ -244,6 +229,16 @@ const ExpedientesSial = () => {
         }
     };
 
+    const handleGetExpedientes = async () => {
+        try {
+            setisLoadingExpedientes(true)
+            const expedientes = await getAllExpedientesSial({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
+    }
 
 
 
@@ -387,7 +382,7 @@ const ExpedientesSial = () => {
                                     </button>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -433,11 +428,11 @@ const ExpedientesSial = () => {
                             )}
                             <div className="relative w-full">
                                 <input
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleManualSearch();
-                                    }
-                                }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"
@@ -512,11 +507,11 @@ const ExpedientesSial = () => {
                             )}
                             <div className="relative w-full">
                                 <input
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleManualSearch();
-                                    }
-                                }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleManualSearch();
+                                        }
+                                    }}
                                     value={search}
                                     onChange={handleSearchInputChange}
                                     type="search"

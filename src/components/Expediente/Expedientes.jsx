@@ -49,7 +49,7 @@ const Expedientes = () => {
     const [IsLoadingUpdateAllExpedientes, setIsLoadingUpdateAllExpedientes] = useState(false)
     const [progress, setProgress] = useState(0);
     const [isCheckedUpdate, setIsCheckedUpdate] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false); 
+    const [isUpdating, setIsUpdating] = useState(false);
 
 
     const handleCheckboxUpdateChange = (event) => {
@@ -107,40 +107,40 @@ const Expedientes = () => {
                 uploadFile: 'No ha seleccionado ningún archivo aún.',
             }));
             return;
-        }    
-    
+        }
+
         setIsLoading(true);
-        setIsUpdating(false); 
-        setProgress(0); 
-        
+        setIsUpdating(false);
+        setProgress(0);
+
         try {
             const { success, jobId, error } = await uploadFile(setOriginalExpedientes, selectedFiles, isCheckedUpdate);
-    
+
             if (success) {
                 if (isCheckedUpdate && jobId) {
                     setIsUpdating(true);
                     const { success: monitorSuccess, result } = await monitorJobProgress(jobId);
-    
+
                     if (monitorSuccess) {
                         if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
-                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                            icon: () => <img src={check} alt="Success Icon" />,
-                            progressStyle: {
-                                background: '#1D4ED8',
-                            }
-                        });
-                        setExpedientes(result.expedientesConDetalles);
-                    } else {
-                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                            icon: () => <img src={check} alt="Success Icon" />,
-                            progressStyle: {
-                                background: '#1D4ED8',
-                            }
-                        });
-                       window.location.reload()
-                    }
-                    
-                      
+                            toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                                icon: () => <img src={check} alt="Success Icon" />,
+                                progressStyle: {
+                                    background: '#1D4ED8',
+                                }
+                            });
+                            setExpedientes(result.expedientesConDetalles);
+                        } else {
+                            toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                                icon: () => <img src={check} alt="Success Icon" />,
+                                progressStyle: {
+                                    background: '#1D4ED8',
+                                }
+                            });
+                            window.location.reload()
+                        }
+
+
                     } else {
                         toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                             icon: () => <img src={check} alt="Success Icon" />,
@@ -163,7 +163,7 @@ const Expedientes = () => {
             } else if (error === "Formato de archivo no válido. Solo se permiten archivos .csv") {
                 toast.error('Formato de archivo no válido. Solo se permiten archivos .csv, Cambia el formato e intente de nuevo.');
             }
-             else {
+            else {
                 toast.error(`Algo mal sucedió al subir los archivos. Intente de nuevo`);
             }
         } catch (error) {
@@ -176,8 +176,8 @@ const Expedientes = () => {
             setErrors({});
         }
     };
-    
-    
+
+
 
     useEffect(() => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
@@ -329,24 +329,24 @@ const Expedientes = () => {
 
                 if (monitorSuccess) {
                     if (result.expedientesConDetalles && result.expedientesConDetalles.length > 0) {
-                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                        icon: () => <img src={check} alt="Success Icon" />,
-                        progressStyle: {
-                            background: '#1D4ED8',
-                        }
-                    });
-                    setExpedientes(result.expedientesConDetalles);
-                } else {
-                    toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
-                        icon: () => <img src={check} alt="Success Icon" />,
-                        progressStyle: {
-                            background: '#1D4ED8',
-                        }
-                    });
-                   window.location.reload()
-                }
-                
-                  
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                        setExpedientes(result.expedientesConDetalles);
+                    } else {
+                        toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
+                            icon: () => <img src={check} alt="Success Icon" />,
+                            progressStyle: {
+                                background: '#1D4ED8',
+                            }
+                        });
+                        window.location.reload()
+                    }
+
+
                 } else {
                     toast.info('Se le notificó por correo electrónico con el resultado del proceso.', {
                         icon: () => <img src={check} alt="Success Icon" />,
@@ -520,10 +520,10 @@ const Expedientes = () => {
                 });
             } else {
                 if (error == "El expediente tiene tareas pendientes sin completar")
-                toast.error(`No se puede eliminar el expediente, El expediente tiene tareas pendientes sin completar`);
+                    toast.error(`No se puede eliminar el expediente, El expediente tiene tareas pendientes sin completar`);
                 else {
                     toast.error(`Algo mal sucedió al eliminar el expediente`, error);
-           
+
                 }
             }
         } catch (error) {
@@ -579,14 +579,7 @@ const Expedientes = () => {
         setIsSearchOpen(false);
         setSearch('');
         setIsManualSearch(type === 'Numero');
-        setisLoadingExpedientes(true)
-        try {
-            const expedientes = await getAllExpedientes({ token: jwt });
-            setExpedientes(expedientes);
-        } catch (error) {
-            console.error("Something was wrong", error)
-        }
-        setisLoadingExpedientes(false)
+        await handleGetExpedientes()
 
     };
 
@@ -635,16 +628,9 @@ const Expedientes = () => {
         }
 
         if (searchTerm.trim() === '') {
-            setIsManualSearch(false);     
-                setisLoadingExpedientes(true)
-                try {
-                const expedientes = await getAllExpedientes({ token: jwt });
-                setExpedientes(expedientes);
-                } catch (error) {
-                    console.error("Something was wrong", error)
-                } 
-             setisLoadingExpedientes(false)
-            
+            setIsManualSearch(false);
+            await handleGetExpedientes()
+
         }
     }
 
@@ -654,6 +640,17 @@ const Expedientes = () => {
         }
     };
 
+
+    const handleGetExpedientes = async () => {
+        try {
+            setisLoadingExpedientes(true)
+            const expedientes = await getAllExpedientes({ token: jwt });
+            setExpedientes(expedientes);
+        } catch (error) {
+            console.error("Something was wrong", error)
+        }
+        setisLoadingExpedientes(false)
+    }
 
 
 
@@ -739,22 +736,22 @@ const Expedientes = () => {
                                     >
                                         <div className="flex flex-col items-center">
                                             {isLoading ? (
-                                                  <div className="flex flex-col items-center">
-                                                  <Spinner
-                                                    className="text-center mt-6 mb-8 text-sm"
-                                                    label={isUpdating ? `Actualizando Expedientes... ${progress}%` : `Subiendo Archivos...`}
-                                                    color="primary"
-                                                    size="lg"
-                                                    labelColor="primary"
-                                                  />
-                                                  
-                                                  {isUpdating && (
-                                                    <h3 className="text-sm text-center font-semibold text-primary/80">
-                                                      Se le notificará por correo electrónico cuando se complete el proceso.
-                                                    </h3>
-                                                  )}
+                                                <div className="flex flex-col items-center">
+                                                    <Spinner
+                                                        className="text-center mt-6 mb-8 text-sm"
+                                                        label={isUpdating ? `Actualizando Expedientes... ${progress}%` : `Subiendo Archivos...`}
+                                                        color="primary"
+                                                        size="lg"
+                                                        labelColor="primary"
+                                                    />
+
+                                                    {isUpdating && (
+                                                        <h3 className="text-sm text-center font-semibold text-primary/80">
+                                                            Se le notificará por correo electrónico cuando se complete el proceso.
+                                                        </h3>
+                                                    )}
                                                 </div>
-                                              
+
                                             ) : (
                                                 <>
                                                     <img
@@ -815,7 +812,7 @@ const Expedientes = () => {
                                             className="mr-2"
                                             checked={isCheckedUpdate}
                                             disabled={isUpdating}
-                                            onChange={handleCheckboxUpdateChange} 
+                                            onChange={handleCheckboxUpdateChange}
                                         />
                                         <label className='-mt-1' htmlFor="acceptMessages">
                                             Actualizar Expedientes

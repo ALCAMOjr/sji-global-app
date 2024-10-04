@@ -168,12 +168,14 @@ const TableExpedientes = ({
                                         <span className='text-xs font-bold text-black'>Días</span>
                                     </TableCell>
                                     <TableCell align='center' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'></span>
+                                        <span className='text-xs font-bold text-black'>Sprints</span>
                                     </TableCell>
+                                
                                     <TableCell align='center' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'></span>
+                                        <span className='text-xs font-bold text-black'>Gestión</span>
                                     </TableCell>
-                                    <TableCell align='center' className='bg-white'>
+
+                                    <TableCell align='left' className='bg-white'>
                                         <span className='text-xs font-bold text-black'>Acciones</span>
                                     </TableCell>
                                     <TableCell className='bg-green-200'>
@@ -190,6 +192,9 @@ const TableExpedientes = ({
                                     </TableCell>
                                     <TableCell className='bg-green-200'>
                                         <span className='text-xs font-bold text-black'>Est</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>D</span>
                                     </TableCell>
 
                                 </>
@@ -209,6 +214,9 @@ const TableExpedientes = ({
                                     </TableCell>
                                     <TableCell className='bg-green-200'>
                                         <span className='text-xs font-bold text-black'>Est</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>D</span>
                                     </TableCell>
                                     <TableCell className='bg-blue-200'>
                                         <span className='text-xs font-bold text-black'>Exp</span>
@@ -232,13 +240,14 @@ const TableExpedientes = ({
                                         <span className='text-xs font-bold text-black'>Días</span>
                                     </TableCell>
                                     <TableCell align='center' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'></span>
+                                        <span className='text-xs font-bold text-black'>Sprints</span>
                                     </TableCell>
+                                
                                     <TableCell align='center' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'></span>
+                                        <span className='text-xs font-bold text-black'>Gestión</span>
                                     </TableCell>
 
-                                    <TableCell align='right' className='bg-white'>
+                                    <TableCell align='left' className='bg-white'>
                                         <span className='text-xs font-bold text-black'>Acciones</span>
                                     </TableCell>
                                 </>
@@ -464,10 +473,6 @@ const Row = ({
                             </button>
                         </TableCell>
                         <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                            <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
-                        </TableCell>
-                   
-                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                             <span className="text-xs">{expediente.num_credito}</span>
                         </TableCell>
                         <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
@@ -487,7 +492,10 @@ const Row = ({
                         <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                             <span className="text-xs">{expediente.estatus}</span>
                         </TableCell>
-                
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
+                        </TableCell>
+                   
 
                     
 

@@ -45,7 +45,7 @@ const Position = () => {
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
-    const { jwt } = useContext(Context);
+    const { jwt, isCoordinador} = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
     const [openMenuIndex, setOpenMenuIndex] = useState(null);

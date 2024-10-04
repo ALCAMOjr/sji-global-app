@@ -46,7 +46,7 @@ const TableTarea = ({
                                 <span className='text-sm font-bold text-black'>Nombre</span>
                             </TableCell>
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>Numero</span>
+                                <span className='text-sm font-bold text-black'>Crédito</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Url</span>
@@ -213,7 +213,7 @@ const Row = ({
                             <Collapse in={open} timeout="auto" unmountOnExit>
                                 <Box sx={{ margin: 1 }}>
                                     <Typography variant="h6" gutterBottom component="div">
-                                    Gestion del Expediente
+                                    Gestion del Crédito
                                     </Typography>
                                     <Table size="small" aria-label="details">
                                         <TableHead>

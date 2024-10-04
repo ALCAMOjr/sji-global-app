@@ -27,7 +27,7 @@ const TableExpedientes = ({
                         <TableRow>
                             <TableCell />
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>Numero</span>
+                                <span className='text-sm font-bold text-black'>Crédito</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Estatus</span>

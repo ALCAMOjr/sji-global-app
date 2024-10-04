@@ -22,6 +22,7 @@ import getPositionByFecha from '../../views/position/getPositionbyFecha.js';
 import useJuzgados from '../../hooks/juzgados/useJuzgados.jsx';
 import getPositionByJuzgado from '../../views/position/getPositionByJuzgado.js';
 import getPositionFilteredRecords from '../../views/position/getPositionFilteredRecords.js';
+import getPositionByExpediente from '../../views/position/getPositiobyExpediente.js';
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
@@ -331,6 +332,9 @@ const Position = () => {
         if (searchType === 'Numero' && searchTerm.trim() !== '') {
             setIsManualSearch(true);
         }
+        if (searchType === 'Expediente' && searchTerm.trim() !== '') {
+            setIsManualSearch(true);
+        }
         if (searchType === 'Fecha' && searchTerm.trim() !== '') {
             setIsManualSearch(true);
         }
@@ -381,6 +385,22 @@ const Position = () => {
             const lowercaseSearchTerm = searchTerm.toLowerCase();
             try {
                 const expediente = await getPositionByNumero({ numero: lowercaseSearchTerm, token: jwt });
+
+                if (expediente && expediente.length > 0) {
+                    filteredExpedientes.push(expediente[0]);
+                } else {
+                    filteredExpedientes = [];
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    filteredExpedientes = [];
+                } else {
+                    console.error("Something went wrong", error);
+                }
+            }
+        }  else if (searchType === 'Expediente') {
+            try {
+                const expediente = await getPositionByExpediente({ expediente: searchTerm, token: jwt });
 
                 if (expediente && expediente.length > 0) {
                     filteredExpedientes.push(expediente[0]);
@@ -513,7 +533,7 @@ const Position = () => {
         setSearchType(type);
         setIsSearchOpen(false);
         setSearch('');
-        setIsManualSearch(type === 'Numero' && type === 'Fecha');
+        setIsManualSearch(type === 'Numero' && type === 'Fecha' && type === 'Expediente');
         if (type === 'Filtros Multiples') {
             handleOpenModal();
         }
@@ -700,8 +720,14 @@ const Position = () => {
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Numero
+                                            Crédito
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Expediente")}>
+                                               Expediente Tv
+                                                {searchType === "Expediente" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
@@ -864,8 +890,14 @@ const Position = () => {
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Numero
+                                                Crédito
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Expediente")}>
+                                               Expediente Tv
+                                                {searchType === "Expediente" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>

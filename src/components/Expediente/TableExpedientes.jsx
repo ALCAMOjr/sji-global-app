@@ -63,7 +63,7 @@ const TableExpedientes = ({
                                 <span className='text-sm font-bold text-black'>Nombre</span>
                             </TableCell>
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>Numero</span>
+                                <span className='text-sm font-bold text-black'>Crédito</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Url</span>

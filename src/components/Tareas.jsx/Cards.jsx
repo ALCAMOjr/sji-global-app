@@ -130,7 +130,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                 )}
 
                                 <h5 className="text-sm mr-16 font-bold leading-none text-gray-900 dark:text-white">
-                                    Expediente #{expediente.numero}
+                                Crédito #{expediente.numero}
                                 </h5>
                             </div>
                             {openMenuIndex === index && (
@@ -208,7 +208,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                Gestion del Expediente #{selectedExpediente.numero}
+                                Gestion del Crédito #{selectedExpediente.numero}
                                 </h3>
                                 <button type="button" onClick={() => CloseModal()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -286,7 +286,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Detalles del Expediente #{selectedExpedienteDetails.numero}
+                                    Detalles del Crédito #{selectedExpedienteDetails.numero}
                                 </h3>
                                 <button type="button" onClick={() => CloseModalDetails()} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">

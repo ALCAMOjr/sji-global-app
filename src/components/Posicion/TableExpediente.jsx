@@ -64,9 +64,78 @@ const TableExpedientes = ({
     openModalTarea,
     handleDownload,
     handleUpdate,
-    isLoading
+    isLoading,
+    isReversed
+
 }) => {
 
+    const renderColumns = (expediente) => {
+        const commonColumns = (
+            <>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.expediente}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.juzgado}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.fecha}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.etapa}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.termino}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.notificacion}</span>
+                </TableCell>
+                <TableCell align='center'>
+                    <span className="text-lg text-white">
+                        {calculateDaysDifference(expediente.fecha)}
+                    </span>
+                </TableCell>
+            </>
+        );
+
+        const creditColumns = (
+            <>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.num_credito}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.macroetapa_aprobada}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.ultima_etapa_aprobada}</span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">
+                        {new Date(expediente.fecha_ultima_etapa_aprobada).toLocaleDateString('es-ES', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        })}
+                    </span>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                    <span className="text-xs">{expediente.estatus}</span>
+                </TableCell>
+            </>
+        );
+
+        return isReversed ? (
+            <>
+                {commonColumns}
+                {creditColumns}
+            </>
+        ) : (
+            <>
+                {creditColumns}
+                {commonColumns}
+            </>
+        );
+    };
 
     return (
         <div>
@@ -74,57 +143,106 @@ const TableExpedientes = ({
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                        <TableCell />
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Crédito</span>
-                            </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>MacroEtapa</span>
-                            </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Ultima E A</span>
-                            </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Fecha</span>
-                            </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>Est</span>
-                            </TableCell>
-                            <TableCell className='bg-green-200'>
-                                <span className='text-xs font-bold text-black'>D</span>
-                            </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Exp</span>
-                            </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Juzg</span>
-                            </TableCell>
+                            <TableCell />
+                            {isReversed ? (
+                                <>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Exp</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Juzg</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Fecha</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Etapa</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Termino</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Notificación</span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'>Días</span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'></span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'></span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'>Acciones</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Crédito</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>MacroEtapa</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Ultima E A</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Fecha</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Est</span>
+                                    </TableCell>
 
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Fecha</span>
-                            </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Etapa</span>
-                            </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Termino</span>
-                            </TableCell>
-                            <TableCell className='bg-blue-200'>
-                                <span className='text-xs font-bold text-black'>Notificación</span>
-                            </TableCell>
-                            <TableCell align='center' className='bg-white'>
-                                <span className='text-xs font-bold text-black'>Días</span>
-                            </TableCell>
+                                </>
+                            ) : (
+                                <>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Crédito</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>MacroEtapa</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Ultima E A</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Fecha</span>
+                                    </TableCell>
+                                    <TableCell className='bg-green-200'>
+                                        <span className='text-xs font-bold text-black'>Est</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Exp</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Juzg</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Fecha</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Etapa</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Termino</span>
+                                    </TableCell>
+                                    <TableCell className='bg-blue-200'>
+                                        <span className='text-xs font-bold text-black'>Notificación</span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'>Días</span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'></span>
+                                    </TableCell>
+                                    <TableCell align='center' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'></span>
+                                    </TableCell>
 
-                            <TableCell align='center' className='bg-white'>
-                                <span className='text-xs font-bold text-black'>Sprints</span>
-                            </TableCell>
-                            <TableCell align="center" className=''>
-                                <span className='text-xs font-bold text-black'>Tareas</span>
-                            </TableCell>
-                            <TableCell align="center" className=''>
-                                <span className='text-xs font-bold text-black'>Acciones</span>
-                            </TableCell>
+                                    <TableCell align='right' className='bg-white'>
+                                        <span className='text-xs font-bold text-black'>Acciones</span>
+                                    </TableCell>
+                                </>
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -136,7 +254,7 @@ const TableExpedientes = ({
                                 handleDownload={handleDownload}
                                 handleUpdate={handleUpdate}
                                 isLoading={isLoading}
-
+                                isReversed={isReversed}
                             />
                         ))}
                     </TableBody>
@@ -172,7 +290,9 @@ const Row = ({
     openModalTarea,
     handleDownload,
     handleUpdate,
-    isLoading
+    isLoading,
+    isReversed
+
 }) => {
     const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [hasTarea, setHasTarea] = useState(false);
@@ -244,7 +364,7 @@ const Row = ({
         } else if (days >= 60) {
             return 'bg-dark-green';
         } else if (days >= 30) {
-            return 'bg-dark-blue'; o
+            return 'bg-dark-blue';
         } else {
             return '';
         }
@@ -274,7 +394,7 @@ const Row = ({
 
     return (
         <Fragment>
-         <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <IconButton
                         aria-label="expand row"
@@ -284,84 +404,183 @@ const Row = ({
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.num_credito}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.macroetapa_aprobada}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.ultima_etapa_aprobada}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">
-                        {new Date(expediente.fecha_ultima_etapa_aprobada).toLocaleDateString('es-ES', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        })}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.estatus}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.expediente}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.juzgado}</span>
-                </TableCell>
+
+                {isReversed ? (
+
+                    <>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.expediente}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.juzgado}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.fecha}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.etapa}</span>
+                        </TableCell>
+
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.termino}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.notificacion}</span>
+                        </TableCell>
+                        <TableCell align='center' className={`max-w-xs truncate ${daysBackgroundColor}`}>
+                            <span className="text-lg text-white">{daysDisplay}</span>
+                        </TableCell>
+                        <TableCell align="right" className={`max-w-xs truncate`}>
+                            {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
+                        </TableCell>
+                        <TableCell align="right">
+                            {hasTarea ? (
+                                <button
+                                    type="button"
+                                    className="text-white bg-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                    disabled
+                                >
+                                    Ya Asignada
+                                </button>
+                            ) : (
+                                <button
+                                    disabled={isLoading}
+                                    onClick={() => openModalTarea(expediente)}
+                                    type="button"
+                                    className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                >
+                                    Asignar Exp
+                                </button>
+                            )}
+                        </TableCell>
+                        <TableCell align="left">
+                            <button
+                                disabled={isLoading}
+                                onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
+                                type="button"
+                                className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                            >
+                                {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
+                            </button>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
+                        </TableCell>
+                   
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.num_credito}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.macroetapa_aprobada}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.ultima_etapa_aprobada}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">
+                                {new Date(expediente.fecha_ultima_etapa_aprobada).toLocaleDateString('es-ES', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                })}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.estatus}</span>
+                        </TableCell>
                 
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.fecha}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.etapa}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.termino}</span>
-                </TableCell>
-                <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
-                    <span className="text-xs">{expediente.notificacion}</span>
-                </TableCell>
-                <TableCell align='center' className={`max-w-xs truncate ${daysBackgroundColor}`}>
-                    <span className="text-lg text-white">{daysDisplay}</span>
-                </TableCell>
-                <TableCell align="right" className={`max-w-xs truncate`}>
-                    {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
-                </TableCell>
-                <TableCell align="right">
-                    {hasTarea ? (
-                        <button
-                            type="button"
-                            className="text-white bg-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                            disabled
-                        >
-                            Ya Asignada
-                        </button>
-                    ) : (
-                        <button
-                            disabled={isLoading}
-                            onClick={() => openModalTarea(expediente)}
-                            type="button"
-                            className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                        >
-                            Asignar Exp
-                        </button>
-                    )}
-                </TableCell>
-                <TableCell align="left">
-                    <button
-                        disabled={isLoading}
-                        onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
-                        type="button"
-                        className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                    >
-                        {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
-                    </button>
-                </TableCell>
+
+                    
+
+                    </>
+                ) : (
+                    <>
+
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.num_credito}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.macroetapa_aprobada}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.ultima_etapa_aprobada}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">
+                                {new Date(expediente.fecha_ultima_etapa_aprobada).toLocaleDateString('es-ES', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                })}</span>
+                        </TableCell>
+
+
+
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.estatus}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.bloquear_gestion_por_estrategia_dual}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.expediente}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.juzgado}</span>
+                        </TableCell>
+
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.fecha}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.etapa}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.termino}</span>
+                        </TableCell>
+                        <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
+                            <span className="text-xs">{expediente.notificacion}</span>
+                        </TableCell>
+                        <TableCell align='center' className={`max-w-xs truncate ${daysBackgroundColor}`}>
+                            <span className="text-lg text-white">{daysDisplay}</span>
+                        </TableCell>
+                        <TableCell align="right" className={`max-w-xs truncate`}>
+                            {sprintIcon && <span className="text-xs">{sprintIcon}</span>}
+                        </TableCell>
+                        <TableCell align="right">
+                            {hasTarea ? (
+                                <button
+                                    type="button"
+                                    className="text-white bg-gray-500 cursor-not-allowed font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                                    disabled
+                                >
+                                    Ya Asignada
+                                </button>
+                            ) : (
+                                <button
+                                    disabled={isLoading}
+                                    onClick={() => openModalTarea(expediente)}
+                                    type="button"
+                                    className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                >
+                                    Asignar Exp
+                                </button>
+                            )}
+                        </TableCell>
+                        <TableCell align="left">
+                            <button
+                                disabled={isLoading}
+                                onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
+                                type="button"
+                                className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
+                            >
+                                {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
+                            </button>
+                        </TableCell>
+
+                    </>
+                )}
+
+
             </TableRow>
 
             <TableRow>
@@ -389,7 +608,7 @@ const Row = ({
                                                 <TableRow key={idx}>
                                                     <TableCell align="left">
                                                         <button
-                                                           disabled={isLoading}
+                                                            disabled={isLoading}
                                                             onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
                                                             type="button"
                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"

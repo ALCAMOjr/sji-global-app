@@ -102,8 +102,6 @@ function Login({ onLogin }) {
         if (email.trim() === "") {
             setEmailError(true);
         } else {
-            // Aquí iría la lógica para enviar el correo
-            console.log("Enviando correo de recuperación a:", email);
             closeModal();
         }
     };

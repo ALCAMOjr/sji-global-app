@@ -82,7 +82,7 @@ const FullScreenModal = ({
           <h1 className="text-black font-bold text-center">Filtros Múltiples</h1>
 
           <div className="flex flex-col w-full">
-            <label htmlFor="desde" className="text-gray-700 font-medium">Desde</label>
+            <label htmlFor="desde" className="text-gray-700 font-medium">Filtro de fecha Tv: Desde</label>
             <input
               type="date"
               id="desde"
@@ -95,7 +95,7 @@ const FullScreenModal = ({
           </div>
 
           <div className="flex flex-col w-full">
-            <label htmlFor="hasta" className="text-gray-700 font-medium">Hasta</label>
+            <label htmlFor="hasta" className="text-gray-700 font-medium">Filtro de fecha Tv: Hasta</label>
             <input
               type="date"
               id="hasta"
@@ -108,7 +108,7 @@ const FullScreenModal = ({
           </div>
 
           <div className="flex flex-col w-full">
-            <label htmlFor="select1" className="text-gray-700 font-medium">Juzgado</label>
+            <label htmlFor="select1" className="text-gray-700 font-medium">Juzgado Tv</label>
             <select
               id="select1"
               value={juzgado}
@@ -127,7 +127,7 @@ const FullScreenModal = ({
           </div>
 
           <div className="flex flex-col w-full">
-            <label htmlFor="select2" className="text-gray-700 font-medium">Acuerdo</label>
+            <label htmlFor="select2" className="text-gray-700 font-medium">Acuerdo Tv</label>
             <select
               id="select2"
               value={acuerdo}

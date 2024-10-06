@@ -64,7 +64,7 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
-    console.log(currentExpedientes)
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -428,10 +428,10 @@ const Position = () => {
             }
         } else if (searchType === 'Expediente') {
             try {
-                const expediente = await getPositionByExpediente({ expediente: searchTerm, token: jwt });
+                const expedientes = await getPositionByExpediente({ expediente: searchTerm, token: jwt });
 
-                if (expediente && expediente.length > 0) {
-                    filteredExpedientes.push(expediente[0]);
+                if (expedientes && expedientes.length > 0) {
+                    filteredExpedientes = [...expedientes];
                 } else {
                     filteredExpedientes = [];
                 }
@@ -624,7 +624,7 @@ const Position = () => {
    
                 </div>
             </DropdownItem>
-            <DropdownItem key="export">Exportar Csv</DropdownItem>
+            <DropdownItem onClick={handleExportCSV} key="export">Exportar Csv</DropdownItem>
         </DropdownMenu>
     </Dropdown>
 </div>
@@ -795,19 +795,19 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Juzgado")}>
-                                                Juzgados
+                                                Juzgados Tv
                                                 {searchType === "Juzgado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
-                                                MacroEtapa
+                                                MacroEtapa Sial
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Acuerdos
+                                                Acuerdos Tv
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -947,7 +947,7 @@ const Position = () => {
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Crédito
+                                                Crédito 
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -965,19 +965,19 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Juzgado")}>
-                                                Juzgados
+                                                Juzgados Tv
                                                 {searchType === "Juzgado" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Etapa")}>
-                                                MacroEtapa
+                                                MacroEtapa Sial
                                                 {searchType === "Etapa" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Filtros")}>
-                                                Acuerdos
+                                                Acuerdos Tv
                                                 {searchType === "Filtros" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

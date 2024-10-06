@@ -73,19 +73,19 @@ const Agenda = () => {
 
             });
             if (success) {
-                toast.info('Se cancelo correctamente la tarea', {
+                toast.info('La asignación del expediente se canceló correctamente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al cancelar la tarea: ${error}`);
+                toast.error(`Algo mal sucedió al cancelar la asignación del expediente: ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al cancelar la tarea');
+            toast.error('Algo mal sucedió al cancelar la asignación del expediente');
         } finally {
             setIsLoading(false);
             closeModal();
@@ -102,19 +102,19 @@ const Agenda = () => {
 
             });
             if (success) {
-                toast.info('Se elimino correctamente la tarea', {
+                toast.info('La asignación del expediente se eliminó correctamente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al eliminar la tarea: ${error}`);
+                toast.error(`Algo mal sucedió al eliminar la asignación del expediente : ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al eliminar la tarea');
+            toast.error('Algo mal sucedió al eliminar la asignación del expediente ');
         } finally {
             setIsDeleting(false);
             closeModalDelete();

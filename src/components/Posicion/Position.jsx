@@ -145,7 +145,7 @@ const Position = () => {
 
 
             if (success) {
-                toast.info('Se creó correctamente la tarea', {
+                toast.info('El expediente fue asignado correctamente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
@@ -155,19 +155,19 @@ const Position = () => {
                 setExpedientes(expedientes)
             } else {
                 if (error === 'Ya existe una tarea asignada a este expediente.') {
-                    toast.error('Ya existe una tarea asignada a este expediente.');
+                    toast.error('Ya el expediente ha sido asigando a un abogado.');
                 } else if (error === 'ID de abogado inválido o el usuario no es un abogado.') {
                     toast.error('ID de abogado inválido o el usuario no es un abogado.');
                 } else if (error === 'El numero de expediente es inválido.') {
                     toast.error('El numero de expediente no existe en el tribunal virtual. Por favor crea el expediente en Expediente Tv e intente de nuevo.');
 
                 } else {
-                    toast.error('Algo mal sucedió al crear la tarea: ' + error);
+                    toast.error('Algo mal sucedió al asignar el expediente: ' + error);
                 }
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al crear la tarea');
+            toast.error('Algo mal sucedió al asignar el expediente');
         } finally {
             setIsLoading(false);
             closeModalTarea();

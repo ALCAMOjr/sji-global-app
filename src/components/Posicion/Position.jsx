@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect, useRef } from 'react';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Switch } from "@nextui-org/react";
 import masicon from "../../assets/mas.png"
 import FullScreenModal from './FullScreenModal.jsx'
 import usePosition from "../../hooks/posicion/usePositions.jsx";
@@ -599,9 +599,6 @@ const Position = () => {
     if (errorEtapas) return <Error message={errorEtapas.message} />;
     if (juzgados_error) return <Error message={juzgados_error.message} />;
 
-    const handleToggleColumns = () => {
-        setIsReversed(!isReversed);
-    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -633,6 +630,30 @@ const Position = () => {
 
             </div>
 
+<div className="relative">
+    <Dropdown>
+        <DropdownTrigger>
+            <Button
+                color='primary'
+                className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
+                isIconOnly
+                aria-label="Mas"
+            >
+                <img src={masicon} alt="Mas" className='w-4 h-4' />
+            </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Static Actions">
+            <DropdownItem key="new" variant='light' >
+                <div className="flex items-center justify-between">
+                    <Switch size="sm" isSelected={isReversed} onValueChange={setIsReversed} />
+                    <p className="text-small font-semibold">Tabla: {isReversed ? "ExpedienteTv" : "Credito Sial"}</p>
+   
+                </div>
+            </DropdownItem>
+            <DropdownItem key="export">Exportar Csv</DropdownItem>
+        </DropdownMenu>
+    </Dropdown>
+</div>
 
 
             {isOpenModal && (

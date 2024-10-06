@@ -47,7 +47,7 @@ const Position = () => {
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
-    const { jwt, isCoordinador} = useContext(Context);
+    const { jwt, isCoordinador } = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -64,6 +64,7 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
+    console.log(currentExpedientes)
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -78,6 +79,30 @@ const Position = () => {
             ...filters,
         });
     };
+    const handleExportCSV = (expedientes) => {
+        if (!expedientes || expedientes.length === 0) {
+            toast.error('No hay expedientes para exportar.');
+            return;
+        }
+        const filteredExpedientes = expedientes.map(({ detalles, ...rest }) => rest);
+        const headers = Object.keys(filteredExpedientes[0]);
+        const csvContent = [
+            headers.join(','), 
+            ...filteredExpedientes.map(expediente =>
+                headers.map(header => expediente[header] || '').join(',')
+            )
+        ].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const link = document.createElement('a');
+    
+        const timestamp = new Date().toISOString().replace(/[:.-]/g, '_');
+        const filename = `Expedientes_${timestamp}.csv`;
+    
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+    };
+    
 
 
     const formatDate = (date) => {
@@ -401,7 +426,7 @@ const Position = () => {
                     console.error("Something went wrong", error);
                 }
             }
-        }  else if (searchType === 'Expediente') {
+        } else if (searchType === 'Expediente') {
             try {
                 const expediente = await getPositionByExpediente({ expediente: searchTerm, token: jwt });
 
@@ -598,7 +623,10 @@ const Position = () => {
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
                         <DropdownItem key="new" onClick={handleToggleColumns}>Cambiar Posicion</DropdownItem>
-                         <DropdownItem key="new" >Exportar Csv</DropdownItem>
+                        <DropdownItem key="new" onClick={() => handleExportCSV(expedientes)}>
+                            Exportar CSV
+                        </DropdownItem>
+
                     </DropdownMenu>
                 </Dropdown>
 
@@ -754,13 +782,13 @@ const Position = () => {
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                            Crédito
+                                                Crédito
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Expediente")}>
-                                               Expediente Tv
+                                                Expediente Tv
                                                 {searchType === "Expediente" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>
@@ -930,7 +958,7 @@ const Position = () => {
                                         </li>
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Expediente")}>
-                                               Expediente Tv
+                                                Expediente Tv
                                                 {searchType === "Expediente" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

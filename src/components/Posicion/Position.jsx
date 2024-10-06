@@ -604,32 +604,6 @@ const Position = () => {
         <div className="flex flex-col min-h-screen">
 
 
-            <div className="relative">
-
-
-                <Dropdown>
-                    <DropdownTrigger>
-                        <Button
-                            color='primary'
-                            className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
-                            isIconOnly
-                            aria-label="Mas"
-                        >
-                            <img src={masicon} alt="Mas" className='w-4 h-4' />
-                        </Button>
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions">
-                        <DropdownItem key="new" onClick={handleToggleColumns}>Cambiar Posicion</DropdownItem>
-                        <DropdownItem key="new" onClick={() => handleExportCSV(expedientes)}>
-                            Exportar CSV
-                        </DropdownItem>
-
-                    </DropdownMenu>
-                </Dropdown>
-
-
-            </div>
-
 <div className="relative">
     <Dropdown>
         <DropdownTrigger>

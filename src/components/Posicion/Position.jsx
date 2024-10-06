@@ -574,7 +574,6 @@ const Position = () => {
     if (errorEtapas) return <Error message={errorEtapas.message} />;
     if (juzgados_error) return <Error message={juzgados_error.message} />;
 
-    // Función para cambiar el estado de las columnas
     const handleToggleColumns = () => {
         setIsReversed(!isReversed);
     };
@@ -598,8 +597,8 @@ const Position = () => {
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
-                        {/* Al hacer clic, invoca la función para cambiar el orden */}
                         <DropdownItem key="new" onClick={handleToggleColumns}>Cambiar Posicion</DropdownItem>
+                         <DropdownItem key="new" >Exportar Csv</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
 

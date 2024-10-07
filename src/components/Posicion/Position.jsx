@@ -624,7 +624,7 @@ const Position = () => {
    
                 </div>
             </DropdownItem>
-            <DropdownItem key="new" onClick={() => handleExportCSV(currentExpedientes)}>
+            <DropdownItem key="new" onClick={() => handleExportCSV(expedientes)}>
   Exportar CSV
 </DropdownItem>  
   </DropdownMenu>

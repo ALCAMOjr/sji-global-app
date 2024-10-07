@@ -15,6 +15,10 @@ import getNombrebyNumero from '../../views/expedientesial/getNamebyNumber.js';
 import { getExpedienteJobStatus } from "../../views/expedientes/optional.js"
 import agregar from "../../assets/agregar.png"
 import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
+import update_icon from "../../assets/actualizar.png"
+import upload_icon from "../../assets/subir.png"
+import create_icon from "../../assets/crear.png"
+import { update } from 'react-spring';
 const Expedientes = () => {
     const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes, get } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
@@ -682,9 +686,9 @@ const Expedientes = () => {
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Static Actions">
-                        <DropdownItem onClick={openModal} key="new">Crear Expediente</DropdownItem>
-                        <DropdownItem onClick={handleUpdateAllExpedientes} key="copy">Actualizar Expedientes</DropdownItem>
-                        <DropdownItem onClick={openModalUpload} key="copy">Subir Expedientes</DropdownItem>
+                        <DropdownItem startContent={<img src={create_icon} alt="Create Icon" className="w-6 h-6 flex-shrink-0" />} onClick={openModal} key="create">Crear Expediente</DropdownItem>
+                        <DropdownItem startContent={<img src={update_icon} alt="Update Icon" className="w-6 h-6 flex-shrink-0" />}  onClick={handleUpdateAllExpedientes} key="update">Actualizar Expedientes</DropdownItem>
+                        <DropdownItem startContent={<img src={upload_icon} alt="Upload Icon" className="w-6 h-6 flex-shrink-0" />} onClick={openModalUpload} key="upload">Subir Expedientes</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
 

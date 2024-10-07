@@ -25,6 +25,7 @@ import useJuzgados from '../../hooks/juzgados/useJuzgados.jsx';
 import getPositionByJuzgado from '../../views/position/getPositionByJuzgado.js';
 import getPositionFilteredRecords from '../../views/position/getPositionFilteredRecords.js';
 import getPositionByExpediente from '../../views/position/getPositiobyExpediente.js';
+import csv_icon from "../../assets/csv.png";
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
@@ -87,22 +88,22 @@ const Position = () => {
         const filteredExpedientes = expedientes.map(({ detalles, ...rest }) => rest);
         const headers = Object.keys(filteredExpedientes[0]);
         const csvContent = [
-            headers.join(','), 
+            headers.join(','),
             ...filteredExpedientes.map(expediente =>
                 headers.map(header => expediente[header] || '').join(',')
             )
         ].join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const link = document.createElement('a');
-    
+
         const timestamp = new Date().toISOString().replace(/[:.-]/g, '_');
         const filename = `Expedientes_${timestamp}.csv`;
-    
+
         link.href = URL.createObjectURL(blob);
         link.download = filename;
         link.click();
     };
-    
+
 
 
     const formatDate = (date) => {
@@ -604,32 +605,34 @@ const Position = () => {
         <div className="flex flex-col min-h-screen">
 
 
-<div className="relative">
-    <Dropdown>
-        <DropdownTrigger>
-            <Button
-                color='primary'
-                className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
-                isIconOnly
-                aria-label="Mas"
-            >
-                <img src={masicon} alt="Mas" className='w-4 h-4' />
-            </Button>
-        </DropdownTrigger>
-        <DropdownMenu aria-label="Static Actions">
-            <DropdownItem key="new" variant='light' >
-                <div className="flex items-center justify-between">
-                    <Switch size="sm" isSelected={isReversed} onValueChange={setIsReversed} />
-                    <p className="text-small font-semibold">Tabla: {isReversed ? "ExpedienteTv" : "Credito Sial"}</p>
-   
-                </div>
-            </DropdownItem>
-            <DropdownItem key="new" onClick={() => handleExportCSV(expedientes)}>
-  Exportar CSV
-</DropdownItem>  
-  </DropdownMenu>
-    </Dropdown>
-</div>
+            <div className="relative">
+                <Dropdown>
+                    <DropdownTrigger>
+                        <Button
+                            color='primary'
+                            className='fixed right-16 lg:right-56 xl:right-56 mt-24 lg:mt-0 xl:mt-0 top-3/4 lg:top-24 xl:top-24 z-50'
+                            isIconOnly
+                            aria-label="Mas"
+                        >
+                            <img src={masicon} alt="Mas" className='w-4 h-4' />
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem key="new" variant='light' >
+                            <div className="flex items-center justify-between">
+                                <Switch size="sm" isSelected={isReversed} onValueChange={setIsReversed} />
+                                <p className="text-small font-semibold">Tabla: {isReversed ? "ExpedienteTv" : "Credito Sial"}</p>
+
+                            </div>
+                        </DropdownItem>
+
+                        <DropdownItem startContent={<img src={csv_icon} alt="CSV Icon" className="w-6 h-6 flex-shrink-0" />} key="new" onClick={() => handleExportCSV(expedientes)}>
+                            <p className='ml-5'>Exportar CSV</p>
+                        </DropdownItem>
+
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
 
 
             {isOpenModal && (
@@ -949,7 +952,7 @@ const Position = () => {
                                     <ul className="py-1 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
                                         <li>
                                             <button type="button" className="inline-flex w-full px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" onClick={() => handleSearchTypeChange("Numero")}>
-                                                Crédito 
+                                                Crédito
                                                 {searchType === "Numero" && <IoMdCheckmark className="w-3 h-3 ml-1" />}
                                             </button>
                                         </li>

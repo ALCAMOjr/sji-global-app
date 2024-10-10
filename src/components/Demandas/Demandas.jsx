@@ -89,6 +89,37 @@ const Demandas = () => {
     </div>
   );
 
+  // Definición de los campos con propiedades personalizadas
+  const fields = [
+    { label: "CRÉDITO", type: "number", placeholder: "Ingrese el crédito" },
+    { label: "ACREDITADO", type: "text", placeholder: "Nombre del acreditado", resizable: true },
+    { label: "ESCRITURA", type: "text", placeholder: "Número de escritura", resizable: true },
+    { label: "FECHA ESCRITURA", type: "text", placeholer: "Fecha de escritura", resizable: true },
+    { label: "INSCRIPCION", type: "text", placeholder: "Número de inscripción" },
+    { label: "VOLUMEN", type: "number", placeholder: "Ingrese el volumen" },
+    { label: "LIBRO", type: "text", placeholder: "Número de libro" },
+    { label: "SECCION", type: "text", placeholder: "Sección correspondiente", resizable: true },
+    { label: "UNIDAD", type: "text", placeholder: "Unidad de medida" },
+    { label: "FECHA", type: "date" },
+    { label: "MONTO OTORGADO", type: "number", placeholder: "Monto otorgado en pesos" },
+    { label: "MES DE PRIMER ADEUDO", type: "text", placeholder: "Mes del primer adeudo" },
+    { label: "MES CON ULTIMO ADEUDO", type: "text", placeholder: "Mes del último adeudo" },
+    { label: "ADEUDO EN PESOS", type: "text", placeholder: "Monto del adeudo en pesos", resizable: true  },
+    { label: "ADEUDO", type: "number", placeholder: "Ingrese el adeudo" },
+    { label: "CALLE", type: "text", placeholder: "Nombre de la calle", resizable: true },
+    { label: "NUMERO", type: "text", placeholder: "Número de la propiedad" },
+    { label: "COLONIA/FRACCIONAMIENTO", type: "text", placeholder: "Colonia o fraccionamiento", resizable: true },
+    { label: "CODIGO POSTAL", type: "text", placeholder: "Código postal" },
+    { label: "MUNICIPIO", type: "text", placeholder: "Nombre del municipio" },
+    { label: "ESTADO", type: "text", placeholder: "Estado" },
+    { label: "NOMENCLATURA", type: "text", placeholder: "Nomenclatura correspondiente" },
+    { label: "INTERES ORDINARIO", type: "number", placeholder: "Interés ordinario %" },
+    { label: "INTERES MORATORIO", type: "number", placeholder: "Interés moratorio %" },
+    { label: "JUZGADO", type: "text", placeholder: "Juzgado correspondiente", resizable: true},
+    { label: "HORA REQUERIMIENTO", type: "time" },
+    { label: "FECHA REQUERIMIENTO", type: "date" }
+  ];
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="relative">
@@ -113,26 +144,38 @@ const Demandas = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-3/4 overflow-y-auto max-h-screen shadow-lg">
+          <div className="bg-white rounded-lg p-6 w-11/12 max-w-5xl overflow-y-auto max-h-screen shadow-lg relative">
+            {/* Botón de cierre */}
+           
+            <button onClick={closeModal} type="button" className="absolute top-4 right-4  text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                                    <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span className="sr-only">Close modal</span>
+                                </button>
             <h2 className="text-xl font-semibold mb-4">Crear Demanda</h2>
             <form className="space-y-4">
-              {/* Inputs Generados */}
-              {[
-                "CRÉDITO", "ACREDITADO", "ESCRITURA", "FECHA ESCRITURA", "INSCRIPCION", "VOLUMEN", "LIBRO",
-                "SECCION", "UNIDAD", "FECHA", "MONTO OTORGADO", "MES DE PRIMER ADEUDO", "MES CON ULTIMO ADEUDO",
-                "ADEUDO EN PESOS", "ADEUDO", "CALLE", "NUMERO", "COLONIA/FRACCIONAMIENTO", "CODIGO POSTAL",
-                "MUNICIPIO", "ESTADO", "NOMENCLATURA", "INTERES ORDINARIO", "INTERES MORATORIO", "JUZGADO",
-                "HORA REQUERIMIENTO", "FECHA REQUERIMIENTO"
-              ].map((label) => (
-                <div key={label}>
-                  <label className="block text-sm font-medium text-gray-700">{label}</label>
-                  <input type="text" placeholder={`Ingrese ${label.toLowerCase()}`} className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-              ))}
-
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {fields.map((field) => (
+                  <div key={field.label} className="col-span-1">
+                    <label className="block text-sm font-medium text-gray-700">{field.label}</label>
+                    {field.resizable ? (
+                      <textarea
+                        placeholder={field.placeholder || ""}
+                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+                      />
+                    ) : (
+                      <input
+                        type={field.type}
+                        placeholder={field.placeholder || ""}
+                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
               <div className="flex justify-end mt-6">
-                <button type="button" onClick={closeModal} className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 mr-2">Cancelar</button>
-                <button type="button" onClick={() => { /* lógica para crear la demanda */ closeModal(); }} className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Crear</button>
+                <button type="button" onClick={() => { /* lógica para crear la demanda */ closeModal(); }} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-600">Crear</button>
               </div>
             </form>
           </div>

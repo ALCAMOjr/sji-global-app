@@ -72,7 +72,7 @@ const FullScreenModal = ({
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="relative bg-white w-full sm:w-3/4 md:w-2/3 lg:w-1/3 h-[490px] rounded-lg shadow-lg p-8 overflow-auto">
         <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-black text-3xl h-12 w-12 flex justify-center items-center"
+          className="absolute top-4 right-4 text-gray-500 hover:text-black hover:bg-gray-200 rounded-lg text-3xl h-8 w-8 flex justify-center items-center"
           onClick={onClose}
         >
           &times;

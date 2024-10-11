@@ -68,7 +68,7 @@ export default function useAgenda() {
             return { success: responseStatus === 204 };
         } catch (err) {
             console.error(err);
-            return { success: false, error: err.message };;
+            return { success: false, error: err.message };
         }
   }, [jwt]);
   
@@ -83,7 +83,7 @@ export default function useAgenda() {
         return { success: responseStatus === 200 };
     } catch (err) {
         console.error(err);
-        return { success: false, error: err.message };;
+        return { success: false, error: err.message };
     }
 }, [jwt]);
 

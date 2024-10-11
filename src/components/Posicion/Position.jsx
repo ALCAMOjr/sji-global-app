@@ -26,6 +26,7 @@ import getPositionByJuzgado from '../../views/position/getPositionByJuzgado.js';
 import getPositionFilteredRecords from '../../views/position/getPositionFilteredRecords.js';
 import getPositionByExpediente from '../../views/position/getPositiobyExpediente.js';
 import csv_icon from "../../assets/csv.png";
+import { colorMap } from '../../utils/Colors.js';
 
 const Position = () => {
     const { registerNewTarea } = useAgenda()
@@ -65,7 +66,7 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
-
+    console.log(etapas)
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -839,13 +840,20 @@ const Position = () => {
                                         id="etapa-dropdown"
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
-                                    >
-                                        <option value="">Todas las Etapas</option>
-                                        {etapas.map((etapa, index) => (
-                                            <option key={index} value={etapa.macroetapa_aprobada}>
-                                                {etapa.macroetapa_aprobada}
-                                            </option>
-                                        ))}
+                                    >  <option value="">Todas las Etapas</option>
+                                    {etapas.map((etapa, index) => {
+                                      const color = colorMap[etapa.macroetapa_aprobada] || '#87CEEB';
+                                      
+                                      return (
+                                        <option 
+                                          key={index} 
+                                          value={etapa.macroetapa_aprobada} 
+                                          style={{ backgroundColor: color }}
+                                        >
+                                          {etapa.macroetapa_aprobada}
+                                        </option>
+                                      );
+                                    })}
                                     </select>
                                 ) : searchType === "Juzgado" ? (
                                     <select
@@ -1005,12 +1013,20 @@ const Position = () => {
                                         className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Todas las Etapas</option>
-                                        {etapas.map((etapa, index) => (
-                                            <option key={index} value={etapa.macroetapa_aprobada}>
-                                                {etapa.macroetapa_aprobada}
-                                            </option>
-                                        ))}
+                                       <option value="">Todas las Etapas</option>
+                                    {etapas.map((etapa, index) => {
+                                      const color = colorMap[etapa.macroetapa_aprobada] || '#87CEEB';
+                                      
+                                      return (
+                                        <option 
+                                          key={index} 
+                                          value={etapa.macroetapa_aprobada} 
+                                          style={{ backgroundColor: color }}
+                                        >
+                                          {etapa.macroetapa_aprobada}
+                                        </option>
+                                      );
+                                    })}
                                     </select>
                                 ) : searchType === "Juzgado" ? (
                                     <select

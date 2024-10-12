@@ -19,7 +19,7 @@ import useExpedientesSial from "../../hooks/expedientesial/useExpedienteSial.jsx
 import getPositionByEtapa from '../../views/position/getPositionByEtapa.js';
 import getPositionFiltros from '../../views/position/getPositionFiltros.js';
 import useExpedientes from '../../hooks/expedientes/useExpedientes.jsx';
-import { filtros } from "../../utils/Filtros.js"
+import useFiltros from '../../hooks/filtros/useFiltros.jsx';
 import getPositionByFecha from '../../views/position/getPositionbyFecha.js';
 import useJuzgados from '../../hooks/juzgados/useJuzgados.jsx';
 import getPositionByJuzgado from '../../views/position/getPositionByJuzgado.js';
@@ -34,6 +34,7 @@ const Position = () => {
     const { etapas, loadingEtapas, errorEtapas } = useExpedientesSial();
     const { expedientes, loading, error, setExpedientes } = usePosition();
     const { juzgados, juzgados_error, juzgados_loading } = useJuzgados()
+    const { filtros, filtros_error, filtros_loading } = useFiltros()
     const { abogados } = useAbogados()
     const [isLoading, setIsLoading] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -49,7 +50,7 @@ const Position = () => {
     const [isOpenModal, setIsOpenModal] = useState(false)
     const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
     const [isLoadingExpedientes, setisLoadingExpedientes] = useState(false);
-    const { jwt, isCoordinador } = useContext(Context);
+    const { jwt } = useContext(Context);
     const [selectExpedientetoTask, setSelectExpedientetoTask] = useState(null);
     const [fechaError, setFechaError] = useState('');
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -66,8 +67,6 @@ const Position = () => {
         observaciones: '',
         abogado_id: ''
     });
-    console.log(etapas)
-
     const handleOpenModal = () => {
         setIsModalOpen(true);
     };
@@ -590,7 +589,7 @@ const Position = () => {
 
 
 
-    if (loading || loadingEtapas || isLoadingExpedientes || juzgados_loading) return (
+    if (loading || loadingEtapas || isLoadingExpedientes || juzgados_loading || filtros_loading) return (
         <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
             <Spinner className="h-10 w-10" color="primary" />
         </div>
@@ -600,7 +599,7 @@ const Position = () => {
     if (error) return <Error message={error.message} />;
     if (errorEtapas) return <Error message={errorEtapas.message} />;
     if (juzgados_error) return <Error message={juzgados_error.message} />;
-
+    if (filtros_error) return <Error message={filtros_error.message} />;
 
     return (
         <div className="flex flex-col min-h-screen">

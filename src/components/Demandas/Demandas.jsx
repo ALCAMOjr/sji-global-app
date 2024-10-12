@@ -137,6 +137,9 @@ const Demandas = () => {
             <DropdownItem startContent={<img src={create_icon} alt="Create Icon" className="w-6 h-6 flex-shrink-0" />} onClick={openModal} key="create">
               Crear Demanda
             </DropdownItem>
+            <DropdownItem startContent={<img src={create_icon} alt="Create Icon" className="w-6 h-6 flex-shrink-0" />} key="create">
+              Subir Plantilla
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </div>

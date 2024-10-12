@@ -51,14 +51,17 @@ function App() {
       element={<RoleProtectedRoute element={<Agenda />} allowedRoles={['coordinador']} />}
     />
     <Route
-      path="/demandas"
-      element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['coordinador']} />}
-    />
-    <Route
       path="/reporte"
       element={<RoleProtectedRoute element={<Reporte />} allowedRoles={['coordinador']} />}
     />
-
+ <Route
+      path="/demandas"
+      element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
+    />
+    <Route
+      path="/demandas/plantillas"
+      element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
+    />
     <Route
       path="/gestion"
       element={<RoleProtectedRoute element={<Tarea />} allowedRoles={['abogado']} />}

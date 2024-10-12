@@ -1,5 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, useState } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -27,6 +26,9 @@ const TableAgenda = ({
     openModal,
     openModalDelete
 }) => {
+
+
+  
     return (
         <div>
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
@@ -138,6 +140,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
+              
                 <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -184,7 +187,8 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                     {new Date(tarea.fecha_registro).toLocaleDateString('es-ES', {
                                                         day: '2-digit',
                                                         month: '2-digit',
-                                                        year: 'numeric'
+                                                        year: 'numeric',
+                                                        timeZone: 'America/Mexico_City'
                                                     })}
                                                 </TableCell>
                                                 {tarea.estado_tarea === "Finalizada" ? (
@@ -193,14 +197,16 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                             {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
                                                                 day: '2-digit',
                                                                 month: '2-digit',
-                                                                year: 'numeric'
+                                                                year: 'numeric',
+                                                                timeZone: 'America/Mexico_City'
                                                             })}
                                                         </TableCell>
                                                         <TableCell className="text-xs">
                                                             {new Date(tarea.fecha_real_entrega).toLocaleDateString('es-ES', {
                                                                 day: '2-digit',
                                                                 month: '2-digit',
-                                                                year: 'numeric'
+                                                                year: 'numeric',
+                                                                timeZone: 'America/Mexico_City'
                                                             })}
                                                         </TableCell>
                                                     </>
@@ -209,7 +215,8 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                         {new Date(tarea.fecha_cancelacion).toLocaleDateString('es-ES', {
                                                             day: '2-digit',
                                                             month: '2-digit',
-                                                            year: 'numeric'
+                                                            year: 'numeric',
+                                                            timeZone: 'America/Mexico_City'
                                                         })}
                                                     </TableCell>
                                                 ) : tarea.estado_tarea === "Iniciada" ? (
@@ -217,15 +224,19 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                         {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
                                                             day: '2-digit',
                                                             month: '2-digit',
-                                                            year: 'numeric'
+                                                            year: 'numeric',
+                                                            timeZone: 'America/Mexico_City'
                                                         })}
                                                     </TableCell>
                                                 ) : (
                                                     <TableCell className="text-xs">
+                                                        
                                                         {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
+                                                            
                                                             day: '2-digit',
                                                             month: '2-digit',
-                                                            year: 'numeric'
+                                                            year: 'numeric',
+                                                            timeZone: 'America/Mexico_City'
                                                         })}
                                                     </TableCell>
                                                 )}

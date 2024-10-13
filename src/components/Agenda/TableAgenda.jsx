@@ -153,7 +153,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                         <TableRow>
                                             <TableCell>Gestión</TableCell>
                                             <TableCell>Fecha de Asignación</TableCell>
-                                            {expediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
+                                            {expediente.tareas.some(t => t.estado_tarea === "Terminada") ? (
                                                 <>
                                                     <TableCell>Fecha de Inicio</TableCell>
                                                     <TableCell>Fecha de Entrega</TableCell>
@@ -169,7 +169,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                             <TableCell>
                                                 {expediente.tareas.some(t => t.estado_tarea === "Iniciada" || t.estado_tarea === "Asignada")
                                                     ? "Abogado a realizarla"
-                                                    : expediente.tareas.some(t => t.estado_tarea === "Finalizada")
+                                                    : expediente.tareas.some(t => t.estado_tarea === "Terminada")
                                                         ? "Abogado quien la realizó"
                                                         : expediente.tareas.some(t => t.estado_tarea === "Cancelada")
                                                             ? "Abogado quien debía realizarla"
@@ -186,7 +186,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                                 <TableCell className="text-xs">
                                                     <TableCell className="text-xs">{tarea.fecha_registro.slice(0, 10).split('-').reverse().join('-')}</TableCell>
                                                 </TableCell>
-                                                {tarea.estado_tarea === "Finalizada" ? (
+                                                {tarea.estado_tarea === "Terminada" ? (
                                                     <>
                                                         <TableCell className="text-xs">{tarea.fecha_inicio.slice(0, 10).split('-').reverse().join('-')}</TableCell>
                                                         <TableCell className="text-xs">{tarea.fecha_real_entrega.slice(0, 10).split('-').reverse().join('-')}</TableCell>

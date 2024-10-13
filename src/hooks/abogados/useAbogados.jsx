@@ -63,6 +63,8 @@ export default function useAbogados() {
         
         } else if  (error.response && error.response.status === 400 && error.response.data.error === 'Email is already registered') {
             return { success: false, error: 'El correo ya esta en uso' };
+        } else if  (error.response && error.response.status === 400 && error.response.data.error === 'Email must end with @sjiglobal.com in production environment') {
+            return { success: false, error: 'Email debe terminar con @sjiglobal.com' };
         
         } else {
             console.error(error);

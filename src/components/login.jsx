@@ -134,7 +134,7 @@ function Login({ onLogin }) {
                             <input
                                 type="text"
                                 className={`w-full border py-2 px-4 rounded-md outline-none ${usernameError ? 'border-red-500' : ''}`}
-                                placeholder="Usuario"
+                                placeholder="Usuario o dirección de correo"
                                 onChange={(e) => handleInputChange(e, setUsername, setUsernameError)}
                                 value={username}
                             />

@@ -133,7 +133,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                 <tr>
                                                     <th scope="col" className="px-6 py-3"> Gestión</th>
                                                     <th scope="col" className="px-6 py-3">Fecha de Asignación</th>
-                                                    {selectedExpediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
+                                                    {selectedExpediente.tareas.some(t => t.estado_tarea === "Terminada") ? (
                                                         <>
                                                             <th scope="col" className="px-6 py-3">Fecha de Inicio</th>
                                                             <th scope="col" className="px-6 py-3">Fecha de Entrega</th>
@@ -149,7 +149,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                     <th scope="col" className="px-6 py-3">
                                                         {selectedExpediente.tareas.some(t => t.estado_tarea === "Iniciada" || t.estado_tarea === "Asignada")
                                                             ? "Abogado a realizarla"
-                                                            : selectedExpediente.tareas.some(t => t.estado_tarea === "Finalizada")
+                                                            : selectedExpediente.tareas.some(t => t.estado_tarea === "Terminada")
                                                                 ? "Abogado quien la realizó"
                                                                 : selectedExpediente.tareas.some(t => t.estado_tarea === "Cancelada")
                                                                     ? "Abogado quien debía realizarla"
@@ -164,52 +164,28 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                     <tr key={index}>
                                                         <td className="px-6 py-4">{tarea.tarea}</td>
                                                         <td className="px-6 py-4">
-                                                            {new Date(tarea.fecha_registro).toLocaleDateString('es-ES', {
-                                                                day: '2-digit',
-                                                                month: '2-digit',
-                                                                year: 'numeric'
-                                                            })}
+                                                        {tarea.fecha_registro.slice(0, 10).split('-').reverse().join('-')}
                                                         </td>
-                                                        {tarea.estado_tarea === "Finalizada" ? (
+                                                        {tarea.estado_tarea === "Terminada" ? (
                                                             <>
                                                                 <td className="px-6 py-4">
-                                                                    {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
-                                                                        day: '2-digit',
-                                                                        month: '2-digit',
-                                                                        year: 'numeric'
-                                                                    })}
+                                                                {tarea.fecha_inicio.slice(0, 10).split('-').reverse().join('-')}
                                                                 </td>
                                                                 <td className="px-6 py-4">
-                                                                    {new Date(tarea.fecha_real_entrega).toLocaleDateString('es-ES', {
-                                                                        day: '2-digit',
-                                                                        month: '2-digit',
-                                                                        year: 'numeric'
-                                                                    })}
+                                                                {tarea.fecha_real_entrega.slice(0, 10).split('-').reverse().join('-')}
                                                                 </td>
                                                             </>
                                                         ) : tarea.estado_tarea === "Cancelada" ? (
                                                             <td className="px-6 py-4">
-                                                                {new Date(tarea.fecha_cancelacion).toLocaleDateString('es-ES', {
-                                                                    day: '2-digit',
-                                                                    month: '2-digit',
-                                                                    year: 'numeric'
-                                                                })}
+                                                                {tarea.fecha_cancelacion.slice(0, 10).split('-').reverse().join('-')}
                                                             </td>
                                                         ) : tarea.estado_tarea === "Iniciada" ? (
                                                             <td className="px-6 py-4">
-                                                                {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
-                                                                    day: '2-digit',
-                                                                    month: '2-digit',
-                                                                    year: 'numeric'
-                                                                })}
+                                                              {tarea.fecha_inicio.slice(0, 10).split('-').reverse().join('-')}
                                                             </td>
                                                         ) : (
                                                             <td className="px-6 py-4">
-                                                                {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
-                                                                    day: '2-digit',
-                                                                    month: '2-digit',
-                                                                    year: 'numeric'
-                                                                })}
+                                                               {tarea.fecha_entrega.slice(0, 10).split('-').reverse().join('-')}
                                                             </td>
                                                         )}
                                                         <td className="px-6 py-4">{tarea.observaciones}</td>

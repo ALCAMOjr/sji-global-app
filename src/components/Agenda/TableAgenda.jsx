@@ -28,7 +28,7 @@ const TableAgenda = ({
 }) => {
 
 
-  
+
     return (
         <div>
             <TableContainer component={Paper} className='justify-center flex relative min-w-max items-center mt-20'>
@@ -67,9 +67,9 @@ const TableAgenda = ({
             <TablePagination
                 rowsPerPageOptions={[200, 400, 600]}
                 component="div"
-                count={expedientes.length}  
-                rowsPerPage={itemsPerPage} 
-                page={currentPage - 1}  
+                count={expedientes.length}
+                rowsPerPage={itemsPerPage}
+                page={currentPage - 1}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="Filas por página:"
@@ -140,20 +140,20 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
-              
+
                 <TableRow>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                                 <Typography variant="h6" gutterBottom component="div">
-                                Gestion del Crédito
+                                    Gestion del Crédito
                                 </Typography>
                                 <Table size="small" aria-label="details">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Gestión</TableCell>
                                             <TableCell>Fecha de Asignación</TableCell>
-                                            {expediente.tareas.some(t => t.estado_tarea === "Finalizada") ? (
+                                            {expediente.tareas.some(t => t.estado_tarea === "Terminada") ? (
                                                 <>
                                                     <TableCell>Fecha de Inicio</TableCell>
                                                     <TableCell>Fecha de Entrega</TableCell>
@@ -169,7 +169,7 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                             <TableCell>
                                                 {expediente.tareas.some(t => t.estado_tarea === "Iniciada" || t.estado_tarea === "Asignada")
                                                     ? "Abogado a realizarla"
-                                                    : expediente.tareas.some(t => t.estado_tarea === "Finalizada")
+                                                    : expediente.tareas.some(t => t.estado_tarea === "Terminada")
                                                         ? "Abogado quien la realizó"
                                                         : expediente.tareas.some(t => t.estado_tarea === "Cancelada")
                                                             ? "Abogado quien debía realizarla"
@@ -184,61 +184,28 @@ const Row = ({ expediente, openModal, openModalDelete }) => {
                                             <TableRow key={idx}>
                                                 <TableCell className="text-xs">{tarea.tarea}</TableCell>
                                                 <TableCell className="text-xs">
-                                                    {new Date(tarea.fecha_registro).toLocaleDateString('es-ES', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric',
-                                                        timeZone: 'America/Mexico_City'
-                                                    })}
+                                                    <TableCell className="text-xs">{tarea.fecha_registro.slice(0, 10).split('-').reverse().join('-')}</TableCell>
                                                 </TableCell>
-                                                {tarea.estado_tarea === "Finalizada" ? (
+                                                {tarea.estado_tarea === "Terminada" ? (
                                                     <>
-                                                        <TableCell className="text-xs">
-                                                            {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
-                                                                day: '2-digit',
-                                                                month: '2-digit',
-                                                                year: 'numeric',
-                                                                timeZone: 'America/Mexico_City'
-                                                            })}
-                                                        </TableCell>
-                                                        <TableCell className="text-xs">
-                                                            {new Date(tarea.fecha_real_entrega).toLocaleDateString('es-ES', {
-                                                                day: '2-digit',
-                                                                month: '2-digit',
-                                                                year: 'numeric',
-                                                                timeZone: 'America/Mexico_City'
-                                                            })}
-                                                        </TableCell>
+                                                        <TableCell className="text-xs">{tarea.fecha_inicio.slice(0, 10).split('-').reverse().join('-')}</TableCell>
+                                                        <TableCell className="text-xs">{tarea.fecha_real_entrega.slice(0, 10).split('-').reverse().join('-')}</TableCell>
+
+
                                                     </>
                                                 ) : tarea.estado_tarea === "Cancelada" ? (
                                                     <TableCell className="text-xs">
-                                                        {new Date(tarea.fecha_cancelacion).toLocaleDateString('es-ES', {
-                                                            day: '2-digit',
-                                                            month: '2-digit',
-                                                            year: 'numeric',
-                                                            timeZone: 'America/Mexico_City'
-                                                        })}
+                                                        <TableCell className="text-xs">{tarea.fecha_cancelacion.slice(0, 10).split('-').reverse().join('-')}</TableCell>
                                                     </TableCell>
                                                 ) : tarea.estado_tarea === "Iniciada" ? (
                                                     <TableCell className="text-xs">
-                                                        {new Date(tarea.fecha_inicio).toLocaleDateString('es-ES', {
-                                                            day: '2-digit',
-                                                            month: '2-digit',
-                                                            year: 'numeric',
-                                                            timeZone: 'America/Mexico_City'
-                                                        })}
+                                                        <TableCell className="text-xs">{tarea.fecha_inicio.slice(0, 10).split('-').reverse().join('-')}</TableCell>
+
+
                                                     </TableCell>
                                                 ) : (
-                                                    <TableCell className="text-xs">
-                                                        
-                                                        {new Date(tarea.fecha_entrega).toLocaleDateString('es-ES', {
-                                                            
-                                                            day: '2-digit',
-                                                            month: '2-digit',
-                                                            year: 'numeric',
-                                                            timeZone: 'America/Mexico_City'
-                                                        })}
-                                                    </TableCell>
+                                                    <TableCell className="text-xs">{tarea.fecha_entrega.slice(0, 10).split('-').reverse().join('-')}</TableCell>
+
                                                 )}
                                                 <TableCell className="text-xs">{tarea.observaciones}</TableCell>
                                                 <TableCell className="text-xs">{tarea.abogadoUsername}</TableCell>

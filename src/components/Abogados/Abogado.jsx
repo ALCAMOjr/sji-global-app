@@ -215,6 +215,11 @@ const Abogados = () => {
                     toast.error('El correo ya esta en uso con otro usuario. Por favor, elige otro.');
 
                 }
+                else if (error === 'Email debe terminar con @sjiglobal.com') {
+                    toast.error('Error al crear el abogado. La dirección de correo no termina en @sjiglobal.com');
+
+                }
+                
                 
                 else {
                     toast.error(`Algo mal sucedió al crear el abogado: ${error.message}`);
@@ -354,7 +359,7 @@ const Abogados = () => {
                                         onChange={handleChange}
                                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
                                         placeholder=" "
-                                        required
+                                      
                                     />
                                     <label htmlFor="floating_cedula" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Cédula</label>
                                 </div>
@@ -382,7 +387,6 @@ const Abogados = () => {
                                         onChange={handleChange}
                                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 focus:outline-none focus:ring-0 focus:border-primary peer"
                                         placeholder=" "
-                                        required
                                     />
                                     <label htmlFor="floating_telefono" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-0 peer-focus:left-0 peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Teléfono</label>
                                 </div>

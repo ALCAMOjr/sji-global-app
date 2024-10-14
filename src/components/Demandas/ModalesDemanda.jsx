@@ -1,8 +1,38 @@
 // src/components/ModalesDemandas.jsx
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [formValues, setFormValues] = useState({
+    credito: "",
+    acreditado: "",
+    escritura: "",
+    fechaEscritura: "",
+    inscripcion: "",
+    volumen: "",
+    libro: "",
+    seccion: "",
+    unidad: "",
+    fecha: "",
+    montoOtorgado: "",
+    mesPrimerAdeudo: "",
+    mesUltimoAdeudo: "",
+    adeudoEnPesos: "",
+    adeudo: "",
+    calle: "",
+    numero: "",
+    colonia: "",
+    codigoPostal: "",
+    municipio: "",
+    estado: "",
+    nomenclatura: "",
+    interesOrdinario: "",
+    interesMoratorio: "",
+    juzgado: "",
+    horaRequerimiento: "",
+    fechaRequerimiento: "",
+  });
 
   const closeSelectionModal = () => {
     setIsSelectionModalOpen(false);
@@ -17,34 +47,48 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
     setIsCreateModalOpen(false);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    // Aquí se puede hacer una solicitud al backend con formValues
+    console.log("Datos enviados al backend:", formValues);
+    closeCreateModal();
+  };
+
   const fields = [
-    { label: "CRÉDITO", type: "number", placeholder: "Ingrese el crédito" },
-    { label: "ACREDITADO", type: "text", placeholder: "Nombre del acreditado", resizable: true },
-    { label: "ESCRITURA", type: "text", placeholder: "Número de escritura", resizable: true },
-    { label: "FECHA ESCRITURA", type: "text", placeholder: "Fecha de escritura", resizable: true },
-    { label: "INSCRIPCION", type: "text", placeholder: "Número de inscripción" },
-    { label: "VOLUMEN", type: "number", placeholder: "Ingrese el volumen" },
-    { label: "LIBRO", type: "text", placeholder: "Número de libro" },
-    { label: "SECCION", type: "text", placeholder: "Sección correspondiente", resizable: true },
-    { label: "UNIDAD", type: "text", placeholder: "Unidad de medida" },
-    { label: "FECHA", type: "date" },
-    { label: "MONTO OTORGADO", type: "number", placeholder: "Monto otorgado en pesos" },
-    { label: "MES DE PRIMER ADEUDO", type: "text", placeholder: "Mes del primer adeudo" },
-    { label: "MES CON ULTIMO ADEUDO", type: "text", placeholder: "Mes del último adeudo" },
-    { label: "ADEUDO EN PESOS", type: "text", placeholder: "Monto del adeudo en pesos", resizable: true  },
-    { label: "ADEUDO", type: "number", placeholder: "Ingrese el adeudo" },
-    { label: "CALLE", type: "text", placeholder: "Nombre de la calle", resizable: true },
-    { label: "NUMERO", type: "text", placeholder: "Número de la propiedad" },
-    { label: "COLONIA/FRACCIONAMIENTO", type: "text", placeholder: "Colonia o fraccionamiento", resizable: true },
-    { label: "CODIGO POSTAL", type: "text", placeholder: "Código postal" },
-    { label: "MUNICIPIO", type: "text", placeholder: "Nombre del municipio" },
-    { label: "ESTADO", type: "text", placeholder: "Estado" },
-    { label: "NOMENCLATURA", type: "text", placeholder: "Nomenclatura correspondiente" },
-    { label: "INTERES ORDINARIO", type: "number", placeholder: "Interés ordinario %" },
-    { label: "INTERES MORATORIO", type: "number", placeholder: "Interés moratorio %" },
-    { label: "JUZGADO", type: "text", placeholder: "Juzgado correspondiente", resizable: true},
-    { label: "HORA REQUERIMIENTO", type: "time" },
-    { label: "FECHA REQUERIMIENTO", type: "date" }
+    { label: "CRÉDITO", type: "number", placeholder: "Ingrese el crédito", name: "credito" },
+    { label: "ACREDITADO", type: "text", placeholder: "Nombre del acreditado", name: "acreditado", resizable: true },
+    { label: "ESCRITURA", type: "text", placeholder: "Número de escritura", name: "escritura", resizable: true },
+    { label: "FECHA ESCRITURA", type: "date", placeholder: "Fecha de escritura", name: "fechaEscritura" },
+    { label: "INSCRIPCION", type: "text", placeholder: "Número de inscripción", name: "inscripcion" },
+    { label: "VOLUMEN", type: "number", placeholder: "Ingrese el volumen", name: "volumen" },
+    { label: "LIBRO", type: "text", placeholder: "Número de libro", name: "libro" },
+    { label: "SECCION", type: "text", placeholder: "Sección correspondiente", name: "seccion", resizable: true },
+    { label: "UNIDAD", type: "text", placeholder: "Unidad de medida", name: "unidad" },
+    { label: "FECHA", type: "date", name: "fecha" },
+    { label: "MONTO OTORGADO", type: "number", placeholder: "Monto otorgado en pesos", name: "montoOtorgado" },
+    { label: "MES DE PRIMER ADEUDO", type: "text", placeholder: "Mes del primer adeudo", name: "mesPrimerAdeudo" },
+    { label: "MES CON ULTIMO ADEUDO", type: "text", placeholder: "Mes del último adeudo", name: "mesUltimoAdeudo" },
+    { label: "ADEUDO EN PESOS", type: "text", placeholder: "Monto del adeudo en pesos", name: "adeudoEnPesos", resizable: true },
+    { label: "ADEUDO", type: "number", placeholder: "Ingrese el adeudo", name: "adeudo" },
+    { label: "CALLE", type: "text", placeholder: "Nombre de la calle", name: "calle", resizable: true },
+    { label: "NUMERO", type: "text", placeholder: "Número de la propiedad", name: "numero" },
+    { label: "COLONIA/FRACCIONAMIENTO", type: "text", placeholder: "Colonia o fraccionamiento", name: "colonia", resizable: true },
+    { label: "CODIGO POSTAL", type: "text", placeholder: "Código postal", name: "codigoPostal" },
+    { label: "MUNICIPIO", type: "text", placeholder: "Nombre del municipio", name: "municipio" },
+    { label: "ESTADO", type: "text", placeholder: "Estado", name: "estado" },
+    { label: "NOMENCLATURA", type: "text", placeholder: "Nomenclatura correspondiente", name: "nomenclatura" },
+    { label: "INTERES ORDINARIO", type: "number", placeholder: "Interés ordinario %", name: "interesOrdinario" },
+    { label: "INTERES MORATORIO", type: "number", placeholder: "Interés moratorio %", name: "interesMoratorio" },
+    { label: "JUZGADO", type: "text", placeholder: "Juzgado correspondiente", name: "juzgado", resizable: true },
+    { label: "HORA REQUERIMIENTO", type: "time", name: "horaRequerimiento" },
+    { label: "FECHA REQUERIMIENTO", type: "date", name: "fechaRequerimiento" }
   ];
 
   return (
@@ -90,19 +134,25 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
               </svg>
             </button>
             <h2 className="text-xl font-semibold mb-4">Crear Demanda</h2>
-            <form className="space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {fields.map((field) => (
-                  <div key={field.label} className="col-span-1">
+                  <div key={field.name} className="col-span-1">
                     <label className="block text-sm font-medium text-gray-700">{field.label}</label>
                     {field.resizable ? (
                       <textarea
+                        name={field.name}
+                        value={formValues[field.name]}
+                        onChange={handleChange}
                         placeholder={field.placeholder || ""}
                         className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 resize-y"
                       />
                     ) : (
                       <input
                         type={field.type}
+                        name={field.name}
+                        value={formValues[field.name]}
+                        onChange={handleChange}
                         placeholder={field.placeholder || ""}
                         className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                       />
@@ -111,7 +161,7 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
                 ))}
               </div>
               <div className="flex justify-end mt-6">
-                <button type="button" onClick={closeCreateModal} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Crear</button>
+                <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Crear</button>
               </div>
             </form>
           </div>
@@ -119,6 +169,11 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
       )}
     </>
   );
+};
+
+ModalesDemandas.propTypes = {
+  isSelectionModalOpen: PropTypes.bool.isRequired,
+  setIsSelectionModalOpen: PropTypes.func.isRequired,
 };
 
 export default ModalesDemandas;

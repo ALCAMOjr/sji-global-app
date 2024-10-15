@@ -39,12 +39,12 @@ const Agenda = () => {
         if (originalExpedientes.length === 0 && expedientes.length > 0) {
             setOriginalExpedientes(expedientes);
         }
-        setTotalPages(Math.ceil(expedientes.length / itemsPerPage));
+        const reversedExpedientes = [...expedientes].reverse();
+        setTotalPages(Math.ceil(reversedExpedientes.length / itemsPerPage));
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        setCurrentExpedientes(expedientes.slice(startIndex, endIndex));
+        setCurrentExpedientes(reversedExpedientes.slice(startIndex, endIndex));
     }, [expedientes, itemsPerPage, currentPage, originalExpedientes.length]);
-    
 
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage + 1);

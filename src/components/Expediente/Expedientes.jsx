@@ -262,7 +262,7 @@ const Expedientes = () => {
                 ...formData,
                 nombre: ''
             });
-            setErrorMsg(`El Expediente con el número: ${formData.numero} no ha sido encontrado`);
+            setErrorMsg(`El Expediente con el número: ${formData.numero} no ha sido encontrado en Credito Sial`);
             setIsSubmitDisabled(true);
         }
     };

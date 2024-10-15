@@ -106,9 +106,6 @@ const TableExpedientes = ({
                                         <span className='text-xs font-bold text-black'>Gestión</span>
                                     </TableCell>
 
-                                    <TableCell align='left' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'>Acciones</span>
-                                    </TableCell>
                                     <TableCell className='bg-green-200'>
                                         <span className='text-xs font-bold text-black'>Crédito</span>
                                     </TableCell>
@@ -177,10 +174,6 @@ const TableExpedientes = ({
                                     <TableCell align='center' className='bg-white'>
                                         <span className='text-xs font-bold text-black'>Gestión</span>
                                     </TableCell>
-
-                                    <TableCell align='left' className='bg-white'>
-                                        <span className='text-xs font-bold text-black'>Acciones</span>
-                                    </TableCell>
                                 </>
                             )}
                         </TableRow>
@@ -229,12 +222,10 @@ const Row = ({
     expediente,
     openModalTarea,
     handleDownload,
-    handleUpdate,
     isLoading,
     isReversed
 
 }) => {
-    const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [hasTarea, setHasTarea] = useState(false);
     const { jwt } = useContext(Context);
     const [downloadingDetails, setDownloadingDetails] = useState({});
@@ -246,11 +237,6 @@ const Row = ({
         setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
     };
 
-    const handleUpgradeLoading = async (numero, nombre, url, id) => {
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
-        await handleUpdate(numero, nombre, url);
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
-    };
 
     useEffect(() => {
         const fetchHasTarea = async () => {
@@ -393,16 +379,7 @@ const Row = ({
                                 </button>
                             )}
                         </TableCell>
-                        <TableCell align="left">
-                            <button
-                                disabled={isLoading}
-                                onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
-                                type="button"
-                                className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                            >
-                                {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
-                            </button>
-                        </TableCell>
+                    
                         <TableCell className={`max-w-xs truncate ${bgColorClass}`}>
                             <span className="text-xs">{expediente.num_credito}</span>
                         </TableCell>
@@ -505,16 +482,7 @@ const Row = ({
                                 </button>
                             )}
                         </TableCell>
-                        <TableCell align="left">
-                            <button
-                                disabled={isLoading}
-                                onClick={() => handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito)}
-                                type="button"
-                                className="text-white bg-blue-600 hover:blue-400 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                            >
-                                {UpgradeLoading[expediente.num_credito] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
-                            </button>
-                        </TableCell>
+                     
 
                     </>
                 )}

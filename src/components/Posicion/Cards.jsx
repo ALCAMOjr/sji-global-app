@@ -37,12 +37,11 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea, handleDownload, handleUpdate, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, isLoading }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, openModalTarea, handleDownload, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, isLoading }) => {
     const { jwt } = useContext(Context);
     const [tasksStatus, setTasksStatus] = useState({});
     const [showModalDetails, setShowModalDetails] = useState(false);
     const [selectedExpedienteDetails, setSelectedExpedienteDetails] = useState(null);
-    const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [downloadingDetails, setDownloadingDetails] = useState({});
 
 
@@ -66,13 +65,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
             return newState;
         });
     };
-
-    const handleUpgradeLoading = async (numero, nombre, url, id) => {
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
-        await handleUpdate(numero, nombre, url);
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
-    };
-
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -217,9 +209,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                 <div className="flex flex-col">
                                     <div className="p-4">
                                         <div className="mb-4 flex items-center justify-between">
-                                            {UpgradeLoading[expediente.num_credito] ? (
-                                                <Spinner size="sm" color="primary" />
-                                            ) : (
                                                 <button
                                                     id="menu-button"
                                                     onClick={() => handleMenuToggle(index)}
@@ -227,7 +216,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                 >
                                                     <RxHamburgerMenu />
                                                 </button>
-                                            )}
                                             <h5 className="text-sm font-bold ml-4 leading-none text-black">
                                                 Crédito #{expediente.num_credito}
                                             </h5>
@@ -236,12 +224,9 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                     <ul>
                                                         <li className="flex items-center">
                                                             <a
-                                                                disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails}
-
+                        
                                                                 onClick={() => {
-                                                                    if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
                                                                         OpenModalDetails(expediente);
-                                                                    }
                                                                 }}
                                                                 className="block text-sm mb-1 font-medium text-black hover:underline dark:text-black cursor-pointer"
                                                             >
@@ -249,18 +234,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                             </a>
                                                         </li>
 
-                                                        <li className="flex items-center">
-                                                            <a
-                                                                disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails}
-                                                                onClick={() => {
-                                                                    if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
-                                                                        handleUpgradeLoading(expediente.num_credito, expediente.nombre, expediente.url, expediente.num_credito);
-                                                                    }
-                                                                }}        className="block text-sm mb-2 font-medium text-primary hover:underline dark:text-primary cursor-pointer"
-                                                            >
-                                                                Actualizar Expediente
-                                                            </a>
-                                                        </li>
+                                                    
                                                     </ul>
                                                 </div>
                                             )}
@@ -274,13 +248,11 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                                                 </button>
                                             ) : (
                                                 <a
-                                                    disabled={Object.values(UpgradeLoading).some(isLoading => isLoading) && showModalDetails}
-                                                    onClick={() => {
-                                                        if (!Object.values(UpgradeLoading).some(isLoading => isLoading) && !showModalDetails) {
-                                                            openModalTarea(expediente);
-                                                        }
+                                                           onClick={() => {
+                                                              openModalTarea(expediente);
+                                                        
                                                     }}
-                                                    className={`text-sm font-medium text-primary hover:underline dark:text-primary ${Object.values(UpgradeLoading).some(isLoading => isLoading) || showModalDetails ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}        >
+                                                    className={`text-sm font-medium text-primary hover:underline dark:text-primary cursor-pointer`}        >
                                                     Asignar Exp
                                                 </a>
 

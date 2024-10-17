@@ -34,6 +34,10 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
     fechaRequerimiento: "",
   });
 
+  const [selectedDemandado, setSelectedDemandado] = useState("");
+  const [selectedMoneda, setSelectedMoneda] = useState("");
+
+
   const closeSelectionModal = () => {
     setIsSelectionModalOpen(false);
   };
@@ -93,7 +97,6 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
 
   return (
     <>
-      {/* Selection Modal */}
       {isSelectionModalOpen && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-11/12 max-w-lg shadow-lg relative">
@@ -103,23 +106,67 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
               </svg>
             </button>
             <h2 className="text-xl font-semibold mb-4">Crear Demanda</h2>
-            <ul className="space-y-4">
-              <li>
-                <button onClick={openCreateModal} className="w-full text-left px-4 py-2 border rounded-md hover:bg-gray-100">
-                  Individual: Demandada / Demandado
-                </button>
-              </li>
-              <li>
-                <button onClick={openCreateModal} className="w-full text-left px-4 py-2 border rounded-md hover:bg-gray-100">
-                  Con consentimiento: Demandada / Demandado
-                </button>
-              </li>
-              <li>
-                <button onClick={openCreateModal} className="w-full text-left px-4 py-2 border rounded-md hover:bg-gray-100">
-                  Conyugal: Pesos / VSMM
-                </button>
-              </li>
-            </ul>
+
+            {/* Sección Individual y Con Consentimiento */}
+            <h3 className="text-lg font-semibold mb-6">Individual y Con Consentimiento</h3>
+            {/* Opciones Demandado/Demandada */}
+            <div className="flex space-x-2 mb-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="demandado"
+                  name="demandado"
+                  value="Demandado"
+                  checked={selectedDemandado === "Demandado"}
+                  onChange={(e) => setSelectedDemandado(e.target.value)}
+                />
+                <label htmlFor="demandado" className="ml-1">Demandado</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="demandada"
+                  name="demandado"
+                  value="Demandada"
+                  checked={selectedDemandado === "Demandada"}
+                  onChange={(e) => setSelectedDemandado(e.target.value)}
+                />
+                <label htmlFor="demandada" className="ml-1">Demandada</label>
+              </div>
+            </div>
+
+
+            {/* Sección Individual, Con Consentimiento y Conyugal */}
+            <h3 className="text-lg font-semibold mb-2">Individual, Con Consentimiento y Conyugal</h3>
+            <div className="flex space-x-12 mb-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="pesos"
+                  name="moneda"
+                  value="Pesos"
+                  checked={selectedMoneda === "Pesos"}
+                  onChange={(e) => setSelectedMoneda(e.target.value)}
+                />
+                <label htmlFor="pesos" className="ml-2">Pesos</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="vsmm"
+                  name="moneda"
+                  value="VSMM"
+                  checked={selectedMoneda === "VSMM"}
+                  onChange={(e) => setSelectedMoneda(e.target.value)}
+                  className="bg-red-600"
+                />
+                <label htmlFor="vsmm" className="ml-2">VSMM</label>
+              </div>
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button onClick={openCreateModal} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Siguiente</button>
+            </div>
           </div>
         </div>
       )}

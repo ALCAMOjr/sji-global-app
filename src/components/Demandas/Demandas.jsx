@@ -77,9 +77,9 @@ const Demandas = () => {
   };
 
   if (loading || isLoadingExpedientes) return (
-    <div className="flex items-center justify-center h-screen w-screen">
-      <Spinner className="h-10 w-10" color="primary" />
-    </div>
+    <div className="fixed inset-0 flex items-center justify-center">
+    <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
+  </div>
   );
 
   return (

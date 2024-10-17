@@ -279,7 +279,7 @@ const Row = ({
                                                     <Collapse in={nestedOpen} timeout="auto" unmountOnExit>
                                                         <Box sx={{ margin: 1 }}>
                                                             <Typography variant="h6" gutterBottom component="div">
-                                                                Detalles
+                                                                Detalles del Expediente
                                                             </Typography>
                                                             <Table size="small" aria-label="details">
                                                                 <TableHead>

@@ -590,9 +590,9 @@ const Position = () => {
 
 
     if (loading || loadingEtapas || isLoadingExpedientes || juzgados_loading || filtros_loading) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
-            <Spinner className="h-10 w-10" color="primary" />
-        </div>
+        <div className="fixed inset-0 flex items-center justify-center">
+        <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
+      </div>
     );
 
 
@@ -862,7 +862,7 @@ const Position = () => {
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Selecciona un juzgado</option>
+                                        <option value="">Todos los juzgados</option>
                                         {juzgados.map((juzgado, index) => (
                                             <option key={index} value={juzgado.juspos}>
                                                 {juzgado.juspos} - {juzgado.abreviaciones}
@@ -1035,7 +1035,7 @@ const Position = () => {
                                         className="block p-2.5 w-[300px] z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-primary"
                                         required
                                     >
-                                        <option value="">Selecciona un juzgado</option>
+                                        <option value="">Todos los juzgados</option>
                                         {juzgados.map((juzgado, index) => (
                                             <option key={index} value={juzgado.juspos}>
                                                 {juzgado.juspos} - {juzgado.abreviaciones}

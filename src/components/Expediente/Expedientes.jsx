@@ -155,7 +155,7 @@ const Expedientes = () => {
                         window.location.reload();
                     }
                 } else {
-                    toast.info('Archivos subidos correctamente.', {
+                    toast.info('Expedientes subidos correctamente.', {
                         icon: () => <img src={check} alt="Success Icon" />,
                         progressStyle: {
                             background: '#1D4ED8',
@@ -749,11 +749,11 @@ const Expedientes = () => {
                                                         labelColor="primary"
                                                     />
 
-                                                    {isUpdating && (
+                                                    (
                                                         <h3 className="text-sm text-center font-semibold text-primary/80">
                                                             Se le notificará por correo electrónico cuando se complete el proceso.
                                                         </h3>
-                                                    )}
+                                                    )
                                                 </div>
 
                                             ) : (

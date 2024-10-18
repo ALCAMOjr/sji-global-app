@@ -192,24 +192,30 @@ const Cards = ({ currentExpedientes, handleMenuToggle, isOpen, openMenuIndex, op
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {selectedExpediente.detalles.map((detalle, index) => (
-                                        <tr key={index}>
-                                            <td className="px-6 py-4">{detalle.fecha}</td>
-                                            <td className="px-6 py-4">{detalle.etapa}</td>
-                                            <td className="px-6 py-4">{detalle.termino}</td>
-                                            <td className="px-6 py-4 truncate">{detalle.notificacion}</td>
+                                    {selectedExpediente.detalles.length > 1 ? (
+                                        selectedExpediente.detalles.map((detalle, index) => (
+                                            <tr key={index}>
+                                                <td className="px-6 py-4">{detalle.fecha}</td>
+                                                <td className="px-6 py-4">{detalle.etapa}</td>
+                                                <td className="px-6 py-4">{detalle.termino}</td>
+                                                <td className="px-6 py-4 truncate">{detalle.notificacion}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={4} align="center">No hay detalles disponibles</td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
-                        </div>
-                               
-                            </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      )}
+    </div>
+)}
+
         </div>
     );
 };

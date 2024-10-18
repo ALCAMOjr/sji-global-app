@@ -196,7 +196,7 @@ const Tarea = () => {
 
             });
             if (success) {
-                toast.info('Se completo correctamente la gestión', {
+                toast.info('Se finalizo correctamente la gestión', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',

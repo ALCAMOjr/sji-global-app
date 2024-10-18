@@ -155,7 +155,7 @@ const Expedientes = () => {
                         window.location.reload();
                     }
                 } else {
-                    toast.info('Archivos subidos correctamente.', {
+                    toast.info('Expedientes subidos correctamente.', {
                         icon: () => <img src={check} alt="Success Icon" />,
                         progressStyle: {
                             background: '#1D4ED8',
@@ -661,9 +661,9 @@ const Expedientes = () => {
 
 
     if (loading || isLoadingExpedientes) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
-            <Spinner className="h-10 w-10" color="primary" />
-        </div>
+        <div className="fixed inset-0 flex items-center justify-center">
+        <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
+      </div>
     );
 
     if (error) return <Error message={error.message} />;
@@ -749,11 +749,11 @@ const Expedientes = () => {
                                                         labelColor="primary"
                                                     />
 
-                                                    {isUpdating && (
+                                                    (
                                                         <h3 className="text-sm text-center font-semibold text-primary/80">
                                                             Se le notificará por correo electrónico cuando se complete el proceso.
                                                         </h3>
-                                                    )}
+                                                    )
                                                 </div>
 
                                             ) : (

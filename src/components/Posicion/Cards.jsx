@@ -343,7 +343,7 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, open
                         <div className="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Detalles del Expediente #{selectedExpedienteDetails.numero}
+                                    Detalles del Expediente #{selectedExpedienteDetails.num_credito}
                                 </h3>
                                 <button
                                     type="button"

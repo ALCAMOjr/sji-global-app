@@ -73,19 +73,19 @@ const Agenda = () => {
 
             });
             if (success) {
-                toast.info('La asignación del expediente se canceló correctamente', {
+                toast.info('La Gestión del expediente se canceló correctamente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al cancelar la asignación del expediente: ${error}`);
+                toast.error(`Algo mal sucedió al cancelar la Gestión del expediente: ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al cancelar la asignación del expediente');
+            toast.error('Algo mal sucedió al cancelar la Gestión del expediente');
         } finally {
             setIsLoading(false);
             closeModal();
@@ -102,19 +102,19 @@ const Agenda = () => {
 
             });
             if (success) {
-                toast.info('La asignación del expediente se eliminó correctamente', {
+                toast.info('La Gestión del expediente se eliminó correctamente', {
                     icon: () => <img src={check} alt="Success Icon" />,
                     progressStyle: {
                         background: '#1D4ED8',
                     }
                 });
             } else {
-                toast.error(`Algo mal sucedió al eliminar la asignación del expediente : ${error}`);
+                toast.error(`Algo mal sucedió al eliminar la Gestión del expediente : ${error}`);
 
             }
         } catch (error) {
             console.error(error);
-            toast.error('Algo mal sucedió al eliminar la asignación del expediente ');
+            toast.error('Algo mal sucedió al eliminar la Gestión del expediente ');
         } finally {
             setIsDeleting(false);
             closeModalDelete();
@@ -273,9 +273,9 @@ const Agenda = () => {
 
 
     if (loading || isLoadingExpedientes) return (
-        <div className="flex items-center -mt-44 -ml-72 lg:-ml-44 xl:-ml-48 justify-center h-screen w-screen">
-            <Spinner className="h-10 w-10" color="primary" />
-        </div>
+        <div className="fixed inset-0 flex items-center justify-center">
+        <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
+      </div>
     )
 
     if (error) return <Error message={error.message} />;
@@ -292,7 +292,7 @@ const Agenda = () => {
                             <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-                            <h3 className="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres cancelar esta Tarea??</h3>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres cancelar la Gestión del Expediente??</h3>
                             <button
                                 disabled={isLoading}
                                 onClick={handleCancelTarea} type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">
@@ -312,7 +312,7 @@ const Agenda = () => {
                             <svg className="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-                            <h3 className="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres eliminar esta Tarea??</h3>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500">Esta seguro que quieres eliminar la Gestión de este expediente??</h3>
                             <button
                                 disabled={isDeleting}
                                 onClick={handleDeleteTarea} type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-3">

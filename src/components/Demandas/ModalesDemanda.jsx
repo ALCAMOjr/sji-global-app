@@ -164,6 +164,34 @@ const ModalesDemandas = ({ isSelectionModalOpen, setIsSelectionModalOpen }) => {
               </div>
             </div>
 
+                {/* Sección Individual y Con Consentimiento */}
+                <h3 className="text-lg font-semibold mb-6">Individual y Con Consentimiento</h3>
+            {/* Opciones Demandado/Demandada */}
+            <div className="flex space-x-2 mb-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="demandado"
+                  name="demandado"
+                  value="Demandado"
+                  checked={selectedDemandado === "Demandado"}
+                  onChange={(e) => setSelectedDemandado(e.target.value)}
+                />
+                <label htmlFor="demandado" className="ml-1">Demandado</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="demandada"
+                  name="demandado"
+                  value="Demandada"
+                  checked={selectedDemandado === "Demandada"}
+                  onChange={(e) => setSelectedDemandado(e.target.value)}
+                />
+                <label htmlFor="demandada" className="ml-1">Demandada</label>
+              </div>
+            </div>
+
             <div className="flex justify-end mt-6">
               <button onClick={openCreateModal} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Siguiente</button>
             </div>

@@ -25,51 +25,51 @@ function App() {
       <UserContextProvider>
         <ToastContainer />
         <Routes>
-  <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} />
 
-  <Route element={<ProtectedRoute element={<Dashboard />} />}>
-    <Route path="/" element={<Home />} />
+          <Route element={<ProtectedRoute element={<Dashboard />} />}>
+            <Route path="/" element={<Home />} />
 
-    <Route
-      path="/abogados"
-      element={<RoleProtectedRoute element={<Abogados />} allowedRoles={['coordinador']} />}
-    />
-    <Route
-      path="/expedientes"
-      element={<RoleProtectedRoute element={<Expedientes />} allowedRoles={['coordinador']} />}
-    />
-    <Route
-      path="/expedientesSial"
-      element={<RoleProtectedRoute element={<ExpedientesSial />} allowedRoles={['coordinador']} />}
-    />
-    <Route
-      path="/positions"
-      element={<RoleProtectedRoute element={<Position />} allowedRoles={['coordinador']} />}
-    />
-    <Route
-      path="/agenda"
-      element={<RoleProtectedRoute element={<Agenda />} allowedRoles={['coordinador']} />}
-    />
-    <Route
-      path="/reporte"
-      element={<RoleProtectedRoute element={<Reporte />} allowedRoles={['coordinador']} />}
-    />
- <Route
-      path="/demandas"
-      element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
-    />
-    <Route
-      path="/demandas/plantillas"
-      element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
-    />
-    <Route
-      path="/gestion"
-      element={<RoleProtectedRoute element={<Tarea />} allowedRoles={['abogado']} />}
-    />
-  </Route>
+            <Route
+              path="/abogados"
+              element={<RoleProtectedRoute element={<Abogados />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/expedientes"
+              element={<RoleProtectedRoute element={<Expedientes />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/expedientesSial"
+              element={<RoleProtectedRoute element={<ExpedientesSial />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/positions"
+              element={<RoleProtectedRoute element={<Position />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/agenda"
+              element={<RoleProtectedRoute element={<Agenda />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/reporte"
+              element={<RoleProtectedRoute element={<Reporte />} allowedRoles={['coordinador']} />}
+            />
+            <Route
+              path="/demandas"
+              element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
+            />
+            <Route
+              path="/demandas/plantillas"
+              element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
+            />
+            <Route
+              path="/gestion"
+              element={<RoleProtectedRoute element={<Tarea />} allowedRoles={['abogado']} />}
+            />
+          </Route>
 
-  <Route path="*" element={<NotFound />} />
-</Routes>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
 
       </UserContextProvider>
     </NextUIProvider>

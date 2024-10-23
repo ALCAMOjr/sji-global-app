@@ -18,9 +18,9 @@ import getAllExpedientes from '../../views/expedientes/getExpedientes.js';
 import update_icon from "../../assets/actualizar.png"
 import upload_icon from "../../assets/subir.png"
 import create_icon from "../../assets/crear.png"
-import { update } from 'react-spring';
+
 const Expedientes = () => {
-    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes, get } = useExpedientes();
+    const { expedientes, loading, error, registerNewExpediente, uploadFile, deleteExpediente, updateExpediente, UpdateAllExpedientes, setExpedientes } = useExpedientes();
     const [isLoading, setIsLoading] = useState(false);
     const [openMenuIndex, setOpenMenuIndex] = useState(null);
     const [isOpen, setIsOpen] = useState([]);

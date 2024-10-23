@@ -769,16 +769,39 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Juzgado</label>
-                        <textarea
-                            type="text"
+                        <select
                             name="juzgado"
                             value={formValues.juzgado}
-
                             onChange={handleChange}
-                            placeholder="Juzgado"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y mb-1"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
-                        />
+                        >
+                            <option value="">Selecciona un juzgado</option>
+                            <option value="1° - JUEZ DE LO CIVIL DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                1° - Juez de lo Civil del Primer Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="5° - JUEZ DE LO CIVIL DEL QUINTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                5° - Juez de lo Civil del Quinto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="6° - JUEZ DE LO CIVIL DEL SEXTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                6° - Juez de lo Civil del Sexto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="8° - JUEZ DE LO CIVIL DEL OCTAVO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                8° - Juez de lo Civil del Octavo Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="9° - JUEZ DE LO CIVIL DEL NOVENO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                9° - Juez de lo Civil del Noveno Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="10° - JUEZ DE LO CIVIL DEL DÉCIMO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                10° - Juez de lo Civil del Décimo Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="14° - JUEZ DE LO CIVIL DEL DÉCIMO CUARTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                14° - Juez de lo Civil del Décimo Cuarto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="Menor Cuantía - JUEZ DE MENOR CUANTÍA DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Menor Cuantía - Juez de Menor Cuantía del Primer Distrito Judicial en el Estado en Turno
+                            </option>
+                        </select>
 
                         <label className="block text-sm font-medium text-gray-700">Fecha</label>
                         <input

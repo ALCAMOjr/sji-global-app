@@ -6,7 +6,6 @@ import Context from '../context/abogados.context.jsx';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, Outlet, Link, useLocation } from 'react-router-dom';
 import useUser from "../hooks/auth.jsx";
-import { GrHome } from "react-icons/gr";
 import user from "../assets/user.png";
 import logo2 from "../assets/logoGde.png";
 import agendalogo from "../assets/agenda.png";
@@ -15,7 +14,6 @@ import expedientelogo from "../assets/expedientes.png";
 import expedienteSiallogo from "../assets/expedienteSial.png";
 import tasklogo from "../assets/task.png";
 import positionlogo from "../assets/posicion.png";
-import template from "../assets/plantillas.png"
 import hogar from "../assets/hogar.png"
 import demanda from "../assets/caso-legal.png"
 function Dashboard() {
@@ -203,13 +201,6 @@ function Dashboard() {
                                     <span className="flex-1 ms-3 whitespace-nowrap">Demandas</span>
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/demandas/plantillas" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/demandas/plantillas' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>
-                                    <img src={template} className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                                    <span className="flex-1 ms-3 whitespace-nowrap">Plantillas Demandas</span>
-                                </Link>
-                            </li>
-
                             {userType === 'coordinador' && (
                                 <li>
                                     <Link to="/reporte" className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${location.pathname === '/reporte' ? 'bg-gray-100 dark:bg-gray-700' : ''}`}>

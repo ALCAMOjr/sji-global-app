@@ -59,10 +59,6 @@ function App() {
               element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
             />
             <Route
-              path="/demandas/plantillas"
-              element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
-            />
-            <Route
               path="/gestion"
               element={<RoleProtectedRoute element={<Tarea />} allowedRoles={['abogado']} />}
             />

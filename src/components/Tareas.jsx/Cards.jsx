@@ -32,32 +32,18 @@ const customTheme = {
     }
 };
 
-const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, handleInitTarea, isLoading, handleCompleteTarea, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, handleDownload, handleUpdate }) => {
+const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, handleInitTarea, isLoading, handleCompleteTarea, setOpenMenuIndex, setIsOpen, openMenuIndex, isOpen, handleMenuToggle, handleDownload }) => {
     const [showModal, setShowModal] = useState(false);
     const [showModalDetails, setShowModalDetails] = useState(false);
     const [selectedExpediente, setSelectedExpediente] = useState(null);
     const [selectedExpedienteDetails, setSelectedExpedienteDetails] = useState(null);
-    const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [downloadingDetails, setDownloadingDetails] = useState({});
-
 
     const handleDownloadLoading = async (url, fecha, id) => {
         setDownloadingDetails(prevState => ({ ...prevState, [id]: true }));
         await handleDownload(url, fecha);
         setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
     };
-
-    const handleUpgradeLoading = async (numero, nombre, url, id) => {
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
-        await handleUpdate(numero, nombre, url);
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
-
-    };
-
-
-    const isAnyDownloadInProgress = Object.values(downloadingDetails).some(isDownloading => isDownloading);
-    const isAnyUpgradeInProgress = Object.values(UpgradeLoading).some(isUpgrading => isUpgrading);
-
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -117,9 +103,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                     <div key={index} className="w-full max-w-xs mb-20 m-4">
                         <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
                             <div className="mb-4 flex items-center justify-between">
-                                {UpgradeLoading[expediente.numero] ? (
-                                    <Spinner size="sm" color="primary" />
-                                ) : (
                                     <button
                                         id="menu-button"
                                         onClick={() => handleMenuToggle(index)}
@@ -127,8 +110,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                     >
                                         <RxHamburgerMenu />
                                     </button>
-                                )}
-
                                 <h5 className="text-sm mr-16 font-bold leading-none text-gray-900 dark:text-white">
                                 Crédito #{expediente.numero}
                                 </h5>
@@ -150,17 +131,6 @@ const Cards = ({ currentExpedientes, currentPage, totalPages, onPageChange, hand
                                                 className="block text-sm mb-1 font-medium text-black hover:underline dark:text-black cursor-pointer"
                                             >
                                                 Ver Detalles
-                                            </a>
-                                        </li>
-
-                                        <li className="flex items-center">
-                                            <a
-                                                disabled={isAnyUpgradeInProgress || isAnyDownloadInProgress}
-                                                                                 
-                                                onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero)}
-                                                className="block text-sm mb-2 font-medium text-primary hover:underline dark:text-primary cursor-pointer"
-                                            >
-                                                Actualizar Expediente
                                             </a>
                                         </li>
                                     </ul>

@@ -79,9 +79,6 @@ const Demandas = () => {
     fecha_requerimiento_ft: ""
   });
 
-  console.log(demandas)
-
-
   const resetFormValues = () => {
     setFormValuesIycc({
       credito: "",

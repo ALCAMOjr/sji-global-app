@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState, useContext } from 'react';
+import React, { Fragment, useState } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -29,7 +29,6 @@ const TableTarea = ({
     handleInitTarea,
     handleCompleteTarea,
     handleDownload,
-    handleUpdate
 }) => {
 
 
@@ -58,9 +57,6 @@ const TableTarea = ({
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Juzgado</span>
                             </TableCell>
-                            <TableCell align='left'>
-                                <span className='text-sm font-bold text-black'>Acciones</span>
-                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -73,7 +69,7 @@ const TableTarea = ({
                                 handleInitTarea={handleInitTarea}
                                 handleCompleteTarea={handleCompleteTarea}
                                 handleDownload={handleDownload}
-                                handleUpdate={handleUpdate}
+                             
 
                             />
                         ))}
@@ -109,13 +105,11 @@ const Row = ({
     handleInitTarea,
     handleCompleteTarea,
     handleDownload,
-    handleUpdate
 }) => {
     const [open, setOpen] = useState(false);
     const [nestedOpen, setNestedOpen] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
     const [downloadingDetails, setDownloadingDetails] = useState({});
-    const [UpgradeLoading, setUpgradeLoading] = useState({});
     const [TaskStartLoading, setTaskStartLoading] = useState({});
     const [TaskCompleteLoading, setTaskCompleteLoading] = useState({});
 
@@ -137,11 +131,6 @@ const Row = ({
         setDownloadingDetails(prevState => ({ ...prevState, [id]: false }));
     };
 
-    const handleUpgradeLoading = async (numero, nombre, url, id) => {
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: true }));
-        await handleUpdate(numero, nombre, url);
-        setUpgradeLoading(prevState => ({ ...prevState, [id]: false }));
-    };
 
     const handleTaskStartLoading = async (id) => {
         setTaskStartLoading(prevState => ({ ...prevState, [id]: true }));
@@ -157,7 +146,6 @@ const Row = ({
 
 
     const isAnyDownloadInProgress = Object.values(downloadingDetails).some(isDownloading => isDownloading);
-    const isAnyUpgradeInProgress = Object.values(UpgradeLoading).some(isUpgrading => isUpgrading);
 
 
     return (
@@ -195,16 +183,6 @@ const Row = ({
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{expediente.expediente}</TableCell>
                 <TableCell className="max-w-xs">{expediente.juzgado}</TableCell>
-                <TableCell align="left">
-                    <button
-                        disabled={isAnyDownloadInProgress || isAnyUpgradeInProgress}
-                        onClick={() => handleUpgradeLoading(expediente.numero, expediente.nombre, expediente.url, expediente.numero)}
-                        type="button"
-                        className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"
-                    >
-                        {UpgradeLoading[expediente.numero] ? <Spinner size='sm' color="default" /> : 'Actualizar'}
-                    </button>
-                </TableCell>
             </TableRow>
             {expediente.tareas && expediente.tareas.length > 0 && (
                 <Fragment>
@@ -299,7 +277,7 @@ const Row = ({
                                                                                 <TableRow key={idx}>
                                                                                     <TableCell align="left">
                                                                                         <button
-                                                                                            disabled={isAnyUpgradeInProgress || isAnyDownloadInProgress}
+                                                                                            disabled={isAnyDownloadInProgress}
                                                                                             onClick={() => handleDownloadLoading(expediente.url, detalle.fecha, detalle.id)}
                                                                                             type="button"
                                                                                             className="text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-xs px-5 py-2.5 text-center me-2 mb-2"

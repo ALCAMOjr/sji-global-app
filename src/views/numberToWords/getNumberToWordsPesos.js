@@ -21,7 +21,7 @@ export default async function getNumberToWordsPesos({ number, token }) {
         return response.data.words;
 
     } catch (error) {
-        console.error(error('Error doing getNUmberToWordsPesos'))
+        console.error('Error doing getNUmberToWordsPesos', error)
         throw error;
     }
 }

@@ -22,7 +22,7 @@ export default async function getFilename({ filename, token }) {
         return response.data; 
 
     } catch (error) {
-        console.error(error('Error doing getFilename'))
+        console.error('Error doing getFilename', error)
         throw error;
     }
 }

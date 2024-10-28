@@ -22,7 +22,7 @@ export default async function getPositionByEtapa({ etapa, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getPositionByEtapa'))
+        console.error('Error doing getPositionByEtapa', error)
         throw error;
     }
 }

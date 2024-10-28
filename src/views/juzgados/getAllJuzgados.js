@@ -20,7 +20,7 @@ export default async function getAllJuzgados({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getAllJuzgados'))
+        console.error('Error doing getAllJuzgados', error)
         throw error;
     }
 }

@@ -24,7 +24,7 @@ export default async function CompleteTarea({ id, token }) {
         return response.status;
 
     } catch (error) {
-        console.error(error('Error doing CompleteTarea'))
+        console.error('Error doing CompleteTarea', error)
         throw error;
     }
 }

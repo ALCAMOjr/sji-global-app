@@ -23,7 +23,7 @@ export default async function login_user({ username, password }) {
         return { token };
 
     } catch (error) {
-        console.error(error('Error doing Login'))
+        console.error('Error doing Login', error)
         throw error;
        
     }

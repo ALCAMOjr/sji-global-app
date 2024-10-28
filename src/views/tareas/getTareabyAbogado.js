@@ -23,7 +23,7 @@ export default async function getTareaByAbogado({ username, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getTareaByAbogado'))
+        console.error('Error doing getTareaByAbogado', error)
         throw error;
     }
 }

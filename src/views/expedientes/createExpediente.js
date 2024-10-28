@@ -24,7 +24,7 @@ export default async function createExpediente({ numero, nombre, url,  token }) 
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing createExpediente'))
+        console.error('Error doing createExpediente', error )
         throw error;
     }
 }

@@ -19,7 +19,7 @@ export default async function getPositionExpedientes({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getPositionExpediente'))
+        console.error('Error doing getPositionExpediente', error)
         throw error;
     }
 }

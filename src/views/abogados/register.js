@@ -29,7 +29,7 @@ export default async function register({ username, userType, nombre, apellido, c
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing registers'))
+        console.error('Error doing registers', error)
         throw error;
     }
 }

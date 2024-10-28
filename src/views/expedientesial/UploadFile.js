@@ -25,6 +25,7 @@ export default async function UploadFile({ files, token }) {
     return response.data;
 
   } catch (error) {
+    console.error(error('Error doing UploadFile'))
     throw error;
   }
 }

@@ -426,7 +426,7 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
             <div className="bg-white w-full max-w-[1400px] p-8 rounded-lg overflow-y-auto max-h-[95vh] min-h-[50vh] shadow-lg relative">
                 <button
                     onClick={closeModal}
@@ -461,9 +461,8 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                     />
                 </button>
                 <h2 className="text-2xl font-semibold mt-4 mb-4">Crear Demanda Individual y Con Consentimiento {moneda}</h2>
-                <form onSubmit={handleCreate} className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1">
-
+                <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div>
                         <label className="block text-sm font-medium text-gray-700">Crédito</label>
                         <input
                             type="number"
@@ -481,37 +480,38 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             </p>
                         )}
 
-                        <label className="block text-sm font-medium text-gray-700">Acréditado</label>
+                        <label className="block text-sm font-medium text-gray-700">Escritura Formateada</label>
+                        <textarea
+                            name="escritura_ft"
+                            value={formValues.escritura_ft}
+                            onChange={isEscrituraFormatEditable ? handleChange : undefined}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
+                            rows={1}
+                            readOnly={!isEscrituraFormatEditable}
+                        />
+
+                        <label className="block text-sm font-medium text-gray-700">Volumen</label>
                         <input
-                            type="text"
-                            name="acreditado"
-                            value={formValues.acreditado}
+                            type="number"
+                            name="volumen"
+                            value={formValues.volumen}
+                            onBlur={handleVolumenBlur}
                             onChange={handleChange}
-                            placeholder="Ingrese el acréditado"
+                            placeholder="Volumen"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
+                        {errorVolumen && (
+                            <p className="text-primary text-xs -mt-2">{errorVolumen}</p>
+                        )}
 
-                        <label className="block text-sm font-medium text-gray-700">Seccion</label>
-                        <select
-                            name="seccion"
-                            value={formValues.seccion}
-                            onChange={handleChange}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        >
-                            <option value="" disabled hidden>Selecciona</option>
-                            <option value="Demandado">Propiedad</option>
-                            <option value="Demandada">Gravamen</option>
-                        </select>
-
-                        <label className="block text-sm font-medium text-gray-700">Monto Otorgado</label>
+                        <label className="block text-sm font-medium text-gray-700">Fecha</label>
                         <input
-                            type="number"
-                            name="monto_otorgado"
-                            value={formValues.monto_otorgado}
+                            type="date"
+                            name="fecha"
+                            value={formValues.fecha}
                             onChange={handleChange}
-                            placeholder="Ingrese el Monto Otorgado"
+                            placeholder="Fecha"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
@@ -527,110 +527,14 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             required
                         />
 
-                        <label className="block text-sm font-medium text-gray-700 mt-0">Municipio</label>
+                        <label className="block text-sm font-medium text-gray-700">Número (NSS)</label>
                         <input
-                            type="text"
-                            name="municipio"
-                            value={formValues.municipio}
-                            onChange={isMunicipioEditable ? handleChange : undefined}
-                            placeholder="Municipio"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            readOnly={!isMunicipioEditable}
-                            required
-                        />
-
-                        <label className="block text-sm font-medium text-gray-700">Interes Ordinario</label>
-                        <input
-                            type="number"
-                            name="interes_ordinario"
-                            value={formValues.interes_ordinario}
+                            name="numero_ss"
+                            value={formValues.numero_ss}
                             onChange={handleChange}
-                            placeholder="Ingrese el Interes Ordinario"
+                            placeholder="Ingrese el Número"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        />
 
-                        <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento</label>
-                        <input
-                            type="date"
-                            name="fecha_requerimiento"
-                            value={formValues.fecha_requerimiento}
-                            onChange={handleChange}
-                            onBlur={handleFechaRequerimientoBlur}
-                            placeholder="Fecha Requerimiento"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11"
-                            required
-                        />
-                        {errorFechaRequerimiento && (
-                            <p className="text-red-500 text-xs mt-1">{errorFechaRequerimiento}</p>
-                        )}
-                    </div>
-
-
-                    <div className="col-span-1">
-
-                        <label className="block text-sm font-medium text-gray-700">Demandado/Demandada</label>
-                        <select
-                            name="categoria"
-                            value={formValues.categoria}
-                            onChange={handleChange}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        >
-                            <option value="" disabled hidden>Selecciona</option>
-                            <option value="Demandado">Demandado</option>
-                            <option value="Demandada">Demandada</option>
-                        </select>
-
-                        <label className="block text-sm font-medium text-gray-700">Inscripcion</label>
-                        <input
-                            type="number"
-                            name="inscripcion"
-                            value={formValues.inscripcion}
-                            onChange={handleChange}
-                            onBlur={handleInscripcionBlur}
-                            placeholder="Inscripcion"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        />
-                        {errorInscripcion && (
-                            <p className="text-primary text-xs -mt-2">{errorInscripcion}</p>
-                        )}
-
-                        <label className="block text-sm font-medium text-gray-700">Unidad</label>
-                        <select
-                            name="unidad"
-                            value={formValues.unidad}
-                            onChange={handleChange}
-                            placeholder="Unidad"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required >
-                            <option value="" disabled hidden>Selecciona un municipio</option>
-                            {municipios.map((municipio, index) => (
-                                <option key={index} value={municipio}>
-                                    {municipio}
-                                </option>
-                            ))}
-                        </select>
-
-                        <label className="block text-sm font-medium text-gray-700">Monto Otorgado Formateado</label>
-                        <textarea
-                            name="monto_otorgado_ft"
-                            value={formValues.monto_otorgado_ft}
-                            onChange={isMontoFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-1 resize-y"
-                            rows={1}
-                            readOnly={!isMontoFormatEditable}
-                        />
-
-                        <label className="block text-sm font-medium text-gray-700">Adeudo Formateado</label>
-                        <textarea
-                            name="adeudo_ft"
-                            value={formValues.adeudo_ft}
-                            onChange={isAdeudoFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
-                            rows={1}
-                            readOnly={!isAdeudoFormatEditable}
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Colonia/Fraccionamiento</label>
@@ -649,60 +553,72 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             ))}
                         </select>
 
-                        <label className="block text-sm font-medium text-gray-700">Interes Moratorio</label>
+                        <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento</label>
                         <input
-                            type="number"
-                            name="interes_moratorio"
-                            value={formValues.interes_moratorio}
+                            type="date"
+                            name="fecha_requerimiento"
+                            value={formValues.fecha_requerimiento}
                             onChange={handleChange}
-                            placeholder="Ingrese el Interes Moratorio"
+                            onBlur={handleFechaRequerimientoBlur}
+                            placeholder="Fecha Requerimiento"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
+                        {errorFechaRequerimiento && (
+                            <p className="text-red-500 text-xs mt-1">{errorFechaRequerimiento}</p>
+                        )}
 
-                        <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento Formateada</label>
-                        <textarea
-                            name="fecha_requerimiento_ft"
-                            value={formValues.fecha_requerimiento_ft}
-                            onChange={isFechaRequerimientoFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
-                            rows={1}
-                            readOnly={!isFechaRequerimientoFormatEditable}
-                        />
+                        <label className="block text-sm font-medium text-gray-700">Juzgado</label>
+                        <select
+                            name="juzgado"
+                            value={formValues.juzgado}
+                            onChange={handleChange}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
+                        >
+                            <option value="">Selecciona un juzgado</option>
+                            <option value="JUEZ DE LO CIVIL DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Primer Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL QUINTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Quinto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL SEXTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Sexto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL OCTAVO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Octavo Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL NOVENO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Noveno Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL DÉCIMO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Décimo Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="JUEZ DE LO CIVIL DEL DÉCIMO CUARTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Juez de lo Civil del Décimo Cuarto Distrito Judicial en el Estado en Turno
+                            </option>
+                            <option value="Menor Cuantía - JUEZ DE MENOR CUANTÍA DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                Menor Cuantía - Juez de Menor Cuantía del Primer Distrito Judicial en el Estado en Turno
+                            </option>
+                        </select>
+
                     </div>
 
+                    <div>
 
-                    <div className="col-span-1">
-
-                        <label className="block text-sm font-medium text-gray-700">Escritura</label>
-                        <input
-                            type="number"
-                            name="escritura"
-                            value={formValues.escritura}
-                            onBlur={handleEscrituraBlur}
+                        <label className="block text-sm font-medium text-gray-700">Demandado/Demandada</label>
+                        <select
+                            name="categoria"
+                            value={formValues.categoria}
                             onChange={handleChange}
-                            placeholder="Escritura"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
-                        />
-                        {errorEscritura && (
-                            <p className="text-primary text-xs -mt-2">{errorEscritura}</p>
-                        )}
-
-                        <label className="block text-sm font-medium text-gray-700">Volumen</label>
-                        <input
-                            type="number"
-                            name="volumen"
-                            value={formValues.volumen}
-                            onBlur={handleVolumenBlur}
-                            onChange={handleChange}
-                            placeholder="Volumen"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        />
-                        {errorVolumen && (
-                            <p className="text-primary text-xs -mt-2">{errorVolumen}</p>
-                        )}
+                        >
+                            <option value="" disabled hidden>Selecciona</option>
+                            <option value="Demandado">Demandado</option>
+                            <option value="Demandada">Demandada</option>
+                        </select>
 
                         <label className="block text-sm font-medium text-gray-700">Fecha Escritura</label>
                         <input
@@ -715,32 +631,39 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             required
                         />
 
-                        <label className="block text-sm font-medium text-gray-700">Mes Primer Adeudo</label>
+                        <label className="block text-sm font-medium text-gray-700">Libro</label>
                         <input
-                            type="month"
-                            name="mes_primer_adeudo"
-                            value={formValues.mes_primer_adeudo}
+                            type="number"
+                            name="libro"
+                            value={formValues.libro}
+                            onBlur={handleLibroBlur}
                             onChange={handleChange}
-                            placeholder="Mes Primer Adeudo"
+                            placeholder="Libro"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
                         />
-
-                        {moneda === "VSMM" && (
-                            <>
-                                <label className="block text-sm font-medium text-gray-700">Adeudo en Pesos</label>
-                                <input
-                                    type="number"
-                                    name="adeudo_pesos"
-                                    value={formValues.adeudo_pesos}
-
-                                    placeholder="Ingrese el Adeudo en Pesos"
-                                    onChange={handleChange}
-                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                                />
-
-                            </>
+                        {errorLibro && (
+                            <p className="text-primary text-xs -mt-2">{errorLibro}</p>
                         )}
 
+                        <label className="block text-sm font-medium text-gray-700">Fecha  Formateada</label>
+                        <textarea
+                            name="fecha_ft"
+                            value={formValues.fecha_ft}
+                            onChange={isFechaFormatEditable ? handleChange : undefined}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
+                            rows={1}
+                            readOnly={!isFechaFormatEditable}
+                        />
+                        <label className="block text-sm font-medium text-gray-700">Adeudo Formateado</label>
+                        <textarea
+                            name="adeudo_ft"
+                            value={formValues.adeudo_ft}
+                            onChange={isAdeudoFormatEditable ? handleChange : undefined}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
+                            rows={1}
+                            readOnly={!isAdeudoFormatEditable}
+                        />
                         <label className="block text-sm font-medium text-gray-700">Código Postal</label>
                         <input
                             type="text"
@@ -768,116 +691,83 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             required
                         />
 
-                        <label className="block text-sm font-medium text-gray-700">Juzgado</label>
-                        <select
-                            name="juzgado"
-                            value={formValues.juzgado}
-                            onChange={handleChange}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            required
-                        >
-                            <option value="">Selecciona un juzgado</option>
-                            <option value="1° - JUEZ DE LO CIVIL DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                1° - Juez de lo Civil del Primer Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="5° - JUEZ DE LO CIVIL DEL QUINTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                5° - Juez de lo Civil del Quinto Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="6° - JUEZ DE LO CIVIL DEL SEXTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                6° - Juez de lo Civil del Sexto Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="8° - JUEZ DE LO CIVIL DEL OCTAVO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                8° - Juez de lo Civil del Octavo Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="9° - JUEZ DE LO CIVIL DEL NOVENO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                9° - Juez de lo Civil del Noveno Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="10° - JUEZ DE LO CIVIL DEL DÉCIMO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                10° - Juez de lo Civil del Décimo Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="14° - JUEZ DE LO CIVIL DEL DÉCIMO CUARTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                14° - Juez de lo Civil del Décimo Cuarto Distrito Judicial en el Estado en Turno
-                            </option>
-                            <option value="Menor Cuantía - JUEZ DE MENOR CUANTÍA DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                Menor Cuantía - Juez de Menor Cuantía del Primer Distrito Judicial en el Estado en Turno
-                            </option>
-                        </select>
+                        <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento Formateada</label>
+                        <textarea
+                            name="fecha_requerimiento_ft"
+                            value={formValues.fecha_requerimiento_ft}
+                            onChange={isFechaRequerimientoFormatEditable ? handleChange : undefined}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
+                            rows={1}
+                            readOnly={!isFechaRequerimientoFormatEditable}
+                        />
 
-                        <label className="block text-sm font-medium text-gray-700">Fecha</label>
+                        <label className="block text-sm font-medium text-gray-700">Folio</label>
                         <input
-                            type="date"
-                            name="fecha"
-                            value={formValues.fecha}
+                            name="folio"
+                            value={formValues.folio}
                             onChange={handleChange}
-                            placeholder="Fecha"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11"
-                            required
+                            placeholder="Ingrese el Folio"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+
                         />
                     </div>
 
+                    <div>
 
-                    <div className="col-span-1">
-
-                        <label className="block text-sm font-medium text-gray-700">Escritura Formateada</label>
-                        <textarea
-                            name="escritura_ft"
-                            value={formValues.escritura_ft}
-                            onChange={isEscrituraFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
-                            rows={1}
-                            readOnly={!isEscrituraFormatEditable}
-                        />
-
-                        <label className="block text-sm font-medium text-gray-700">Libro</label>
+                        <label className="block text-sm font-medium text-gray-700">Acréditado</label>
                         <input
-                            type="number"
-                            name="libro"
-                            value={formValues.libro}
-                            onBlur={handleLibroBlur}
+                            type="text"
+                            name="acreditado"
+                            value={formValues.acreditado}
                             onChange={handleChange}
-                            placeholder="Libro"
+                            placeholder="Ingrese el acréditado"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
-                        {errorLibro && (
-                            <p className="text-primary text-xs -mt-2">{errorLibro}</p>
-                        )}
 
                         <label className="block text-sm font-medium text-gray-700">Fecha Escritura Formateada</label>
                         <textarea
                             name="fecha_escritura_ft"
                             value={formValues.fecha_escritura_ft}
                             onChange={isFechaEscrituraFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y mb-1"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
                             rows={1}
                             readOnly={!isFechaEscrituraFormatEditable}
                         />
 
-                        <label className="block text-sm font-medium text-gray-700">Mes del Ultimo Adeudo</label>
-                        <input
-                            type="month"
-                            name="mes_ultimo_adeudo"
-                            value={formValues.mes_ultimo_adeudo}
+                        <label className="block text-sm font-medium text-gray-700">Seccion</label>
+                        <select
+                            name="seccion"
+                            value={formValues.seccion}
                             onChange={handleChange}
-                            placeholder="Mes del Ultimo Adeudo"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
+                        >
+                            <option value="" disabled hidden>Selecciona</option>
+                            <option value="Demandado">Propiedad</option>
+                            <option value="Demandada">Gravamen</option>
+                        </select>
+
+                        <label className="block text-sm font-medium text-gray-700">Monto Otorgado</label>
+                        <input
+                            type="number"
+                            name="monto_otorgado"
+                            value={formValues.monto_otorgado}
+                            onChange={handleChange}
+                            placeholder="Ingrese el Monto Otorgado"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
                         />
 
-                        {moneda === "VSMM" && (
-                            <>
-
-                                <label className="block text-sm font-medium text-gray-700">Adeudo en Pesos Formateado</label>
-                                <textarea
-                                    name="adeudo_pesos_ft"
-                                    value={formValues.adeudo_pesos_ft}
-                                    onChange={isAdeudoPesosFormatEditable ? handleChange : undefined}
-                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y mb-1"
-                                    rows={1}
-                                    readOnly={!isAdeudoPesosFormatEditable}
-                                />
-                            </>
-                        )}
-
+                        <label className="block text-sm font-medium text-gray-700">Mes Primer Adeudo</label>
+                        <input
+                            type="month"
+                            name="mes_primer_adeudo"
+                            value={formValues.mes_primer_adeudo}
+                            onChange={handleChange}
+                            placeholder="Mes Primer Adeudo"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                        />
 
                         <label className="block text-sm font-medium text-gray-700">Estado</label>
                         <input
@@ -893,7 +783,6 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
 
                         <label className="block text-sm font-medium text-gray-700">Número</label>
                         <input
-                            type="number"
                             name="numero"
                             value={formValues.numero}
                             onChange={handleChange}
@@ -901,6 +790,115 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
+
+                        <label className="block text-sm font-medium text-gray-700">Interes Ordinario</label>
+                        <input
+                            type="number"
+                            name="interes_ordinario"
+                            value={formValues.interes_ordinario}
+                            onChange={handleChange}
+                            placeholder="Ingrese el Interes Ordinario"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
+                        />
+                        {moneda === "VSMM" && (
+                            <>
+                                <label className="block text-sm font-medium text-gray-700">Adeudo en Pesos</label>
+                                <input
+                                    type="number"
+                                    name="adeudo_pesos"
+                                    value={formValues.adeudo_pesos}
+
+                                    placeholder="Ingrese el Adeudo en Pesos"
+                                    onChange={handleChange}
+                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                />
+
+                            </>
+                        )}
+                    </div>
+
+                    <div>
+
+                        <label className="block text-sm font-medium text-gray-700">Escritura</label>
+                        <input
+                            type="number"
+                            name="escritura"
+                            value={formValues.escritura}
+                            onBlur={handleEscrituraBlur}
+                            onChange={handleChange}
+                            placeholder="Escritura"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
+                        />
+                        {errorEscritura && (
+                            <p className="text-primary text-xs -mt-2">{errorEscritura}</p>
+                        )}
+
+                        <label className="block text-sm font-medium text-gray-700">Inscripcion</label>
+                        <input
+                            type="number"
+                            name="inscripcion"
+                            value={formValues.inscripcion}
+                            onChange={handleChange}
+                            onBlur={handleInscripcionBlur}
+                            placeholder="Inscripcion"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
+                        />
+                        {errorInscripcion && (
+                            <p className="text-primary text-xs -mt-2">{errorInscripcion}</p>
+                        )}
+
+
+                        <label className="block text-sm font-medium text-gray-700">Unidad</label>
+                        <select
+                            name="unidad"
+                            value={formValues.unidad}
+                            onChange={handleChange}
+                            placeholder="Unidad"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required >
+                            <option value="" disabled hidden>Selecciona un municipio</option>
+                            {municipios.map((municipio, index) => (
+                                <option key={index} value={municipio}>
+                                    {municipio}
+                                </option>
+                            ))}
+                        </select>
+
+                        <label className="block text-sm font-medium text-gray-700">Monto Otorgado Formateado</label>
+                        <textarea
+                            name="monto_otorgado_ft"
+                            value={formValues.monto_otorgado_ft}
+                            onChange={isMontoFormatEditable ? handleChange : undefined}
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-1 resize-y"
+                            rows={1}
+                            readOnly={!isMontoFormatEditable}
+                        />
+
+                        <label className="block text-sm font-medium text-gray-700">Mes del Ultimo Adeudo</label>
+                        <input
+                            type="month"
+                            name="mes_ultimo_adeudo"
+                            value={formValues.mes_ultimo_adeudo}
+                            onChange={handleChange}
+                            placeholder="Mes del Ultimo Adeudo"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                        />
+
+                        <label className="block text-sm font-medium text-gray-700 mt-0">Municipio</label>
+                        <input
+                            type="text"
+                            name="municipio"
+                            value={formValues.municipio}
+                            onChange={isMunicipioEditable ? handleChange : undefined}
+                            placeholder="Municipio"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            readOnly={!isMunicipioEditable}
+                            required
+                        />
+
 
                         <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
                         <input
@@ -912,19 +910,38 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required
                         />
-                        <label className="block text-sm font-medium text-gray-700">Fecha  Formateada</label>
-                        <textarea
-                            name="fecha_ft"
-                            value={formValues.fecha_ft}
-                            onChange={isFechaFormatEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
-                            rows={1}
-                            readOnly={!isFechaFormatEditable}
+
+                        <label className="block text-sm font-medium text-gray-700">Interes Moratorio</label>
+                        <input
+                            type="number"
+                            name="interes_moratorio"
+                            value={formValues.interes_moratorio}
+                            onChange={handleChange}
+                            placeholder="Ingrese el Interes Moratorio"
+                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            required
                         />
+
+
+
+                        {moneda === "VSMM" && (
+                            <>
+
+                                <label className="block text-sm font-medium text-gray-700">Adeudo en Pesos Formateado</label>
+                                <textarea
+                                    name="adeudo_pesos_ft"
+                                    value={formValues.adeudo_pesos_ft}
+                                    onChange={isAdeudoPesosFormatEditable ? handleChange : undefined}
+                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
+                                    rows={1}
+                                    readOnly={!isAdeudoPesosFormatEditable}
+                                />
+                            </>
+                        )}
                     </div>
 
 
-                    <div className="col-span-4 flex justify-end mt-4">
+                    <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-4">
                         <button
                             type="submit"
                             className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 cursor-pointer"
@@ -932,7 +949,13 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                         >
                             {isCreatingDemanda ? (
                                 <div role="status">
-                                    <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg
+                                        aria-hidden="true"
+                                        className="inline w-8 h-8 text-gray-200 animate-spin"
+                                        viewBox="0 0 100 101"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
                                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                                         <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="white" />
                                     </svg>

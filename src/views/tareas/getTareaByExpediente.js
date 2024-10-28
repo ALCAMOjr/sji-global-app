@@ -22,6 +22,7 @@ export default async function getTareaByExpediente({ numero, token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing getTareaByExpediente'))
         throw error;
     }
 }

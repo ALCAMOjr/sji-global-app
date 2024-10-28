@@ -23,6 +23,7 @@ export default async function CancelTarea({ id, token }) {
         return response.status;
 
     } catch (error) {
+        console.error(error('Error doing CancelTarea'))
         throw error;
     }
 }

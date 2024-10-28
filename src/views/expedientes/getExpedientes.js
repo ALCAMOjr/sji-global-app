@@ -19,6 +19,7 @@ export default async function getAllExpedientes({ token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing getAllExpedientes'))
         throw error;
     }
 }

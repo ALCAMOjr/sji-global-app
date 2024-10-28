@@ -22,6 +22,7 @@ export default async function DeleteTarea({ id, token }) {
         return response.status;
 
     } catch (error) {
+        console.error(error('Error doing DeleteTarea'))
         throw error;
     }
 }

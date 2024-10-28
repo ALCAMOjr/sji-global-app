@@ -25,6 +25,7 @@ export async function updateExpedientes({ numero, nombre, url, token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing UpdateExpedientes'))
         throw error;
     }
 }
@@ -49,6 +50,7 @@ export async function updateAllExpedientes({ token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing updateAllExpedientes'))
         throw error;
     }
 }
@@ -72,6 +74,7 @@ export async function getExpedienteJobStatus({ token, jobId }) {
         return response.data; 
 
     } catch (error) {
+        console.error(error('Error doing getExpedienteJobStatus'))
         throw error;
     }
 }
@@ -95,6 +98,7 @@ export async function deleteExpedientes({numero, token}) {
         return response.status;
 
     } catch (error) {
+        console.error(error('Error doing deleteExpedientes'))
         throw error;
     }
 }

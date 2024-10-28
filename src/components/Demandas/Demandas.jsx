@@ -22,6 +22,8 @@ const Demandas = () => {
   const { demandas, loading, error, setDemandas, createNewDemanda } = useDemandas();
   const [isCreatingDemanda, setIsCreatingDemanda] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const [isOpen, setIsOpen] = useState([]);
   const menuRef = useRef(null);
   const [search, setSearch] = useState('');
   const [isLoadingDemandas, setisLoadingDemandas] = useState(false);
@@ -34,6 +36,7 @@ const Demandas = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [originalDemandas, setOriginalDemandas] = useState([]);
   const [currentDemandas, setCurrentDemandas] = useState([]);
+  const [menuDirection, setMenuDirection] = useState('down');
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
   const [type, setType] = useState("");
   const [selectedMoneda, setSelectedMoneda] = useState("");
@@ -119,7 +122,7 @@ const Demandas = () => {
 
   useEffect(() => {
     if (originalDemandas.length === 0 && demandas.length > 0) {
-        setOriginalDemandas(demandas);
+      setOriginalDemandas(demandas);
     }
     setTotalPages(Math.ceil(demandas.length / itemsPerPage));
 
@@ -129,22 +132,22 @@ const Demandas = () => {
     const endIndex = startIndex + itemsPerPage;
 
     setCurrentDemandas(reversedDemandas.slice(startIndex, endIndex));
-}, [demandas, itemsPerPage, currentPage, originalDemandas.length]);
+  }, [demandas, itemsPerPage, currentPage, originalDemandas.length]);
 
 
-const handleChangePage = (event, newPage) => {
+  const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage + 1);
-};
+  };
 
-const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (event) => {
     setItemsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(1);
-};
+  };
 
 
-const onPageChange = (page) => {
+  const onPageChange = (page) => {
     setCurrentPage(page);
-};
+  };
 
   const openSelectionModal = () => {
     setSelectedMoneda("");
@@ -195,131 +198,156 @@ const onPageChange = (page) => {
     e.preventDefault();
     setIsCreatingDemanda(true);
     if (!formValuesIycc.credito || !selectedMoneda) {
-        toast.error('Los campos crédito y subtipo son obligatorios.');
-        setIsCreatingDemanda(false);
-        return;
+      toast.error('Los campos crédito y subtipo son obligatorios.');
+      setIsCreatingDemanda(false);
+      return;
     }
 
     const demandaData = {
       ...formValuesIycc,
       subtipo: selectedMoneda
-  };
+    };
 
-  try {
+    try {
       const { success, error } = await createNewDemanda(demandaData, setOriginalDemandas);
 
-        if (success) {
-            toast.info('Se creó la demanda con éxito', {
-                icon: () => <img src={check} alt="Success Icon" />,
-                progressStyle: { background: '#1D4ED8' }
-            });
-            closeCreateModalIycc(); 
+      if (success) {
+        toast.info('Se creó la demanda con éxito', {
+          icon: () => <img src={check} alt="Success Icon" />,
+          progressStyle: { background: '#1D4ED8' }
+        });
+        closeCreateModalIycc();
+      } else {
+        if (error === 'Los campos crédito y subtipo son obligatorios.') {
+          toast.error('Los campos crédito y subtipo son obligatorios.');
+        } else if (error === 'El número de credito no existe en CreditosSIAL.') {
+          toast.error('El número de credito no existe en CreditosSIAL.');
+        } else if (error === 'Ya existe una demanda con este crédito.') {
+          toast.error('Ya existe una demanda con este crédito.');
+        } else if (error === 'No se encontró una plantilla para el subtipo proporcionado.') {
+          toast.error('No se encontró una plantilla para el subtipo proporcionado. Por favor crea una plantilla para el subtipo proporcionado');
         } else {
-            if (error === 'Los campos crédito y subtipo son obligatorios.') {
-                toast.error('Los campos crédito y subtipo son obligatorios.');
-            } else if (error === 'El número de credito no existe en CreditosSIAL.') {
-                toast.error('El número de credito no existe en CreditosSIAL.');
-            } else if (error === 'Ya existe una demanda con este crédito.') {
-                toast.error('Ya existe una demanda con este crédito.');
-            } else if (error === 'No se encontró una plantilla para el subtipo proporcionado.') {
-                toast.error('No se encontró una plantilla para el subtipo proporcionado. Por favor crea una plantilla para el subtipo proporcionado');
-            } else {
-                toast.error("Algo sucedió al crear la demanda. Intente de nuevo");
-            }
+          toast.error("Algo sucedió al crear la demanda. Intente de nuevo");
         }
+      }
     } catch (error) {
-        console.error("Error:", error);
-        toast.error('Algo mal sucedió al crear la demanda. Intente de nuevo');
+      console.error("Error:", error);
+      toast.error('Algo mal sucedió al crear la demanda. Intente de nuevo');
     } finally {
       setIsCreatingDemanda(false);
     }
-};
+  };
+
+
+  const openModalUpdate = () => {
+    console.log('Hola')
+  }
+
+  const openModalDelete = () => {
+    console.log('Hola')
+  }
+
+  const handleMenuToggle = (index) => {
+    setOpenMenuIndex(index === openMenuIndex ? null : index);
+
+    setIsOpen(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+    if (index >= currentDemandas.length - 2) {
+      setMenuDirection('up');
+    } else {
+      setMenuDirection('down');
+    }
+  };
+
 
 
   const toggleDropdown = () => setIsSearchOpen((prev) => !prev);
 
   useEffect(() => {
-      const handleClickOutside = (event) => {
-          if (menuRef.current && !menuRef.current.contains(event.target)) {
-              setIsSearchOpen(false);
-          }
-      };
-
-      if (isSearchOpen) {
-          document.addEventListener('mousedown', handleClickOutside);
-      } else {
-          document.removeEventListener('mousedown', handleClickOutside);
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
       }
+    };
 
-      return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-      };
+    if (isSearchOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isSearchOpen]);
 
   const handleSearchTypeChange = async (type) => {
-      setSearchType(type);
-      setIsSearchOpen(false);
-      setSearch('');
-      setIsManualSearch(type === 'Numero');
-      await handleGetDemandas()
+    setSearchType(type);
+    setIsSearchOpen(false);
+    setSearch('');
+    setIsManualSearch(type === 'Numero');
+    await handleGetDemandas()
 
   };
 
 
   const searcherDemanda = async (searchTerm) => {
     setisLoadingDemandas(true)
-      const lowercaseSearchTerm = searchTerm.toLowerCase();
-      let filteredDemandas = [];
-      if (searchType === 'Nombre') {
-        filteredDemandas = demandas.filter(demanda => demanda.nombre.toLowerCase().includes(lowercaseSearchTerm));
-      } else if (searchType === 'Numero') {
-          try {
-              const demanda = await getDemandaByCredito({ numero: lowercaseSearchTerm, token: jwt });
-              if (demanda[0]) {
-                filteredDemandas.push(demanda[0]);
-              } else {
-                filteredDemandas = [];
-              }
-          } catch (error) {
-              if (error.response && error.response.status === 404) {
-                filteredDemandas = [];
-              } else {
-                  console.error("Somethin was wrong")
-              }
-          }
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
+    let filteredDemandas = [];
+    if (searchType === 'Nombre') {
+      filteredDemandas = demandas.filter(demanda => demanda.nombre.toLowerCase().includes(lowercaseSearchTerm));
+    } else if (searchType === 'Numero') {
+      try {
+        const demanda = await getDemandaByCredito({ numero: lowercaseSearchTerm, token: jwt });
+        if (demanda[0]) {
+          filteredDemandas.push(demanda[0]);
+        } else {
+          filteredDemandas = [];
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          filteredDemandas = [];
+        } else {
+          console.error("Somethin was wrong")
+        }
       }
+    }
 
-      setDemandas(filteredDemandas);
-      setisLoadingDemandas(false)
-      setCurrentPage(1);
+    setDemandas(filteredDemandas);
+    setisLoadingDemandas(false)
+    setCurrentPage(1);
   };
 
 
 
   const handleSearchInputChange = async (e) => {
-      const searchTerm = e.target.value;
-      setSearch(searchTerm);
+    const searchTerm = e.target.value;
+    setSearch(searchTerm);
 
 
-      if (searchType === 'Numero' && searchTerm.trim() !== '') {
-          setIsManualSearch(true);
-      }
+    if (searchType === 'Numero' && searchTerm.trim() !== '') {
+      setIsManualSearch(true);
+    }
 
-      if (searchType === 'Nombre' && searchTerm.trim() !== '') {
-        searcherDemanda(searchTerm);
-      }
+    if (searchType === 'Nombre' && searchTerm.trim() !== '') {
+      searcherDemanda(searchTerm);
+    }
 
-      if (searchTerm.trim() === '') {
-          setIsManualSearch(false);
-          await handleGetDemandas()
+    if (searchTerm.trim() === '') {
+      setIsManualSearch(false);
+      await handleGetDemandas()
 
-      }
+    }
   }
 
   const handleManualSearch = () => {
-      if (search.trim() !== '') {
-        searcherDemanda(search);
-      }
+    if (search.trim() !== '') {
+      searcherDemanda(search);
+    }
   };
 
   const handleGetDemandas = async () => {
@@ -567,40 +595,48 @@ const onPageChange = (page) => {
           </div>
         </div>
       )}
-      
+
 
       {demandas.length === 0 ? (
-                <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
-                    <div className="flex flex-col items-center justify-center">
-                        <div className="text-gray-400 mb-2">
-                            <svg width="116" height="116" viewBox="0 0 116 116" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fillRule="evenodd" clipRule="evenodd" d="M106.673 12.4027C110.616 13.5333 112.895 17.6462 111.765 21.5891L97.7533 70.4529C96.8931 73.4525 94.307 75.4896 91.3828 75.7948C91.4046 75.5034 91.4157 75.2091 91.4157 74.9121V27.1674C91.4157 20.7217 86.1904 15.4965 79.7447 15.4965H56.1167L58.7303 6.38172C59.8609 2.43883 63.9738 0.159015 67.9167 1.28962L106.673 12.4027Z" fill="#D2D9EE"></path>
-                                <path fillRule="evenodd" clipRule="evenodd" d="M32 27.7402C32 23.322 35.5817 19.7402 40 19.7402H79.1717C83.59 19.7402 87.1717 23.322 87.1717 27.7402V74.3389C87.1717 78.7572 83.59 82.3389 79.1717 82.3389H40C35.5817 82.3389 32 78.7572 32 74.3389V27.7402ZM57.1717 42.7402C57.1717 46.6062 53.8138 49.7402 49.6717 49.7402C45.5296 49.7402 42.1717 46.6062 42.1717 42.7402C42.1717 38.8742 45.5296 35.7402 49.6717 35.7402C53.8138 35.7402 57.1717 38.8742 57.1717 42.7402ZM36.1717 60.8153C37.2808 58.3975 40.7688 54.8201 45.7381 54.3677C51.977 53.7997 55.3044 57.8295 56.5522 60.0094C59.8797 55.4423 67.0336 46.8724 72.3575 45.9053C77.6814 44.9381 81.7853 48.4574 83.1717 50.338V72.6975C83.1717 75.4825 80.914 77.7402 78.1289 77.7402H41.2144C38.4294 77.7402 36.1717 75.4825 36.1717 72.6975V60.8153Z" fill="#D2D9EE"></path>
-                            </svg>
-                        </div>
-                        <p className="text-gray-500">No hay Demandas todavía</p>
-                        <p className="text-gray-400 text-sm mb-4 text-center">Crea un nuevo demanda para comenzar.</p>
-                    </div>
+        <div className="flex items-center justify-center min-h-screen -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0">
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-gray-400 mb-2">
+              <svg width="116" height="116" viewBox="0 0 116 116" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M106.673 12.4027C110.616 13.5333 112.895 17.6462 111.765 21.5891L97.7533 70.4529C96.8931 73.4525 94.307 75.4896 91.3828 75.7948C91.4046 75.5034 91.4157 75.2091 91.4157 74.9121V27.1674C91.4157 20.7217 86.1904 15.4965 79.7447 15.4965H56.1167L58.7303 6.38172C59.8609 2.43883 63.9738 0.159015 67.9167 1.28962L106.673 12.4027Z" fill="#D2D9EE"></path>
+                <path fillRule="evenodd" clipRule="evenodd" d="M32 27.7402C32 23.322 35.5817 19.7402 40 19.7402H79.1717C83.59 19.7402 87.1717 23.322 87.1717 27.7402V74.3389C87.1717 78.7572 83.59 82.3389 79.1717 82.3389H40C35.5817 82.3389 32 78.7572 32 74.3389V27.7402ZM57.1717 42.7402C57.1717 46.6062 53.8138 49.7402 49.6717 49.7402C45.5296 49.7402 42.1717 46.6062 42.1717 42.7402C42.1717 38.8742 45.5296 35.7402 49.6717 35.7402C53.8138 35.7402 57.1717 38.8742 57.1717 42.7402ZM36.1717 60.8153C37.2808 58.3975 40.7688 54.8201 45.7381 54.3677C51.977 53.7997 55.3044 57.8295 56.5522 60.0094C59.8797 55.4423 67.0336 46.8724 72.3575 45.9053C77.6814 44.9381 81.7853 48.4574 83.1717 50.338V72.6975C83.1717 75.4825 80.914 77.7402 78.1289 77.7402H41.2144C38.4294 77.7402 36.1717 75.4825 36.1717 72.6975V60.8153Z" fill="#D2D9EE"></path>
+              </svg>
+            </div>
+            <p className="text-gray-500">No hay Demandas todavía</p>
+            <p className="text-gray-400 text-sm mb-4 text-center">Crea un nuevo demanda para comenzar.</p>
+          </div>
 
-                </div>
-
-
-
-
-            ) : (
-
-                <TableConditional
-                currentDemandas={currentDemandas}
-                demandas={demandas}
-                itemsPerPage={itemsPerPage}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                handleChangePage={handleChangePage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
-                onPageChange={onPageChange}
-                />
-            )}
         </div>
+
+
+
+
+      ) : (
+
+        <TableConditional
+          currentDemandas={currentDemandas}
+          demandas={demandas}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={onPageChange}
+          handleMenuToggle={handleMenuToggle}
+          isOpen={isOpen}
+          openMenuIndex={openMenuIndex}
+          openModalUpdate={openModalUpdate}
+          openModalDelete={openModalDelete}
+          menuDirection={menuDirection}
+          setOpenMenuIndex={setOpenMenuIndex}
+          setIsOpen={setIsOpen}
+        />
+      )}
+    </div>
   );
 };
 

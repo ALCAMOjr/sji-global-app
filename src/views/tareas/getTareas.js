@@ -19,6 +19,7 @@ export default async function getTareas({ token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing getTarea'))
         throw error;
     }
 }

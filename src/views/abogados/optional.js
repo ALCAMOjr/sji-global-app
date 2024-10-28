@@ -28,6 +28,7 @@ export async function updateAbogados({ id, username, nombre, apellido, cedula, e
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing Update Abogados'))
         throw error;
     }
 }
@@ -50,6 +51,7 @@ export async function deleteAbogados({ id, token }) {
         return response.status;
 
     } catch (error) {
+        console.error(error('Error doing  deleteAbogados'))
         throw error;
     }
 }

@@ -19,6 +19,7 @@ export default async function getAllEtapas({ token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing getAllEtapas'))
         throw error;
     }
 }

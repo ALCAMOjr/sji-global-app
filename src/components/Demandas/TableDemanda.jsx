@@ -6,6 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { IoTrash } from "react-icons/io5";
+import { GrUpdate } from "react-icons/gr";
+
 import TablePagination from '@mui/material/TablePagination';
 
 const TableDemanda = ({
@@ -16,7 +19,33 @@ const TableDemanda = ({
     totalPages,
     handleChangePage,
     handleChangeRowsPerPage,
+    handleMenuToggle,
+    isOpen,
+    openMenuIndex,
+    openModalUpdate,
+    openModalDelete,
+    setOpenMenuIndex,
+    setIsOpen
 }) => {
+
+    useEffect(() => {
+        const handleDocumentClick = (event) => {
+            if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
+                handleMenuClose();
+            }
+        };
+
+        document.addEventListener("click", handleDocumentClick);
+
+        return () => {
+            document.removeEventListener("click", handleDocumentClick);
+        };
+    }, [openMenuIndex]);
+
+    const handleMenuClose = () => {
+        setOpenMenuIndex(null);
+        setIsOpen([]);
+    };
 
     return (
         <div>
@@ -26,6 +55,9 @@ const TableDemanda = ({
                     <TableHead className='bg-gray-100'>
                         <TableRow>
                             <TableCell />
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Opciones</span>
+                            </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Crédito</span>
                             </TableCell>
@@ -136,8 +168,17 @@ const TableDemanda = ({
                     <TableBody>
                         {currentDemandas.map((demanda, index) => (
                             <Row
-                                key={demanda.id}
+                                key={demanda.credito}
+                                currenDemandas={currentDemandas}
                                 demanda={demanda}
+                                index={index}
+                                handleMenuToggle={handleMenuToggle}
+                                isOpen={isOpen}
+                                openMenuIndex={openMenuIndex}
+                                openModalUpdate={openModalUpdate}
+                                openModalDelete={openModalDelete}
+
+
 
                             />
                         ))}
@@ -171,13 +212,55 @@ const TableDemanda = ({
 }
 
 const Row = ({
+    currenDemandas,
     demanda,
+    handleMenuToggle,
+    index,
+    isOpen,
+    openMenuIndex,
+    openModalUpdate,
+    openModalDelete,
 }) => {
+
+    const isMenuOpen = isOpen[index] !== undefined ? isOpen[index] : false;
 
     return (
         <Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell></TableCell>
+                <TableCell>
+                    <button id="menu-button" onClick={() => handleMenuToggle(index)} className={`relative group p-2 ${isMenuOpen ? 'open' : ''}`}>
+                        <div className={`relative flex overflow-hidden items-center justify-center rounded-full w-[32px] h-[32px] transform transition-all bg-white ring-0 ring-gray-300 hover:ring-8  ${isOpen[index] ? 'ring-4' : ''} ring-opacity-30 duration-200 shadow-md`}>
+                            <div className="flex flex-col justify-between w-[12px] h-[12px] transform transition-all duration-300 origin-center overflow-hidden">
+                                <div className={`bg-primary h-[1px] w-3 transform transition-all duration-300 origin-left ${isOpen[index] ? 'translate-x-6' : ''}`}></div>
+                                <div className={`bg-primary h-[1px] w-3 rounded transform transition-all duration-300 ${isOpen[index] ? 'translate-x-6' : ''} delay-75`}></div>
+                                <div className={`bg-primary h-[1px] w-3 transform transition-all duration-300 origin-left ${isOpen[index] ? 'translate-x-6' : ''} delay-150`}></div>
+                                <div className={`absolute items-center justify-between transform transition-all duration-500 top-1 -translate-x-6 ${isOpen[index] ? 'translate-x-0' : ''} flex w-0 ${isOpen[index] ? 'w-8' : ''}`}>
+                                    <div className={`absolute bg-primary h-[1px] w-3 transform transition-all duration-500 rotate-0 delay-300 ${isOpen[index] ? 'rotate-45' : ''}`}></div>
+                                    <div className={`absolute bg-primary h-[1px] w-3 transform transition-all duration-500 -rotate-0 delay-300 ${isOpen[index] ? '-rotate-45' : ''}`}></div>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                    {openMenuIndex === index && (
+                        <div className={`absolute left-24 bg-white py-2 w-48 border rounded-lg shadow-lg menu-options`} style={{
+                            zIndex: 9999,
+                            marginTop: index === 0 || index === currenDemandas.length - 1 ? -120 : 0,
+                            marginRight: index === 0 || index === currenDemandas.length - 1 ? 90 : 0,
+                        }}>
+                            <ul>
+                                <li className="flex items-center">
+                                    <GrUpdate className="inline-block ml-8 w-4 h-4" />
+                                    <a onClick={() => openModalUpdate(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Actualizar Demanda</a>
+                                </li>
+                                <li className="flex items-center">
+                                    <IoTrash className="inline-block ml-8 w-4 h-4" />
+                                    <a onClick={() => openModalDelete(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar Demanda</a>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                </TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.credito}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.subtipo}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.acreditado}</TableCell>

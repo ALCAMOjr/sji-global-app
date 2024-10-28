@@ -22,6 +22,7 @@ export default async function getPositionFilteredRecords({ desde, hasta, juzgado
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing Updat getPositionFilteredRecords'))
         throw error;
     }
 }

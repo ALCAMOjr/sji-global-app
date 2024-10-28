@@ -26,6 +26,7 @@ export default async function createTarea({ exptribunalA_numero, abogado_id, tar
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing createTarea'))
         throw error;
     }
 }

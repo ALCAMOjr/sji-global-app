@@ -1,8 +1,11 @@
-import React from "react";
+import {useEffect} from "react";
 import { Card } from "flowbite-react";
+import { IoTrash } from "react-icons/io5";
+import { GrUpdate } from "react-icons/gr";
+import { RxHamburgerMenu } from "react-icons/rx";
 import { Pagination } from "flowbite-react";
 
-/* const customTheme = {
+const customTheme = {
     pagination: {
         base: "flex overflow-x-auto justify-center",
         layout: {
@@ -29,127 +32,106 @@ import { Pagination } from "flowbite-react";
             }
         }
     }
-}; */
+};
 
-const Cards = ({ currentDemandas, currentPage, totalPages, onPageChange }) => {
+const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, totalPages, onPageChange,setOpenMenuIndex, setIsOpen, currentPage,}) => {
+
+    useEffect(() => {
+        const handleDocumentClick = (event) => {
+            if (openMenuIndex !== null && !event.target.closest("#menu-button") && !event.target.closest(".menu-options")) {
+                handleMenuClose();
+            }
+        };
+
+        document.addEventListener("click", handleDocumentClick);
+
+        return () => {
+            document.removeEventListener("click", handleDocumentClick);
+        };
+    }, [openMenuIndex, isOpen]);
+
+    const handleMenuClose = () => {
+        setOpenMenuIndex(null);
+        setIsOpen([]);
+    };
+
     return (
         <div>
             <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 flex justify-center items-center flex-wrap">
-               
-                    <div className="w-full max-w-xs mb-20 m-4">
+                {currentDemandas.map((demanda, index) => (
+                    <div key={index} className="w-full max-w-xs mb-20 m-4">
                         <Card className="bg-white text-black transform transition duration-500 ease-in-out hover:scale-105">
-                            <div className="mb-4 flex items-center justify-between">
-                                <h5 className="text-sm font-bold leading-none text-gray-900 dark:text-white">
-                                    Crédito #
+                            <div className="mb-2 flex items-center">
+                                <button
+                                    id="menu-button"
+                                    onClick={() => handleMenuToggle(index)}
+                                    className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300"
+                                >
+                                    <RxHamburgerMenu />
+                                </button>
+                                <h5 className="text-sm  ml-12 font-bold leading-none text-gray-900 dark:text-white">
+                                    Crédito # {demanda.credito}
                                 </h5>
                             </div>
+                            {openMenuIndex === index && (
+                                <div className="absolute right-13 bg-white top-12  w-48 border rounded-lg shadow-lg">
+                                    <ul>
+                                        <li className="flex items-center">
+                                            <GrUpdate className="inline-block ml-2" />
+                                            <a
+                                                onClick={() => openModalUpdate(demanda)}
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                                role="menuitem"
+                                            >
+                                                Actualizar expediente
+                                            </a>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <IoTrash className="inline-block ml-2" />
+                                            <a
+                                                onClick={() => openModalDelete(demanda)}
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                                role="menuitem"
+                                            >
+                                                Eliminar expediente
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                             <div className="flow-root">
                                 <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                                     <li className="py-3 sm:py-4">
                                         <div className="flex items-center space-x-4">
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-medium text-gray-500 dark:text-white">
-                                                    <span className="text-black font-bold">Subtipo</span> 
-                                                </p>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-white">
-                                                    <span className="text-black font-bold">Acreditado:</span> 
-                                                </p>
-                                                <p className="truncate text-sm font-medium text-gray-500 dark:text-white">
-                                                    <span className="text-black font-bold">Categoria:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Escritura:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Escritura Formateada:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha Formateada:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Inscripcion:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Volumen:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Libro:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Seccion:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Unidad:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha1:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha1 Formateada:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Monto Otorgado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Monto Otorgado Formateado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Mes Primer Adeudo:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Mes Ultimo Adeudo:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Adeudo:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Adeudo Formateado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Adeudo en Pesos:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Adeudo en Pesos Formateado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Calle:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Número:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fraccionamiento o Colonia:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Municipio:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold"> Estado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Código Postal:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Interes Ordinario:</span>
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold"> Interes Moratorio</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Juzgado:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Hora Requerimiento:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha Requerimiento:</span> 
-                                                </p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    <span className="text-black font-bold">Fecha Requerimiento Formateado:</span> 
-                                                </p>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Subtipo:</span> {demanda.subtipo}</p>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Acreditado:</span> {demanda.acreditado}</p>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Categoria:</span> {demanda.categoria}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura:</span> {demanda.escritura}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura Formateada:</span> {demanda.escritura_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Escritura:</span> {demanda.fecha_escritura_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Inscripción:</span> {demanda.inscripcion}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Volumen:</span> {demanda.volumen}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Libro:</span> {demanda.libro}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Sección:</span> {demanda.seccion}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Unidad:</span> {demanda.unidad}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha:</span> {demanda.fecha_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Monto Otorgado:</span> {demanda.monto_otorgado_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Primer Adeudo:</span> {demanda.mes_primer_adeudo}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Último Adeudo:</span> {demanda.mes_ultimo_adeudo}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Adeudo:</span> {demanda.adeudo_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Adeudo en Pesos:</span> {demanda.adeudo_pesos_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Calle:</span> {demanda.calle}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Número:</span> {demanda.numero}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fraccionamiento o Colonia:</span> {demanda.colonia_fraccionamiento}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Municipio:</span> {demanda.municipio}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Estado:</span> {demanda.estado}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Código Postal:</span> {demanda.codigo_postal}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Interés Ordinario:</span> {demanda.interes_ordinario}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Interés Moratorio:</span> {demanda.interes_moratorio}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Juzgado:</span> {demanda.juzgado}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Hora Requerimiento:</span> {demanda.hora_requerimiento}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Requerimiento:</span> {demanda.fecha_requerimiento_ft}</p>
                                             </div>
                                         </div>
                                     </li>
@@ -157,9 +139,9 @@ const Cards = ({ currentDemandas, currentPage, totalPages, onPageChange }) => {
                             </div>
                         </Card>
                     </div>
-                
+                ))}
             </div>
-           {/*  <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 items-center flex-wrap flex overflow-x-auto justify-center">
+            <div className="mt-24 mb-4 -ml-60 mr-4 lg:-ml-0 lg:mr-0 xl:-ml-0 xl:mr-0 items-center flex-wrap flex overflow-x-auto justify-center">
                 <Pagination
                     theme={customTheme.pagination}
                     currentPage={currentPage}
@@ -170,7 +152,7 @@ const Cards = ({ currentDemandas, currentPage, totalPages, onPageChange }) => {
                     labelRowsPerPage="Filas por página:"
                     showIcons
                 />
-            </div> */}
+            </div>
         </div>
     );
 };

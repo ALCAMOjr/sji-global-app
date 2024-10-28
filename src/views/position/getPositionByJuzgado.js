@@ -23,6 +23,7 @@ export default async function getPositionByJuzgado({ juzgado, token }) {
         return response.data;
 
     } catch (error) {
+        console.error(error('Error doing getpositionByJuzgado'))
         throw error;
     }
 }

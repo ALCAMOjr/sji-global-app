@@ -22,6 +22,7 @@ export default async function StartTarea({ id, token }) {
 
 
     } catch (error) {
+        console.error(error('Error doing StartTarea'))
         throw error;
     }
 }

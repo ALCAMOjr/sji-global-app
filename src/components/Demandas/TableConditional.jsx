@@ -11,9 +11,16 @@ const TableConditional = ({
     handleChangePage,
     handleChangeRowsPerPage,
     onPageChange,
+    handleMenuToggle,
+    isOpen,
+    openMenuIndex,
+    openModalUpdate,
+    openModalDelete,
+    menuDirection,
+    setOpenMenuIndex,
+    setIsOpen
+
 }) => {
-
-
 
     const [shouldRenderTable, setShouldRenderTable] = useState(window.innerWidth >= 1200);
 
@@ -36,25 +43,42 @@ const TableConditional = ({
 
     return shouldRenderTable ? (
         <TableExpedientes
-            currentDemandas={currentDemandas}
-            demandas={demandas}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-            onPageChange={onPageChange}
+        currentDemandas={currentDemandas}
+        demandas={demandas}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={onPageChange}
+        handleMenuToggle={handleMenuToggle}
+        isOpen={isOpen}
+        openMenuIndex={openMenuIndex}
+        openModalUpdate={openModalUpdate}
+        openModalDelete={openModalDelete}
+        menuDirection={menuDirection}
+        setOpenMenuIndex={setOpenMenuIndex}
+        setIsOpen={setIsOpen}
+
         />
     ) : (
         <Cards
-            currentDemandas={currentDemandas}
-            demandas={demandas}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-            onPageChange={onPageChange}
+        currentDemandas={currentDemandas}
+        demandas={demandas}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+        onPageChange={onPageChange}
+        handleMenuToggle={handleMenuToggle}
+        isOpen={isOpen}
+        openMenuIndex={openMenuIndex}
+        openModalUpdate={openModalUpdate}
+        openModalDelete={openModalDelete}
+        menuDirection={menuDirection}
+        setOpenMenuIndex={setOpenMenuIndex}
+        setIsOpen={setIsOpen}
         />
     );
 };

@@ -22,7 +22,7 @@ export default async function getPositionFiltros({ etapa, termino, notificacion,
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getPositionFiltros'))
+        console.error('Error doing getPositionFiltros', error)
         throw error;
     }
 }

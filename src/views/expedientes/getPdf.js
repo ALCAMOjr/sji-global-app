@@ -24,7 +24,7 @@ export default async function getPdf({ url, fecha, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getPdf'))
+        console.error('Error doing getPdf', error)
         throw error;
     }
 }

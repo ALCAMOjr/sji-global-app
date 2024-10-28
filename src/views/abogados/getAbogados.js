@@ -20,7 +20,7 @@ export default async function getAllAbogados({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing get All Abogados'))
+        console.error('Error doing get All Abogados', error)
         throw error;
     }
 }

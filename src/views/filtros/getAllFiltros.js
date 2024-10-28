@@ -20,7 +20,7 @@ export default async function getAllFiltros({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getAllFiltros'))
+        console.error('Error doing getAllFiltros', error)
         throw error;
     }
 }

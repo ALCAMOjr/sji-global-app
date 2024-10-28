@@ -20,7 +20,7 @@ export default async function getExpedienteByNumero({ numero, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getEpedienteByNumero')) 
+        console.error('Error doing getEpedienteByNumero', error) 
         throw error;
     }
 }

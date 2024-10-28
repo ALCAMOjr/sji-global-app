@@ -19,7 +19,7 @@ export default async function getTareasUser({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getTareasUser'))
+        console.error('Error doing getTareasUser', error)
         throw error;
     }
 }

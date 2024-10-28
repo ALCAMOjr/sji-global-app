@@ -21,7 +21,7 @@ export default async function getNumberToWords({ number, token }) {
         return response.data.words;
 
     } catch (error) {
-        console.error(error('Error doing getNumberToWords'))
+        console.error('Error doing getNumberToWords', error)
         throw error;
     }
 }

@@ -19,7 +19,7 @@ export default async function getAllExpedientesSial({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getAllExpedientesSial'))
+        console.error('Error doing getAllExpedientesSial', error)
         throw error;
     }
 }

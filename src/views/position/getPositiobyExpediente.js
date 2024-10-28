@@ -24,7 +24,7 @@ export default async function getPositionByExpediente({ expediente, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getPositionByExpediente'))
+        console.error('Error doing getPositionByExpediente', error)
         throw error;
     }
 }

@@ -13,7 +13,7 @@ export default async function verifyToken(token) {
         return response.data.valid;
 
     } catch (error) {
-        console.error(error('Error doing verifyToken'))
+        console.error('Error doing verifyToken', error )
         throw error;
     }
 }

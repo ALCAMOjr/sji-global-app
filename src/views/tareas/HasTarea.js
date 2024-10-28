@@ -22,7 +22,7 @@ export default async function HasTarea({ numero, token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing HasTarea'))
+        console.error('Error doing HasTarea', error)
         throw error;
     }
 }

@@ -98,6 +98,12 @@ const TableDemanda = ({
                                 <span className='text-sm font-bold text-black'>Unidad</span>
                             </TableCell>
                             <TableCell>
+                                <span className='text-sm font-bold text-black'>Numero (SS)</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Folio</span>
+                            </TableCell>
+                            <TableCell>
                                 <span className='text-sm font-bold text-black'>Fecha</span>
                             </TableCell>
                             <TableCell>
@@ -281,6 +287,8 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.libro}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.seccion}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.unidad}</TableCell>
+                <TableCell className="max-w-xs truncate">{demanda.numero_ss}</TableCell>
+                <TableCell className="max-w-xs truncate">{demanda.folio}</TableCell>
                 <TableCell className="max-w-xs truncate">
                     {new Date(demanda.fecha).toLocaleDateString('es-MX', {
                         day: '2-digit',

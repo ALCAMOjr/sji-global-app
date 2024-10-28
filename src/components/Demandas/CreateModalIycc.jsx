@@ -13,6 +13,8 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
     const [errorEscritura, setErrorEscritura] = useState("");
     const [errorInscripcion, setErrorInscripcion] = useState("");
     const [errorVolumen, setErrorVolumen] = useState("");
+    const [errorNumeroSs, setErrorNumeroSs] = useState("");
+    const [errorFolio, setErrorFolio] = useState("");
     const [errorLibro, setErrorLibro] = useState("");
     const [errorCodigoPostal, setErrorCodigoPostal] = useState("");
     const [errorFechaRequerimiento, setErrorFechaRequerimiento] = useState("");
@@ -352,6 +354,27 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
         }
     };
 
+    const handleNumeroSsBlur = () => {
+        const numeroSsValue = formValues.numero_ss;
+        if (numeroSsValue && numeroSsValue.includes('.')) {
+            setErrorNumeroSs("El número de seguro social no puede tener decimales");
+            setIsSubmitDisabled(true);
+        } else {
+            setErrorNumeroSs('');
+            setIsSubmitDisabled(false);
+        }
+    };
+    const handleFolioBlur = () => {
+        const folioValue = formValues.folio;
+        if (folioValue && folioValue.includes('.')) {
+            setErrorFolio("El número de folio no puede tener decimales");
+            setIsSubmitDisabled(true);
+        } else {
+            setErrorFolio('');
+            setIsSubmitDisabled(false);
+        }
+    };
+
     const handleCodigoPostalBlur = async () => {
         const codigoPostal = formValues.codigo_postal;
         if (!codigoPostal) {
@@ -391,7 +414,7 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
             }
         } catch (error) {
             console.error("Error al obtener información del código postal:", error);
-            setErrorCodigoPostal("Hubo un error al obtener la información del código postal");
+            setErrorCodigoPostal("No se encontró información para el código postal ingresado");
             setIsSubmitDisabled(true);
         }
     };
@@ -527,15 +550,21 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             required
                         />
 
-                        <label className="block text-sm font-medium text-gray-700">Número (NSS)</label>
+                        <label className="block text-sm font-medium text-gray-700">Número (SS)</label>
                         <input
+                            type="number"
                             name="numero_ss"
                             value={formValues.numero_ss}
+                            onBlur={handleNumeroSsBlur}
                             onChange={handleChange}
                             placeholder="Ingrese el Número"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
 
                         />
+                        {errorNumeroSs && (
+                            <p className="text-primary text-xs -mt-2">{errorNumeroSs}</p>
+                        )}
+
 
                         <label className="block text-sm font-medium text-gray-700">Colonia/Fraccionamiento</label>
                         <select
@@ -677,7 +706,7 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                         />
 
                         {errorCodigoPostal && (
-                            <p className="text-red-500 text-xs mt-1">{errorCodigoPostal}</p>
+                            <p className="text-red-500 text-xs -mt-2">{errorCodigoPostal}</p>
                         )}
 
                         <label className="block text-sm font-medium text-gray-700">Calle</label>
@@ -703,13 +732,18 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
 
                         <label className="block text-sm font-medium text-gray-700">Folio</label>
                         <input
+                            type="number"
                             name="folio"
                             value={formValues.folio}
+                            onBlur={handleFolioBlur}
                             onChange={handleChange}
                             placeholder="Ingrese el Folio"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
 
                         />
+                        {errorFolio && (
+                            <p className="text-primary text-xs -mt-2">{errorFolio}</p>
+                        )}
                     </div>
 
                     <div>

@@ -79,7 +79,10 @@ const Demandas = () => {
     juzgado: "",
     hora_requerimiento: "",
     fecha_requerimiento: "",
-    fecha_requerimiento_ft: ""
+    fecha_requerimiento_ft: "",
+    folio: "",
+    numero_ss: ""
+
   });
 
   const resetFormValues = () => {

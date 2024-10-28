@@ -19,7 +19,7 @@ export default async function getReporte({ token }) {
         return response.data;
 
     } catch (error) {
-        console.error(error('Error doing getReporte'))
+        console.error('Error doing getReporte', error)
         throw error;
     }
 }

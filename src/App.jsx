@@ -12,7 +12,7 @@ import Expedientes from './components/Expediente/Expedientes.jsx';
 import Abogados from './components/Abogados/Abogado.jsx';
 import Home from './components/Home.jsx';
 import Agenda from './components/Agenda/Agenda.jsx';
-import Demandas from './components/Demandas/Demandas.jsx'
+import DemandasIycc from './components/DemandasIycc/DemandasIycc.jsx'
 import ExpedientesSial from './components/ExpedienteSial/ExpedienteSial.jsx';
 import Position from './components/Posicion/Position.jsx';
 import Reporte from './components/Reportes/Reportes.jsx';
@@ -55,8 +55,8 @@ function App() {
               element={<RoleProtectedRoute element={<Reporte />} allowedRoles={['coordinador']} />}
             />
             <Route
-              path="/demandas"
-              element={<RoleProtectedRoute element={<Demandas />} allowedRoles={['abogado', 'coordinador']} />}
+              path="/demandasIycc"
+              element={<RoleProtectedRoute element={<DemandasIycc />} allowedRoles={['abogado', 'coordinador']} />}
             />
             <Route
               path="/gestion"

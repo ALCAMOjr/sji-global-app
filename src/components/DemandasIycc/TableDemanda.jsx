@@ -8,8 +8,20 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
+import { GrDocumentPdf } from "react-icons/gr";
 
 import TablePagination from '@mui/material/TablePagination';
+
+const formatMonthYear = (fecha) => {
+    const [year, month] = fecha.split('-');
+    const meses = [
+        "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+        "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+    ];
+    return `${meses[parseInt(month, 10) - 1]} del ${year}`;
+};
+
+
 
 const TableDemanda = ({
     currentDemandas,
@@ -62,13 +74,13 @@ const TableDemanda = ({
                                 <span className='text-sm font-bold text-black'>Crédito</span>
                             </TableCell>
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>Subtipo</span>
+                                <span className='text-sm font-bold text-black'>Moneda</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Acreditado</span>
                             </TableCell>
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>Categoria</span>
+                                <span className='text-sm font-bold text-black'>Demandado/Demanda</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Escritura</span>
@@ -256,12 +268,16 @@ const Row = ({
                         }}>
                             <ul>
                                 <li className="flex items-center">
-                                    <GrUpdate className="inline-block ml-8 w-4 h-4" />
+                                    <GrUpdate className="inline-block ml-8 w-6 h-6" />
                                     <a onClick={() => openModalUpdate(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Actualizar Demanda</a>
                                 </li>
                                 <li className="flex items-center">
-                                    <IoTrash className="inline-block ml-8 w-4 h-4" />
+                                    <IoTrash className="inline-block ml-8 w-6 h-6" />
                                     <a onClick={() => openModalDelete(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar Demanda</a>
+                                </li>
+                                <li className="flex items-center">
+                                    <GrDocumentPdf className="inline-block ml-8 w-6 h-6" />
+                                    <a onClick={() => openModalDelete(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Descargar Demanda</a>
                                 </li>
                             </ul>
                         </div>
@@ -300,8 +316,12 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.fecha_ft}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.monto_otorgado}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.monto_otorgado_ft}</TableCell>
-                <TableCell className="max-w-xs truncate">{demanda.mes_primer_adeudo}</TableCell>
-                <TableCell className="max-w-xs truncate">{demanda.mes_ultimo_adeudo}</TableCell>
+                <TableCell className="max-w-xs truncate">
+                {formatMonthYear(demanda.mes_primer_adeudo)}
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                {formatMonthYear(demanda.mes_ultimo_adeudo)}
+                </TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.adeudo}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.adeudo_ft}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.adeudo_pesos}</TableCell>

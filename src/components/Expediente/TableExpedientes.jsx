@@ -215,11 +215,11 @@ const Row = ({
                         }}>
                             <ul>
                                 <li className="flex items-center">
-                                    <GrUpdate className="inline-block ml-8 w-4 h-4" />
+                                    <GrUpdate className="inline-block ml-8 w-6 h-6" />
                                     <a onClick={() => openModalUpdate(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Actualizar Expediente</a>
                                 </li>
                                 <li className="flex items-center">
-                                    <IoTrash className="inline-block ml-8 w-4 h-4" />
+                                    <IoTrash className="inline-block ml-8 w-6 h-6" />
                                     <a onClick={() => openModalDelete(expediente)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar Expediente</a>
                                 </li>
                             </ul>

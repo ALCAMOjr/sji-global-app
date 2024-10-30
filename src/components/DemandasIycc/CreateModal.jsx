@@ -6,9 +6,12 @@ import getNumberToWordsPesos from "../../views/numberToWords/getNumberToWordsPes
 import Context from "../../context/abogados.context.jsx";
 import { useContext, useState } from "react";
 import { getInfobyCP } from "../../views/copomex/getInfobyCP.js";
+import { getMunicipalitiesByState } from "../../views/copomex/getMunicipalitiesByState.js";
+import { getColoniesbyStateMunicipalities } from "../../views/copomex/getColoniesbyStateMunicipalities.js";
+import { getCP } from "../../views/copomex/getCP.js";
+import trash_icon from "../../assets/basura.png"
 
-
-const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValues, handleCreate, isCreatingDemanda, municipios }) => {
+const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, handleCreate, isCreatingDemanda, municipiosNL, estados }) => {
     const [errorCredito, setErrorCredito] = useState("");
     const [errorEscritura, setErrorEscritura] = useState("");
     const [errorInscripcion, setErrorInscripcion] = useState("");
@@ -28,8 +31,12 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
     const [isAdeudoPesosFormatEditable, setIsAdeudoPesosFormatEditable] = useState(false);
     const [isMunicipioEditable, setIsMunicipioEditable] = useState(false);
     const [isEstadoEditable, setIsEstadoEditable] = useState(false);
-    const [isColFraccEditable, setIsColFraccEditable] = useState(false);
     const [colonias, setColonias] = useState([]);
+    const [municipios, setMunicipios] = useState([]);
+    const [isMunicipioDropdown, setIsMunicipioDropdown] = useState(true);
+    const [isCodigoPostalEditable, setIsCodigoPostalEditable] = useState(true);
+    const [isEstadoDropdown, setIsEstadoDropdown] = useState(true);
+    const [isEditingColonia, setIsEditingColonia] = useState(false);
 
     const { jwt } = useContext(Context);
 
@@ -245,6 +252,54 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                 setIsAdeudoPesosFormatEditable(false);
             }
         }
+        if (name === "estado" && isEstadoDropdown) {
+            if (value === "") {
+                setIsCodigoPostalEditable(true);
+                setIsMunicipioDropdown(true);
+                setMunicipios([]);
+                setColonias([]);
+            } else {
+                setIsCodigoPostalEditable(false);
+                setIsEstadoEditable(true);
+
+                try {
+                    const municipiosData = await getMunicipalitiesByState(value);
+                    if (municipiosData?.response?.municipios) {
+                        setMunicipios(municipiosData.response.municipios);
+                        setIsMunicipioDropdown(true);
+                    } else {
+                        setMunicipios([]);
+                        setIsMunicipioDropdown(true);
+                    }
+                } catch (error) {
+                    console.error("Error al obtener municipios:", error);
+                    setMunicipios([]);
+                    setIsMunicipioDropdown(true);
+                }
+            }
+        }
+        if (name === "municipio" && isMunicipioDropdown) {
+            if (value === "") {
+                setIsMunicipioEditable(false);
+                setColonias([]);
+            } else {
+                setIsMunicipioEditable(true);
+                try {
+                    const coloniesData = await getColoniesbyStateMunicipalities(formValues.estado, value);
+                    if (coloniesData?.response) {
+                        const coloniesList = Object.keys(coloniesData.response).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+                        setColonias(coloniesList);
+                    } else {
+                        setColonias([]);
+                    }
+                } catch (error) {
+                    console.error("Error al obtener colonias:", error);
+                    setColonias([]);
+                }
+            }
+        }
+
+
 
         if (name === 'escritura' && errorEscritura) {
             setErrorEscritura('');
@@ -280,6 +335,50 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
             setErrorFechaRequerimiento('');
             setIsSubmitDisabled(false);
         }
+    };
+
+    const handleColoniaSelect = async (e) => {
+        const selectedColonia = e.target.value;
+    
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            colonia_fraccionamiento: selectedColonia,
+        }));
+        if (selectedColonia !== "") {
+            try {
+                const cpData = await getCP(formValues.estado, formValues.municipio, selectedColonia);
+                if (cpData?.response?.cp) {
+                    const newCodigoPostal = cpData.response.cp[0];
+                    setFormValues((prevValues) => ({
+                        ...prevValues,
+                        codigo_postal: newCodigoPostal,
+                    }));
+                } else {
+                    setErrorCodigoPostal("No se encontró código postal para la información seleccionada");
+                }
+            } catch (error) {
+                console.error("Error al obtener el código postal:", error);
+                setErrorCodigoPostal("No se encontró código postal para la información seleccionada");
+            }
+        } else {
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                codigo_postal: "",
+            }));
+            setErrorCodigoPostal("");
+        }
+
+        setIsEditingColonia(true);
+    };
+
+    const handleResetColonia = () => {
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            colonia_fraccionamiento: "",
+            codigo_postal: "",
+        }));
+        setIsEditingColonia(false);
+        setErrorCodigoPostal("");
     };
 
 
@@ -385,9 +484,10 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                 colonia_fraccionamiento: ""
             }));
             setColonias([]);
-            setIsColFraccEditable(false);
             setIsEstadoEditable(false);
+            setIsEstadoDropdown(true);
             setIsMunicipioEditable(false);
+            setIsMunicipioDropdown(true);
             return;
         }
         try {
@@ -402,19 +502,40 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                 }));
                 const coloniasList = data.map((item) => item.response.asentamiento);
                 setColonias(coloniasList);
-                setIsColFraccEditable(true);
                 setIsEstadoEditable(true);
                 setIsMunicipioEditable(true);
-
+                setIsEstadoDropdown(false);
+                setIsMunicipioDropdown(false);
+                setIsCodigoPostalEditable(true);
                 setErrorCodigoPostal("");
                 setIsSubmitDisabled(false);
             } else {
                 setErrorCodigoPostal("No se encontró información para el código postal ingresado");
                 setIsSubmitDisabled(true);
+                setFormValues((prevValues) => ({
+                    ...prevValues,
+                    estado: "",
+                    municipio: "",
+                    colonia_fraccionamiento: ""
+                }));
+                setIsEstadoEditable(false);
+                setIsEstadoDropdown(false);
+                setIsMunicipioEditable(false);
+                setIsMunicipioDropdown(false);
             }
         } catch (error) {
             console.error("Error al obtener información del código postal:", error);
             setErrorCodigoPostal("No se encontró información para el código postal ingresado");
+            setFormValues((prevValues) => ({
+                ...prevValues,
+                estado: "",
+                municipio: "",
+                colonia_fraccionamiento: ""
+            }));
+            setIsEstadoEditable(false);
+            setIsMunicipioEditable(false);
+            setIsEstadoDropdown(false);
+            setIsMunicipioDropdown(false);
             setIsSubmitDisabled(true);
         }
     };
@@ -567,21 +688,40 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
 
 
                         <label className="block text-sm font-medium text-gray-700">Colonia/Fraccionamiento</label>
-                        <select
-                            name="colonia_fraccionamiento"
-                            value={formValues.colonia_fraccionamiento}
-                            onChange={isColFraccEditable ? handleChange : undefined}
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            disabled={!isColFraccEditable}
-                            required>
-                            <option value="" disabled hidden>Selecciona una opción</option>
-                            {colonias.map((colonia, index) => (
-                                <option key={index} value={colonia}>
-                                    {colonia}
-                                </option>
-                            ))}
-                        </select>
-
+                        {!isEditingColonia ? (
+                            <select
+                                name="colonia_fraccionamiento"
+                                value={formValues.colonia_fraccionamiento}
+                                onChange={handleColoniaSelect}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required>
+                                <option value="">Selecciona una opción</option>
+                                {colonias.map((colonia, index) => (
+                                    <option key={index} value={colonia}>
+                                        {colonia}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <div className="relative w-full">
+                                <input
+                                    type="text"
+                                    name="colonia_fraccionamiento"
+                                    value={formValues.colonia_fraccionamiento}
+                                    onChange={handleChange}
+                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2 pr-10"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleResetColonia}
+                                    className="absolute inset-y-0 right-2 flex items-center"
+                                    title="Restablecer selección"
+                                >
+                                    <img src={trash_icon} alt="Eliminar" className="w-4 h-4 -mt-1" />
+                                </button>
+                            </div>
+                        )}
                         <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento</label>
                         <input
                             type="date"
@@ -702,9 +842,9 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             onBlur={handleCodigoPostalBlur}
                             placeholder="Código Postal"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                            disabled={!isCodigoPostalEditable}
                             required
                         />
-
                         {errorCodigoPostal && (
                             <p className="text-red-500 text-xs -mt-2">{errorCodigoPostal}</p>
                         )}
@@ -778,8 +918,8 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             required
                         >
                             <option value="" disabled hidden>Selecciona</option>
-                            <option value="Demandado">Propiedad</option>
-                            <option value="Demandada">Gravamen</option>
+                            <option value="Propiedad">Propiedad</option>
+                            <option value="Gravamen">Gravamen</option>
                         </select>
 
                         <label className="block text-sm font-medium text-gray-700">Monto Otorgado</label>
@@ -804,16 +944,33 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Estado</label>
-                        <input
-                            type="text"
-                            name="estado"
-                            value={formValues.estado}
-                            onChange={isEstadoEditable ? handleChange : undefined}
-                            placeholder="Estado"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            readOnly={!isEstadoEditable}
-                            required
-                        />
+                        {isEstadoDropdown ? (
+                            <select
+                                name="estado"
+                                value={formValues.estado}
+                                onChange={handleChange}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required>
+                                <option value="">Selecciona un estado</option>
+                                {estados.map((estado, index) => (
+                                    <option key={index} value={estado}>
+                                        {estado}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                name="estado"
+                                value={formValues.estado}
+                                onChange={isEstadoEditable ? handleChange : undefined}
+                                placeholder="Estado"
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                readOnly={!isEstadoEditable}
+                                required
+                            />
+                        )}
+
 
                         <label className="block text-sm font-medium text-gray-700">Número</label>
                         <input
@@ -894,7 +1051,7 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                             required >
                             <option value="" disabled hidden>Selecciona un municipio</option>
-                            {municipios.map((municipio, index) => (
+                            {municipiosNL.map((municipio, index) => (
                                 <option key={index} value={municipio}>
                                     {municipio}
                                 </option>
@@ -922,17 +1079,32 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
                         />
 
                         <label className="block text-sm font-medium text-gray-700 mt-0">Municipio</label>
-                        <input
-                            type="text"
-                            name="municipio"
-                            value={formValues.municipio}
-                            onChange={isMunicipioEditable ? handleChange : undefined}
-                            placeholder="Municipio"
-                            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                            readOnly={!isMunicipioEditable}
-                            required
-                        />
-
+                        {isMunicipioDropdown ? (
+                            <select
+                                name="municipio"
+                                value={formValues.municipio}
+                                onChange={handleChange}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required>
+                                <option value="">Selecciona un municipio</option>
+                                {municipios.map((municipio, index) => (
+                                    <option key={index} value={municipio}>
+                                        {municipio}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                name="municipio"
+                                value={formValues.municipio}
+                                onChange={isMunicipioEditable ? handleChange : undefined}
+                                placeholder="Municipio"
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                readOnly={!isMunicipioEditable}
+                                required
+                            />
+                        )}
 
                         <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
                         <input
@@ -1006,4 +1178,4 @@ const CreateModalIycc = ({ closeModal, moneda, reverse, formValues, setFormValue
     );
 };
 
-export default CreateModalIycc;
+export default CreateModal;

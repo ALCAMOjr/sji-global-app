@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext } from "react";
-import useDemandas from "../../hooks/demandas/useDemandas.jsx";
+import useDemandasIycc from "../../hooks/demandasIycc/useDemandasIycc.jsx";
 import { useMediaQuery } from 'react-responsive';
 import { IoMdCheckmark } from "react-icons/io";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
@@ -8,8 +8,7 @@ import create_icon from "../../assets/crear.png";
 import check from "../../assets/check.png";
 import { Spinner } from "@nextui-org/react";
 import ModalSelection from "./SelectionModal.jsx";
-import CreateModalConyugal from "./CreateModalConyugal.jsx";
-import CreateModalIycc from "./CreateModalIycc.jsx";
+import CreateModal from "./CreateModal.jsx";
 import useCopomex from "../../hooks/compomex/UseCopomex.jsx";
 import Error from "../Error.jsx";
 import TableConditional from "./TableConditional.jsx";
@@ -18,8 +17,8 @@ import Context from "../../context/abogados.context.jsx";
 import { toast } from "react-toastify";
 import getDemandaByCredito from "../../views/demandasIycc/getDemandaByCredito.js";
 
-const Demandas = () => {
-  const { demandas, loading, error, setDemandas, createNewDemanda } = useDemandas();
+const DemandasIycc = () => {
+  const { demandas, loading, error, setDemandas, createNewDemanda } = useDemandasIycc();
   const [isCreatingDemanda, setIsCreatingDemanda] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -38,13 +37,11 @@ const Demandas = () => {
   const [currentDemandas, setCurrentDemandas] = useState([]);
   const [menuDirection, setMenuDirection] = useState('down');
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
-  const [type, setType] = useState("");
   const [selectedMoneda, setSelectedMoneda] = useState("");
-  const { municipiosNL, loadingmunicipiosNL, errorMunicipiosNL } = useCopomex()
-  const [isCreateModalOpenIycc, setIsCreateModalOpenIycc] = useState(false);
-  const [isCreateModalOpenConyugal, setIsCreateModalOpenConyugal] = useState(false);
+  const [ isModalOpen, setIsModalOpen] = useState(false);
+  const { municipiosNL, loadingmunicipiosNL, errorMunicipiosNL, states, errorStates, loadingStates } = useCopomex()
   const { jwt } = useContext(Context);
-  const [formValuesIycc, setFormValuesIycc] = useState({
+  const [formValues, setFormValues] = useState({
     credito: "",
     subtipo: "",
     acreditado: "",
@@ -86,7 +83,7 @@ const Demandas = () => {
   });
 
   const resetFormValues = () => {
-    setFormValuesIycc({
+    setFormValues({
       credito: "",
       acreditado: "",
       categoria: "",
@@ -154,7 +151,6 @@ const Demandas = () => {
 
   const openSelectionModal = () => {
     setSelectedMoneda("");
-    setType("");
     setIsSelectionModalOpen(true);
   };
 
@@ -164,50 +160,39 @@ const Demandas = () => {
   };
 
   const reverse = () => {
-    setIsCreateModalOpenIycc(false);
-    setIsCreateModalOpenConyugal(false);
+    setIsModalOpen(false);
     setIsSelectionModalOpen(true);
     resetFormValues();
   };
 
   const openCreateModal = () => {
-    if (!type || !selectedMoneda) {
-      setErrorSelectionModal("Selecciona un tipo de demanda y moneda antes de continuar.");
+    if (!selectedMoneda) {
+      setErrorSelectionModal("Selecciona un tipo de moneda antes de continuar.");
       return;
     }
-
-    if (type === "Individual y Con Consentimiento") {
-      setIsCreateModalOpenIycc(true);
-    } else if (type === "Conyugal") {
-      setIsCreateModalOpenConyugal(true);
-    }
-
+    setIsModalOpen(true)
     setIsSelectionModalOpen(false);
     setErrorSelectionModal("");
   };
 
 
-  const closeCreateModalIycc = () => {
-    setIsCreateModalOpenIycc(false);
+  const closeCreateModal = () => {
+    setIsModalOpen(false);
     resetFormValues();
   };
 
-  const closeCreateModalConyugal = () => {
-    setIsCreateModalOpenConyugal(false);
-  };
 
-
-  const handleCreateDemandaIycc = async (e) => {
+  const handleCreateDemanda = async (e) => {
     e.preventDefault();
     setIsCreatingDemanda(true);
-    if (!formValuesIycc.credito || !selectedMoneda) {
+    if (!formValues.credito || !selectedMoneda) {
       toast.error('Los campos crédito y subtipo son obligatorios.');
       setIsCreatingDemanda(false);
       return;
     }
 
     const demandaData = {
-      ...formValuesIycc,
+      ...formValues,
       subtipo: selectedMoneda
     };
 
@@ -219,7 +204,7 @@ const Demandas = () => {
           icon: () => <img src={check} alt="Success Icon" />,
           progressStyle: { background: '#1D4ED8' }
         });
-        closeCreateModalIycc();
+        closeCreateModal();
       } else {
         if (error === 'Los campos crédito y subtipo son obligatorios.') {
           toast.error('Los campos crédito y subtipo son obligatorios.');
@@ -246,7 +231,8 @@ const Demandas = () => {
     console.log('Hola')
   }
 
-  const openModalDelete = () => {
+  const openModalDelete = (demanda) => {
+    console.log(demanda)
     console.log('Hola')
   }
 
@@ -364,13 +350,14 @@ const Demandas = () => {
     setisLoadingDemandas(false);
   };
 
-  if (loading || isLoadingDemandas || loadingmunicipiosNL) return (
+  if (loading || isLoadingDemandas || loadingmunicipiosNL || loadingStates) return (
     <div className="fixed inset-0 flex items-center justify-center">
       <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
     </div>
   );
 
   if (errorMunicipiosNL) return <Error message={errorMunicipiosNL.message} />;
+  if (errorStates) return <Error message={errorStates.message} />;
   if (error) return <Error message={error.message} />;
 
 
@@ -403,31 +390,22 @@ const Demandas = () => {
             setSelectedMoneda={setSelectedMoneda}
             selectedMoneda={selectedMoneda}
             openCreateModal={openCreateModal}
-            setType={setType}
-            type={type}
             setError={setErrorSelectionModal}
             error={errorSelectionModal}
           />
         )}
 
-        {isCreateModalOpenIycc && (
-          <CreateModalIycc
-            closeModal={closeCreateModalIycc}
+        {isModalOpen && (
+          <CreateModal
+            closeModal={closeCreateModal}
             moneda={selectedMoneda}
             reverse={reverse}
-            formValues={formValuesIycc}
-            setFormValues={setFormValuesIycc}
-            handleCreate={handleCreateDemandaIycc}
+            formValues={formValues}
+            setFormValues={setFormValues}
+            handleCreate={handleCreateDemanda}
             isCreatingDemanda={isCreatingDemanda}
-            municipios={municipiosNL}
-          />
-        )}
-
-        {isCreateModalOpenConyugal && (
-          <CreateModalConyugal
-            closeModal={closeCreateModalConyugal}
-            moneda={selectedMoneda}
-            reverse={reverse}
+            municipiosNL={municipiosNL}
+            estados={states}
           />
         )}
       </>
@@ -643,4 +621,4 @@ const Demandas = () => {
   );
 };
 
-export default Demandas;
+export default DemandasIycc;

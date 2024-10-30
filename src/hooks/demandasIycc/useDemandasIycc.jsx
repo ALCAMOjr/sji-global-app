@@ -2,8 +2,8 @@ import { useContext, useState, useEffect, useCallback } from 'react';
 import Context from '../../context/abogados.context.jsx';
 import getAllDemandas from '../../views/demandasIycc/getAllDemandas.js';
 import createDemanda from '../../views/demandasIycc/createDemanda.js';
-
-export default function useDemandas() {
+import { deleteDemanda } from '../../views/demandasIycc/optional.js'
+export default function useDemandasIycc() {
     const { jwt } = useContext(Context);
     const [demandas, setDemandas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,7 +27,6 @@ export default function useDemandas() {
       const createNewDemanda = useCallback(async (demandaData, setOriginalDemandas) => {
         try {
             const newDemanda = await createDemanda({ demandaData, token: jwt });
-            console.log(newDemanda)
             setOriginalDemandas([]);
             setDemandas(prevDemandas => [...prevDemandas,  newDemanda[0]]);
             return { success: true, data: newDemanda };

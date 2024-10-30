@@ -2,6 +2,7 @@ import {useEffect} from "react";
 import { Card } from "flowbite-react";
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
+import { GrDocumentPdf } from "react-icons/gr";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { Pagination } from "flowbite-react";
 
@@ -32,6 +33,16 @@ const customTheme = {
             }
         }
     }
+};
+
+
+const formatMonthYear = (fecha) => {
+    const [year, month] = fecha.split('-');
+    const meses = [
+        "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+        "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+    ];
+    return `${meses[parseInt(month, 10) - 1]} del ${year}`;
 };
 
 const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, totalPages, onPageChange,setOpenMenuIndex, setIsOpen, currentPage,}) => {
@@ -83,7 +94,7 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
                                                 role="menuitem"
                                             >
-                                                Actualizar expediente
+                                                Actualizar Demanda
                                             </a>
                                         </li>
                                         <li className="flex items-center">
@@ -93,8 +104,21 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
                                                 role="menuitem"
                                             >
-                                                Eliminar expediente
+                                                Eliminar Demanda
                                             </a>
+                                            
+                                        </li>
+
+                                        <li className="flex items-center">
+                                            <GrDocumentPdf className="inline-block ml-2" />
+                                            <a
+                                                onClick={() => openModalDelete(demanda)}
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                                role="menuitem"
+                                            >
+                                                Descargar Demanda
+                                            </a>
+                                            
                                         </li>
                                     </ul>
                                 </div>
@@ -104,9 +128,9 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                     <li className="py-3 sm:py-4">
                                         <div className="flex items-center space-x-4">
                                             <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Subtipo:</span> {demanda.subtipo}</p>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Moneda:</span> {demanda.subtipo}</p>
                                                 <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Acreditado:</span> {demanda.acreditado}</p>
-                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Categoria:</span> {demanda.categoria}</p>
+                                                <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Demandado/Demanda:</span> {demanda.categoria}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura:</span> {demanda.escritura}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura Formateada:</span> {demanda.escritura_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Escritura:</span> {demanda.fecha_escritura_ft}</p>
@@ -117,8 +141,8 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Unidad:</span> {demanda.unidad}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha:</span> {demanda.fecha_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Monto Otorgado:</span> {demanda.monto_otorgado_ft}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Primer Adeudo:</span> {demanda.mes_primer_adeudo}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Último Adeudo:</span> {demanda.mes_ultimo_adeudo}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Primer Adeudo:</span> {formatMonthYear(demanda.mes_primer_adeudo)}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Último Adeudo:</span>   {formatMonthYear(demanda.mes_ultimo_adeudo)}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Adeudo:</span> {demanda.adeudo_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Adeudo en Pesos:</span> {demanda.adeudo_pesos_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Calle:</span> {demanda.calle}</p>

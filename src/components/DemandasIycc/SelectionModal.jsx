@@ -1,20 +1,19 @@
 import { useEffect } from "react";
 
-const ModalSelection = ({ openCreateModal, closeSelectionModal, setSelectedMoneda, selectedMoneda, setType, type, error, setError }) => {
+const ModalSelection = ({ openCreateModal, closeSelectionModal, setSelectedMoneda, selectedMoneda, error, setError }) => {
 
-  const handleSelection = (demandaType, moneda) => {
-    setType(demandaType);
+  const handleSelection = (moneda) => {
     setSelectedMoneda(moneda);
-    if (demandaType && moneda) {
+    if (moneda) {
       setError(""); 
     }
   };
 
   useEffect(() => {
-    if (type && selectedMoneda) {
+    if (selectedMoneda) {
       setError(""); 
     }
-  }, [type, selectedMoneda, setError]);
+  }, [selectedMoneda, setError]);
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
@@ -49,8 +48,8 @@ const ModalSelection = ({ openCreateModal, closeSelectionModal, setSelectedMoned
               id="individual-pesos"
               name="moneda-individual"
               value="Pesos"
-              checked={selectedMoneda === "Pesos" && type === "Individual y Con Consentimiento"}
-              onChange={() => handleSelection("Individual y Con Consentimiento", "Pesos")}
+              checked={selectedMoneda === "Pesos"}
+              onChange={() => handleSelection("Pesos")}
             />
             <label htmlFor="individual-pesos" className="ml-2">Pesos</label>
           </div>
@@ -60,38 +59,12 @@ const ModalSelection = ({ openCreateModal, closeSelectionModal, setSelectedMoned
               id="individual-vsmm"
               name="moneda-individual"
               value="VSMM"
-              checked={selectedMoneda === "VSMM" && type === "Individual y Con Consentimiento"}
-              onChange={() => handleSelection("Individual y Con Consentimiento", "VSMM")}
+              checked={selectedMoneda === "VSMM"}
+              onChange={() => handleSelection("VSMM")}
             />
             <label htmlFor="individual-vsmm" className="ml-2">VSMM</label>
           </div>
         </div>
-        <h3 className="text-lg font-semibold mb-2">Conyugal</h3>
-        <div className="flex space-x-12 mb-4">
-          <div className="flex items-center">
-            <input
-              type="radio"
-              id="conyugal-pesos"
-              name="moneda-conyugal"
-              value="Pesos"
-              checked={selectedMoneda === "Pesos" && type === "Conyugal"}
-              onChange={() => handleSelection("Conyugal", "Pesos")}
-            />
-            <label htmlFor="conyugal-pesos" className="ml-2">Pesos</label>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="radio"
-              id="conyugal-vsmm"
-              name="moneda-conyugal"
-              value="VSMM"
-              checked={selectedMoneda === "VSMM" && type === "Conyugal"}
-              onChange={() => handleSelection("Conyugal", "VSMM")}
-            />
-            <label htmlFor="conyugal-vsmm" className="ml-2">VSMM</label>
-          </div>
-        </div>
-
         {error && (
           <p className="text-primary mb-4 transition-opacity duration-500 ease-in-out">
             {error}

@@ -632,6 +632,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
                             rows={1}
                             readOnly={!isEscrituraFormatEditable}
+                            required
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Volumen</label>
@@ -679,6 +680,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             onBlur={handleNumeroSsBlur}
                             onChange={handleChange}
                             placeholder="Ingrese el Número"
+                            required
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
 
                         />
@@ -823,6 +825,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
                             rows={1}
                             readOnly={!isFechaFormatEditable}
+                            required
                         />
                         <label className="block text-sm font-medium text-gray-700">Adeudo Formateado</label>
                         <textarea
@@ -832,6 +835,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
                             rows={1}
                             readOnly={!isAdeudoFormatEditable}
+                            required
                         />
                         <label className="block text-sm font-medium text-gray-700">Código Postal</label>
                         <input
@@ -868,6 +872,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
                             rows={1}
                             readOnly={!isFechaRequerimientoFormatEditable}
+                            required
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Folio</label>
@@ -879,7 +884,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             onChange={handleChange}
                             placeholder="Ingrese el Folio"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-
+                            required
                         />
                         {errorFolio && (
                             <p className="text-primary text-xs -mt-2">{errorFolio}</p>
@@ -907,6 +912,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
                             rows={1}
                             readOnly={!isFechaEscrituraFormatEditable}
+                            required
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Seccion</label>
@@ -939,6 +945,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             name="mes_primer_adeudo"
                             value={formValues.mes_primer_adeudo}
                             onChange={handleChange}
+                            required
                             placeholder="Mes Primer Adeudo"
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                         />
@@ -999,7 +1006,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                                     type="number"
                                     name="adeudo_pesos"
                                     value={formValues.adeudo_pesos}
-
+                                    required
                                     placeholder="Ingrese el Adeudo en Pesos"
                                     onChange={handleChange}
                                     className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
@@ -1066,6 +1073,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-1 resize-y"
                             rows={1}
                             readOnly={!isMontoFormatEditable}
+                            required
                         />
 
                         <label className="block text-sm font-medium text-gray-700">Mes del Ultimo Adeudo</label>
@@ -1075,6 +1083,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                             value={formValues.mes_ultimo_adeudo}
                             onChange={handleChange}
                             placeholder="Mes del Ultimo Adeudo"
+                            required
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                         />
 
@@ -1141,6 +1150,7 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                                     className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y"
                                     rows={1}
                                     readOnly={!isAdeudoPesosFormatEditable}
+                                    required
                                 />
                             </>
                         )}

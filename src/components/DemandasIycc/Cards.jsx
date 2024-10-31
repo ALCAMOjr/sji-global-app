@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { Card } from "flowbite-react";
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
@@ -45,7 +45,7 @@ const formatMonthYear = (fecha) => {
     return `${meses[parseInt(month, 10) - 1]} del ${year}`;
 };
 
-const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, totalPages, onPageChange,setOpenMenuIndex, setIsOpen, currentPage,}) => {
+const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, totalPages, onPageChange, setOpenMenuIndex, setIsOpen, currentPage, }) => {
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -106,7 +106,7 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                             >
                                                 Eliminar Demanda
                                             </a>
-                                            
+
                                         </li>
 
                                         <li className="flex items-center">
@@ -118,7 +118,7 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                             >
                                                 Descargar Demanda
                                             </a>
-                                            
+
                                         </li>
                                     </ul>
                                 </div>
@@ -133,13 +133,23 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 <p className="text-sm font-medium text-gray-500 dark:text-white"><span className="text-black font-bold">Demandado/Demanda:</span> {demanda.categoria}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura:</span> {demanda.escritura}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Escritura Formateada:</span> {demanda.escritura_ft}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Escritura:</span> {demanda.fecha_escritura_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Escritura:</span>  {new Date(demanda.fecha_escritura).toLocaleDateString({
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric'
+                                                })}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Escritura Formateada:</span> {demanda.fecha_escritura_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Inscripción:</span> {demanda.inscripcion}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Volumen:</span> {demanda.volumen}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Libro:</span> {demanda.libro}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Sección:</span> {demanda.seccion}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Unidad:</span> {demanda.unidad}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha:</span> {demanda.fecha_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha:</span>  {new Date(demanda.fecha).toLocaleDateString({
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric'
+                                                })}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Formateada:</span> {demanda.fecha_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Monto Otorgado:</span> {demanda.monto_otorgado_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Primer Adeudo:</span> {formatMonthYear(demanda.mes_primer_adeudo)}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Mes Último Adeudo:</span>   {formatMonthYear(demanda.mes_ultimo_adeudo)}</p>
@@ -155,7 +165,12 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Interés Moratorio:</span> {demanda.interes_moratorio}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Juzgado:</span> {demanda.juzgado}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Hora Requerimiento:</span> {demanda.hora_requerimiento}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Requerimiento:</span> {demanda.fecha_requerimiento_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Requerimiento:</span>   {new Date(demanda.fecha_requerimiento).toLocaleDateString({
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric'
+                                                })}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Requerimiento Formateada:</span> {demanda.fecha_requerimiento_ft}</p>
                                             </div>
                                         </div>
                                     </li>

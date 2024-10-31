@@ -290,7 +290,7 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.escritura}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.escritura_ft}</TableCell>
                 <TableCell className="max-w-xs truncate">
-                    {new Date(demanda.fecha_escritura).toLocaleDateString('es-MX', {
+                    {new Date(demanda.fecha_escritura).toLocaleDateString({
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric'
@@ -306,7 +306,7 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.numero_ss}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.folio}</TableCell>
                 <TableCell className="max-w-xs truncate">
-                    {new Date(demanda.fecha).toLocaleDateString('es-MX', {
+                    {new Date(demanda.fecha).toLocaleDateString({
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric'
@@ -337,7 +337,7 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.juzgado}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.hora_requerimiento}</TableCell>
                 <TableCell className="max-w-xs truncate">
-                    {new Date(demanda.fecha_requerimiento).toLocaleDateString('es-MX', {
+                    {new Date(demanda.fecha_requerimiento).toLocaleDateString({
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric'

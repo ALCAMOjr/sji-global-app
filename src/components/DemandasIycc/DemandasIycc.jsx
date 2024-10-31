@@ -350,14 +350,13 @@ const DemandasIycc = () => {
     setisLoadingDemandas(false);
   };
 
-  if (loading || isLoadingDemandas || loadingmunicipiosNL || loadingStates) return (
+  if (loading || isLoadingDemandas) return (
     <div className="fixed inset-0 flex items-center justify-center">
       <Spinner className="h-10 w-10 transform translate-x-0 lg:translate-x-28 xl:translate-x-32" color="primary" />
     </div>
   );
 
-  if (errorMunicipiosNL) return <Error message={errorMunicipiosNL.message} />;
-  if (errorStates) return <Error message={errorStates.message} />;
+
   if (error) return <Error message={error.message} />;
 
 
@@ -404,8 +403,7 @@ const DemandasIycc = () => {
             setFormValues={setFormValues}
             handleCreate={handleCreateDemanda}
             isCreatingDemanda={isCreatingDemanda}
-            municipiosNL={municipiosNL}
-            estados={states}
+
           />
         )}
       </>

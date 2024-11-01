@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getMunicipioNL } from '../../views/copomex/getMunicipioNL.js';
 import { getStates } from '../../views/copomex/getStates.js';
 
@@ -9,8 +9,11 @@ export default function useCopomex() {
   const [states, setStates] = useState([]);
   const [loadingStates, setLoadingStates] = useState(true);
   const [errorStates, setErrorStates] = useState(null);
+  const hasFetchedData = useRef(false);
 
   useEffect(() => {
+    if (hasFetchedData.current) return; 
+    hasFetchedData.current = true; 
     const fetchMunicipiosNL = async () => {
       try {
         const data = await getMunicipioNL();

@@ -17,7 +17,6 @@ export async function updateDemanda({ credito, demandaData, token }) {
         if (response.status !== 200) {
             throw new Error('Response is NOT ok');
         }
-
         return response.data;
 
     } catch (error) {
@@ -44,6 +43,32 @@ export async function deleteDemanda({numero, token}) {
 
     } catch (error) {
         console.error("Error deleting the demanda:", error);
+        throw error;
+    }
+}
+
+
+export async function getDemandaPdf({ credito, token }) {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/pdf"
+            },
+            responseType: 'arraybuffer'  
+        };
+
+        const response = await axios.get(`${baseUrl}/${credito}/pdf`, config);
+
+        if (response.status !== 200) {
+            throw new Error('Response is NOT ok');
+        }
+
+        return response.data;  
+
+    } catch (error) {
+        console.error("Error fetching the PDF:", error);
         throw error;
     }
 }

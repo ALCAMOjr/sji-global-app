@@ -430,6 +430,7 @@ const Expedientes = () => {
         });
         setisModalOpenUpdate(true);
         setOpenMenuIndex(null);
+        setIsOpen([]);
     };
 
     const closeModalUpdate = () => {
@@ -498,6 +499,7 @@ const Expedientes = () => {
         });
         setisModalOpenDelete(true);
         setOpenMenuIndex(null);
+        setIsOpen([]);
     };
 
     const closeModalDelete = () => {

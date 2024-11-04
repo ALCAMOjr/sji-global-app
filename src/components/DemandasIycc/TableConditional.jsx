@@ -16,6 +16,7 @@ const TableConditional = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
+    handleDownloadingDemanda,
     menuDirection,
     setOpenMenuIndex,
     setIsOpen
@@ -56,6 +57,7 @@ const TableConditional = ({
         openMenuIndex={openMenuIndex}
         openModalUpdate={openModalUpdate}
         openModalDelete={openModalDelete}
+        handleDownloadingDemanda={handleDownloadingDemanda}
         menuDirection={menuDirection}
         setOpenMenuIndex={setOpenMenuIndex}
         setIsOpen={setIsOpen}

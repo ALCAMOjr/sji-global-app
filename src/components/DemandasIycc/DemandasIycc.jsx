@@ -9,16 +9,28 @@ import check from "../../assets/check.png";
 import { Spinner } from "@nextui-org/react";
 import ModalSelection from "./SelectionModal.jsx";
 import CreateModal from "./CreateModal.jsx";
-import useCopomex from "../../hooks/compomex/UseCopomex.jsx";
 import Error from "../Error.jsx";
 import TableConditional from "./TableConditional.jsx";
 import getAllDemandas from "../../views/demandasIycc/getAllDemandas.js";
 import Context from "../../context/abogados.context.jsx";
 import { toast } from "react-toastify";
 import getDemandaByCredito from "../../views/demandasIycc/getDemandaByCredito.js";
+import ModalDelete from "./ModalDelete.jsx";
+import ModalUpdate from "./ModalUpdate.jsx";
+import { getDemandaPdf } from "../../views/demandasIycc/optional.js";
+import { saveAs } from 'file-saver';  
+
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const DemandasIycc = () => {
-  const { demandas, loading, error, setDemandas, createNewDemanda } = useDemandasIycc();
+  const { demandas, loading, error, setDemandas, createNewDemanda, deleteDemandaByCredito, updateDemandaByCredito } = useDemandasIycc();
   const [isCreatingDemanda, setIsCreatingDemanda] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -39,7 +51,11 @@ const DemandasIycc = () => {
   const isDesktopOrLaptop = useMediaQuery({ minWidth: 1200 });
   const [selectedMoneda, setSelectedMoneda] = useState("");
   const [ isModalOpen, setIsModalOpen] = useState(false);
-  const { municipiosNL, loadingmunicipiosNL, errorMunicipiosNL, states, errorStates, loadingStates } = useCopomex()
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [selectedDemanda, setSelectedDemanda] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showModalUpdate, setShowModalUpdate] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { jwt } = useContext(Context);
   const [formValues, setFormValues] = useState({
     credito: "",
@@ -226,15 +242,148 @@ const DemandasIycc = () => {
     }
   };
 
+  const handleDownloadingDemanda = async (credito) => {
+    setOpenMenuIndex(null);
+    setIsOpen([]);
+    try {
+        const pdfBuffer = await getDemandaPdf({ credito, token: jwt });
+        
+        const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+        saveAs(blob, `demanda_${credito}.pdf`); 
+        toast.info('PDF descargado correctamente', {
+            icon: () => <img src={check} alt="Success Icon" />,
+            progressStyle: {
+                background: '#1D4ED8',
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        if (error.response && error.response.status === 404) {
+            toast.error('El crédito ingresado no es válido o no se encontró. Intente de nuevo');
+        } else {
+            toast.error('Error al descargar el PDF. Intente de nuevo');
+        }
+    }
+};
+  
+const openModalUpdate = (demanda) => {
+    setFormValues({
+        credito: demanda.credito,
+        subtipo: demanda.subtipo,
+        acreditado: demanda.acreditado,
+        categoria: demanda.categoria,
+        escritura: demanda.escritura,
+        escritura_ft: demanda.escritura_ft,
+        fecha_escritura: formatDate(demanda.fecha_escritura),
+        fecha_escritura_ft: demanda.fecha_escritura_ft,
+        inscripcion: demanda.inscripcion,
+        volumen: demanda.volumen,
+        libro: demanda.libro,
+        seccion: demanda.seccion,
+        unidad: demanda.unidad,
+        fecha: formatDate(demanda.fecha),
+        fecha_ft: demanda.fecha_ft,
+        monto_otorgado: demanda.monto_otorgado,
+        monto_otorgado_ft: demanda.monto_otorgado_ft,
+        mes_primer_adeudo: demanda.mes_primer_adeudo,
+        mes_ultimo_adeudo: demanda.mes_ultimo_adeudo,
+        adeudo: demanda.adeudo,
+        adeudo_ft: demanda.adeudo_ft,
+        adeudo_pesos: demanda.adeudo_pesos,
+        adeudo_pesos_ft: demanda.adeudo_pesos_ft,
+        calle: demanda.calle,
+        numero: demanda.numero,
+        colonia_fraccionamiento: demanda.colonia_fraccionamiento,
+        municipio: demanda.municipio,
+        estado: demanda.estado,
+        codigo_postal: demanda.codigo_postal,
+        interes_ordinario: demanda.interes_ordinario,
+        interes_moratorio: demanda.interes_moratorio,
+        juzgado: demanda.juzgado,
+        hora_requerimiento: demanda.hora_requerimiento,
+        fecha_requerimiento: formatDate(demanda.fecha_requerimiento),
+        fecha_requerimiento_ft: demanda.fecha_requerimiento_ft,
+        folio: demanda.folio ,
+        numero_ss: demanda.numero_ss
+    });
+    setShowModalUpdate(true);
+    setSelectedMoneda(demanda.subtipo);
+    setOpenMenuIndex(null);
+    setIsOpen([]);
+};
 
-  const openModalUpdate = () => {
-    console.log('Hola')
+
+  const closeModalUpdate = () => {
+    setShowModalUpdate(false);
+};
+
+const handleUpdate = async (e) => {
+  e.preventDefault();
+  setIsUpdating(true);
+
+  try {
+      const { success, error } = await updateDemandaByCredito(formValues.credito, formValues, setOriginalDemandas);
+      if (success) {
+          toast.info('Demanda actualizada correctamente', {
+              icon: () => <img src={check} alt="Success Icon" />,
+              progressStyle: {
+                  background: '#1D4ED8',
+              }
+          });
+          closeModalUpdate();
+      } else if (error === "Demanda no encontrada") {
+          toast.error('La demanda no ha sido encontrada. Intente de nuevo');
+      } else {
+          toast.error('Algo mal sucedió al actualizar la demanda. Intente de nuevo', error);
+      }
+  } catch (error) {
+      console.error(error);
+      toast.error('Algo mal sucedió al actualizar la demanda. Intente de nuevo');
+  } finally {
+      setIsUpdating(false);
   }
+};
 
   const openModalDelete = (demanda) => {
-    console.log(demanda)
-    console.log('Hola')
+    setSelectedDemanda(demanda);
+    setShowModalDelete(true);
+    setOpenMenuIndex(null);
+    setIsOpen([]);
+}
+
+const closeModalDelete = () => {
+    setSelectedDemanda(null);
+    setShowModalDelete(false);
+}
+
+
+
+const handleDelete = async () => {
+  setIsDeleting(true);
+
+  try {
+      const { success, error } = await deleteDemandaByCredito(selectedDemanda.credito, setOriginalDemandas);
+      if (success) {
+          toast.info('Se eliminó correctamente la Demanda', {
+              icon: () => <img src={check} alt="Success Icon" />,
+              progressStyle: {
+                  background: '#1D4ED8',
+              }
+          });
+      } else if (error == "Demanda no encontrada"){
+          toast.error(`La demanda no ha sido encontrada, Intente de nuevo`);
+      } else {
+          toast.error("Algo mal sucedió al eliminar la demanda. Intente de nuevo", error)
+      }
+  } catch (error) {
+      console.error(error);
+      toast.error('Algo mal sucedió al eliminar la demanda. Intente de nuevo');
+  } finally {
+      setIsDeleting(false);
+      closeModalDelete();
   }
+};
+
 
   const handleMenuToggle = (index) => {
     setOpenMenuIndex(index === openMenuIndex ? null : index);
@@ -409,10 +558,24 @@ const DemandasIycc = () => {
       </>
 
 
+      {showModalDelete && (
+                <ModalDelete
+               handleDelete={handleDelete}
+               closeModalDelete={closeModalDelete}
+               isDeleting={isDeleting}
+              />
+            )}
 
-
-
-
+           {showModalUpdate && (
+                <ModalUpdate
+               closeModal={closeModalUpdate}
+               moneda={selectedMoneda}
+               formValues={formValues}
+               setFormValues={setFormValues}
+               handleUpdate={handleUpdate}
+               isUpdatingDemanda={isUpdating}
+              />
+            )}
 
       {isDesktopOrLaptop ? (
         <div className="max-w-xs mx-auto mb-4 fixed top-28 left-1/2 transform -translate-x-1/2 z-10 -translate-y-1/2">
@@ -610,6 +773,7 @@ const DemandasIycc = () => {
           openMenuIndex={openMenuIndex}
           openModalUpdate={openModalUpdate}
           openModalDelete={openModalDelete}
+          handleDownloadingDemanda={handleDownloadingDemanda}
           menuDirection={menuDirection}
           setOpenMenuIndex={setOpenMenuIndex}
           setIsOpen={setIsOpen}

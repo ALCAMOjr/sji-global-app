@@ -36,6 +36,7 @@ const TableDemanda = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
+    handleDownloadingDemanda,
     setOpenMenuIndex,
     setIsOpen
 }) => {
@@ -195,6 +196,7 @@ const TableDemanda = ({
                                 openMenuIndex={openMenuIndex}
                                 openModalUpdate={openModalUpdate}
                                 openModalDelete={openModalDelete}
+                                handleDownloadingDemanda={handleDownloadingDemanda}
 
 
 
@@ -238,6 +240,7 @@ const Row = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
+    handleDownloadingDemanda
 }) => {
 
     const isMenuOpen = isOpen[index] !== undefined ? isOpen[index] : false;
@@ -277,7 +280,7 @@ const Row = ({
                                 </li>
                                 <li className="flex items-center">
                                     <GrDocumentPdf className="inline-block ml-8 w-6 h-6" />
-                                    <a onClick={() => openModalDelete(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Descargar Demanda</a>
+                                    <a onClick={() => handleDownloadingDemanda(demanda.credito)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Descargar Demanda</a>
                                 </li>
                             </ul>
                         </div>

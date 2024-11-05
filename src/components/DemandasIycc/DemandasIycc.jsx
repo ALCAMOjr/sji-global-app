@@ -315,6 +315,7 @@ const openModalUpdate = (demanda) => {
 
   const closeModalUpdate = () => {
     setShowModalUpdate(false);
+    resetFormValues()
 };
 
 const handleUpdate = async (e) => {

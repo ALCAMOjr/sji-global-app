@@ -680,7 +680,7 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                 ) : errorStates ? (
                     <Error message={errorStates.message} />
                 ) : (
-                    <form onSubmit={handleUpdate} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+<form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Crédito</label>
                             <input
@@ -692,7 +692,6 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 placeholder="Ingrese el crédito"
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
-                                readOnly
                             />
                             {errorCredito && (
                                 <p className="text-red-500 text-xs -mt-2">
@@ -764,91 +763,47 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 <p className="text-primary text-xs -mt-2">{errorNumeroSs}</p>
                             )}
 
+                            <label className="block text-sm font-medium text-gray-700">Tipo Asentamiento</label>
 
-                            <label className="block text-sm font-medium text-gray-700">Colonia/Fraccionamiento</label>
-                            {!isEditingColonia ? (
-                                <select
-                                    name="colonia_fraccionamiento"
-                                    value={formValues.colonia_fraccionamiento}
-                                    onChange={handleColoniaSelect}
-                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                                    required>
-                                    <option value="">Selecciona una opción</option>
-                                    {colonias.map((colonia, index) => (
-                                        <option key={index} value={colonia}>
-                                            {colonia}
-                                        </option>
-                                    ))}
-                                </select>
-                            ) : (
-                                <div className="relative w-full">
-                                    <input
-                                        type="text"
-                                        name="colonia_fraccionamiento"
-                                        value={formValues.colonia_fraccionamiento}
-                                        onChange={handleChange}
-                                        className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2 pr-10"
-                                        required
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={handleResetColonia}
-                                        className="absolute inset-y-0 right-2 flex items-center"
-                                        title="Restablecer selección"
-                                    >
-                                        <img src={trash_icon} alt="Eliminar" className="w-4 h-4 -mt-1" />
-                                    </button>
-                                </div>
-                            )}
-                            <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento</label>
-                            <input
-                                type="date"
-                                name="fecha_requerimiento"
-                                value={formValues.fecha_requerimiento}
-                                onChange={handleChange}
-                                onBlur={handleFechaRequerimientoBlur}
-                                placeholder="Fecha Requerimiento"
-                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                                required
-                            />
-                            {errorFechaRequerimiento && (
-                                <p className="text-red-500 text-xs mt-1">{errorFechaRequerimiento}</p>
-                            )}
-
-                            <label className="block text-sm font-medium text-gray-700">Juzgado</label>
                             <select
-                                name="juzgado"
-                                value={formValues.juzgado}
+                                name="tipo_asentamiento"
+                                value={formValues.tipo_asentamiento}
                                 onChange={handleChange}
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             >
-                                <option value="">Selecciona un juzgado</option>
-                                <option value="JUEZ DE LO CIVIL DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Primer Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL QUINTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Quinto Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL SEXTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Sexto Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL OCTAVO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Octavo Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL NOVENO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Noveno Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL DÉCIMO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Décimo Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="JUEZ DE LO CIVIL DEL DÉCIMO CUARTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Juez de lo Civil del Décimo Cuarto Distrito Judicial en el Estado en Turno
-                                </option>
-                                <option value="Menor Cuantía - JUEZ DE MENOR CUANTÍA DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
-                                    Menor Cuantía - Juez de Menor Cuantía del Primer Distrito Judicial en el Estado en Turno
-                                </option>
+                                <option value="" disabled hidden>Selecciona</option>
+                                <option value="Propiedad">COLONIA</option>
+                                <option value="Gravamen">FRACCIONAMIENTO</option>
                             </select>
+
+                            <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
+                            <input
+                                type="time"
+                                name="hora_requerimiento"
+                                value={formValues.hora_requerimiento}
+                                onChange={handleChange}
+                                placeholder="Hora Requerimiento"
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required
+                            />
+
+
+                            <label className="block text-sm font-medium text-gray-700">Interes Moratorio</label>
+                            <input
+                                type="number"
+                                name="interes_moratorio"
+                                value={formValues.interes_moratorio}
+                                onChange={handleChange}
+                                placeholder="Ingrese el Interes Moratorio"
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required
+                            />
+
+
+
+
+
 
                         </div>
 
@@ -929,42 +884,98 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 <p className="text-red-500 text-xs -mt-2">{errorCodigoPostal}</p>
                             )}
 
-                            <label className="block text-sm font-medium text-gray-700">Calle</label>
-                            <input
-                                type="text"
-                                name="calle"
-                                value={formValues.calle}
-                                onChange={handleChange}
-                                placeholder="Ingrese la Calle"
-                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                                required
-                            />
-
-                            <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento Formateada</label>
-                            <textarea
-                                name="fecha_requerimiento_ft"
-                                value={formValues.fecha_requerimiento_ft}
-                                onChange={isFechaRequerimientoFormatEditable ? handleChange : undefined}
-                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
-                                rows={1}
-                                readOnly={!isFechaRequerimientoFormatEditable}
-                                required
-                            />
-
-                            <label className="block text-sm font-medium text-gray-700">Folio</label>
-                            <input
-                                type="number"
-                                name="folio"
-                                value={formValues.folio}
-                                onBlur={handleFolioBlur}
-                                onChange={handleChange}
-                                placeholder="Ingrese el Folio"
-                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
-                                required
-                            />
-                            {errorFolio && (
-                                <p className="text-primary text-xs -mt-2">{errorFolio}</p>
+                            <label className="block text-sm font-medium text-gray-700">Colonia/Fraccionamiento</label>
+                            {!isEditingColonia ? (
+                                <select
+                                    name="colonia_fraccionamiento"
+                                    value={formValues.colonia_fraccionamiento}
+                                    onChange={handleColoniaSelect}
+                                    className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                    required>
+                                    <option value="">Selecciona una opción</option>
+                                    {colonias.map((colonia, index) => (
+                                        <option key={index} value={colonia}>
+                                            {colonia}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <div className="relative w-full">
+                                    <input
+                                        type="text"
+                                        name="colonia_fraccionamiento"
+                                        value={formValues.colonia_fraccionamiento}
+                                        onChange={handleChange}
+                                        className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2 pr-10"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleResetColonia}
+                                        className="absolute inset-y-0 right-2 flex items-center"
+                                        title="Restablecer selección"
+                                    >
+                                        <img src={trash_icon} alt="Eliminar" className="w-4 h-4 -mt-1" />
+                                    </button>
+                                </div>
                             )}
+
+
+                            <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento</label>
+                            <input
+                                type="date"
+                                name="fecha_requerimiento"
+                                value={formValues.fecha_requerimiento}
+                                onChange={handleChange}
+                                onBlur={handleFechaRequerimientoBlur}
+                                placeholder="Fecha Requerimiento"
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required
+                            />
+                            {errorFechaRequerimiento && (
+                                <p className="text-red-500 text-xs mt-1">{errorFechaRequerimiento}</p>
+                            )}
+
+                            <label className="block text-sm font-medium text-gray-700">Juzgado</label>
+                            <select
+                                name="juzgado"
+                                value={formValues.juzgado}
+                                onChange={handleChange}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required
+                            >
+                                <option value="">Selecciona un juzgado</option>
+                                <option value="JUEZ DE LO CIVIL DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Primer Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL QUINTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Quinto Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL SEXTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Sexto Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL OCTAVO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Octavo Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL NOVENO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Noveno Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL DÉCIMO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Décimo Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="JUEZ DE LO CIVIL DEL DÉCIMO CUARTO DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Juez de lo Civil del Décimo Cuarto Distrito Judicial en el Estado en Turno
+                                </option>
+                                <option value="Menor Cuantía - JUEZ DE MENOR CUANTÍA DEL PRIMER DISTRITO JUDICIAL EN EL ESTADO EN TURNO">
+                                    Menor Cuantía - Juez de Menor Cuantía del Primer Distrito Judicial en el Estado en Turno
+                                </option>
+                            </select>
+
+
+
+
+
+
                         </div>
 
                         <div>
@@ -1054,27 +1065,47 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 />
                             )}
 
-
-                            <label className="block text-sm font-medium text-gray-700">Número</label>
+                            <label className="block text-sm font-medium text-gray-700">Calle</label>
                             <input
-                                name="numero"
-                                value={formValues.numero}
+                                type="text"
+                                name="calle"
+                                value={formValues.calle}
                                 onChange={handleChange}
-                                placeholder="Ingrese el Número"
+                                placeholder="Ingrese la Calle"
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             />
 
-                            <label className="block text-sm font-medium text-gray-700">Interes Ordinario</label>
+
+                            <label className="block text-sm font-medium text-gray-700">Fecha Requerimiento Formateada</label>
+                            <textarea
+                                name="fecha_requerimiento_ft"
+                                value={formValues.fecha_requerimiento_ft}
+                                onChange={isFechaRequerimientoFormatEditable ? handleChange : undefined}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 resize-y "
+                                rows={1}
+                                readOnly={!isFechaRequerimientoFormatEditable}
+                                required
+                            />
+
+                            <label className="block text-sm font-medium text-gray-700">Folio</label>
                             <input
                                 type="number"
-                                name="interes_ordinario"
-                                value={formValues.interes_ordinario}
+                                name="folio"
+                                value={formValues.folio}
+                                onBlur={handleFolioBlur}
                                 onChange={handleChange}
-                                placeholder="Ingrese el Interes Ordinario"
+                                placeholder="Ingrese el Folio"
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             />
+                            {errorFolio && (
+                                <p className="text-primary text-xs -mt-2">{errorFolio}</p>
+                            )}
+
+
+
+
                             {moneda === "VSMM" && (
                                 <>
                                     <label className="block text-sm font-medium text-gray-700">Adeudo en Pesos</label>
@@ -1191,27 +1222,44 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 />
                             )}
 
-                            <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
+                            <label className="block text-sm font-medium text-gray-700">Número</label>
                             <input
-                                type="time"
-                                name="hora_requerimiento"
-                                value={formValues.hora_requerimiento}
+                                name="numero"
+                                value={formValues.numero}
                                 onChange={handleChange}
-                                placeholder="Hora Requerimiento"
+                                placeholder="Ingrese el Número"
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             />
 
-                            <label className="block text-sm font-medium text-gray-700">Interes Moratorio</label>
+
+                            <label className="block text-sm font-medium text-gray-700">Interes Ordinario</label>
                             <input
                                 type="number"
-                                name="interes_moratorio"
-                                value={formValues.interes_moratorio}
+                                name="interes_ordinario"
+                                value={formValues.interes_ordinario}
                                 onChange={handleChange}
-                                placeholder="Ingrese el Interes Moratorio"
+                                placeholder="Ingrese el Interes Ordinario"
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             />
+
+                            <label className="block text-sm font-medium text-gray-700">Juego</label>
+                            <select
+                                name="juego"
+                                value={formValues.juego}
+                                onChange={handleChange}
+                                className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
+                                required
+                            >
+                                <option value=""  hidden>Selecciona</option>
+                                <option value="Propiedad">1 juego de traslado</option>
+                                <option value="Gravamen">2 juegos de traslado</option>
+                            </select>
+
+
+
+
 
 
 
@@ -1231,6 +1279,8 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 </>
                             )}
                         </div>
+
+
 
 
                         <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-4">

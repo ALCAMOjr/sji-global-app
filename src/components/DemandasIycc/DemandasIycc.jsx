@@ -83,6 +83,7 @@ const DemandasIycc = () => {
     adeudo_pesos_ft: "",
     calle: "",
     numero: "",
+    tipo_asentamiento: "",
     colonia_fraccionamiento: "",
     municipio: "",
     estado: "",
@@ -95,12 +96,12 @@ const DemandasIycc = () => {
     fecha_requerimiento_ft: "",
     folio: "",
     numero_ss: ""
+});
 
-  });
-
-  const resetFormValues = () => {
+const resetFormValues = () => {
     setFormValues({
       credito: "",
+      subtipo: "", 
       acreditado: "",
       categoria: "",
       escritura: "",
@@ -120,8 +121,11 @@ const DemandasIycc = () => {
       mes_ultimo_adeudo: "",
       adeudo: "",
       adeudo_ft: "",
+      adeudo_pesos: "", 
+      adeudo_pesos_ft: "", 
       calle: "",
       numero: "",
+      tipo_asentamiento: "",
       colonia_fraccionamiento: "",
       municipio: "",
       estado: "",
@@ -131,9 +135,11 @@ const DemandasIycc = () => {
       juzgado: "",
       hora_requerimiento: "",
       fecha_requerimiento: "",
-      fecha_requerimiento_ft: ""
+      fecha_requerimiento_ft: "",
+      folio: "",
+      numero_ss: ""
     });
-  };
+};
 
 
   useEffect(() => {

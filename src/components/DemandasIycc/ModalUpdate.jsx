@@ -115,7 +115,7 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
         if (formValues.codigo_postal) {
             validateCodigoPostal();
         }
-    }, []); 
+    }, []);
 
     const handleChange = async (e) => {
         const { name, value } = e.target;
@@ -680,7 +680,7 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                 ) : errorStates ? (
                     <Error message={errorStates.message} />
                 ) : (
-<form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <form onSubmit={handleCreate} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Crédito</label>
                             <input
@@ -773,8 +773,8 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 required
                             >
                                 <option value="" disabled hidden>Selecciona</option>
-                                <option value="Propiedad">COLONIA</option>
-                                <option value="Gravamen">FRACCIONAMIENTO</option>
+                                <option value="COLONIA">COLONIA</option>
+                                <option value="FRACCIONAMIENTO">FRACCIONAMIENTO</option>
                             </select>
 
                             <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
@@ -1252,9 +1252,9 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                                 className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-primary w-full h-11 mb-2"
                                 required
                             >
-                                <option value=""  hidden>Selecciona</option>
-                                <option value="Propiedad">1 juego de traslado</option>
-                                <option value="Gravamen">2 juegos de traslado</option>
+                                <option value="" hidden>Selecciona</option>
+                                <option value="1 juego de traslado">1 juego de traslado</option>
+                                <option value="2 juegos de traslado">2 juegos de traslado</option>
                             </select>
 
 
@@ -1309,7 +1309,7 @@ const ModalUpdate = ({ closeModal, moneda, formValues, setFormValues, handleUpda
                             </button>
                         </div>
                     </form>
-                       )}
+                )}
             </div>
         </div>
     );

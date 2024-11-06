@@ -712,8 +712,8 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                                 required
                             >
                                 <option value="" disabled hidden>Selecciona</option>
-                                <option value="Propiedad">COLONIA</option>
-                                <option value="Gravamen">FRACCIONAMIENTO</option>
+                                <option value="COLONIA">COLONIA</option>
+                                <option value="FRACCIONAMIENTO">FRACCIONAMIENTO</option>
                             </select>
 
                             <label className="block text-sm font-medium text-gray-700">Hora Requerimiento</label>
@@ -1192,8 +1192,8 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                                 required
                             >
                                 <option value=""  hidden>Selecciona</option>
-                                <option value="Propiedad">1 juego de traslado</option>
-                                <option value="Gravamen">2 juegos de traslado</option>
+                                <option value="1 juego de traslado">1 juego de traslado</option>
+                                <option value="2 juegos de traslado">2 juegos de traslado</option>
                             </select>
 
 

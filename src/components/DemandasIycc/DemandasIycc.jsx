@@ -95,7 +95,8 @@ const DemandasIycc = () => {
     fecha_requerimiento: "",
     fecha_requerimiento_ft: "",
     folio: "",
-    numero_ss: ""
+    numero_ss: "",
+    juego: ""
 });
 
 const resetFormValues = () => {
@@ -137,7 +138,8 @@ const resetFormValues = () => {
       fecha_requerimiento: "",
       fecha_requerimiento_ft: "",
       folio: "",
-      numero_ss: ""
+      numero_ss: "",
+      juego: ""
     });
 };
 

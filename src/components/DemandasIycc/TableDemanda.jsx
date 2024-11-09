@@ -126,7 +126,7 @@ const TableDemanda = ({
                                 <span className='text-sm font-bold text-black'>Monto Otorgado</span>
                             </TableCell>
                             <TableCell>
-                                <span className='text-sm font-bold text-black'>MOnto Otorgado Formatedo</span>
+                                <span className='text-sm font-bold text-black'>Monto Otorgado Formatedo</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Mes Primer Adeudo</span>
@@ -151,6 +151,9 @@ const TableDemanda = ({
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Número</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Tipo de Asentamiento</span>
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Fraccionamiento o Colonia</span>
@@ -181,6 +184,9 @@ const TableDemanda = ({
                             </TableCell>
                             <TableCell>
                                 <span className='text-sm font-bold text-black'>Fecha Requerimiento Formateada</span>
+                            </TableCell>
+                            <TableCell>
+                                <span className='text-sm font-bold text-black'>Juego</span>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -331,6 +337,7 @@ const Row = ({
                 <TableCell className="max-w-xs truncate">{demanda.adeudo_pesos_ft}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.calle}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.numero}</TableCell>
+                <TableCell className="max-w-xs truncate">{demanda.tipo_asentamiento}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.colonia_fraccionamiento}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.municipio}</TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.estado}</TableCell>
@@ -347,6 +354,7 @@ const Row = ({
                     })}
                 </TableCell>
                 <TableCell className="max-w-xs truncate">{demanda.fecha_requerimiento_ft}</TableCell>
+                <TableCell className="max-w-xs truncate">{demanda.juego}</TableCell>
             </TableRow>
         </Fragment>
     );

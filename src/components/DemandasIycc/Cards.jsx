@@ -157,6 +157,7 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Adeudo en Pesos:</span> {demanda.adeudo_pesos_ft}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Calle:</span> {demanda.calle}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Número:</span> {demanda.numero}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Tipo de Asentamiento:</span> {demanda.tipo_asentamiento}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fraccionamiento o Colonia:</span> {demanda.colonia_fraccionamiento}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Municipio:</span> {demanda.municipio}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Estado:</span> {demanda.estado}</p>
@@ -171,6 +172,8 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                     year: 'numeric'
                                                 })}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Fecha Requerimiento Formateada:</span> {demanda.fecha_requerimiento_ft}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400"><span className="text-black font-bold">Juego:</span> {demanda.juego}</p>
+                                       
                                             </div>
                                         </div>
                                     </li>

@@ -301,6 +301,7 @@ const openModalUpdate = (demanda) => {
         adeudo_pesos_ft: demanda.adeudo_pesos_ft,
         calle: demanda.calle,
         numero: demanda.numero,
+        tipo_asentamiento: demanda.tipo_asentamiento,
         colonia_fraccionamiento: demanda.colonia_fraccionamiento,
         municipio: demanda.municipio,
         estado: demanda.estado,
@@ -312,7 +313,8 @@ const openModalUpdate = (demanda) => {
         fecha_requerimiento: formatDate(demanda.fecha_requerimiento),
         fecha_requerimiento_ft: demanda.fecha_requerimiento_ft,
         folio: demanda.folio ,
-        numero_ss: demanda.numero_ss
+        numero_ss: demanda.numero_ss,
+        juego: demanda.juego
     });
     setShowModalUpdate(true);
     setSelectedMoneda(demanda.subtipo);

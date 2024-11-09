@@ -1195,13 +1195,6 @@ const CreateModal = ({ closeModal, moneda, reverse, formValues, setFormValues, h
                                 <option value="1 juego de traslado">1 juego de traslado</option>
                                 <option value="2 juegos de traslado">2 juegos de traslado</option>
                             </select>
-
-
-
-
-
-
-
                             {moneda === "VSMM" && (
                                 <>
 

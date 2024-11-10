@@ -249,88 +249,84 @@ const resetFormValues = () => {
       setIsCreatingDemanda(false);
     }
   };
-
   const handleDownloadingDemanda = async (credito) => {
     setOpenMenuIndex(null);
     setIsOpen([]);
     const toastId = toast.loading('Descargando PDF...', {
-        icon: <Spinner size="sm" />,
-        progressStyle: {
-            background: '#1D4ED8',
-        }
-    });
-    
-    try {
-        const pdfBuffer = await getDemandaPdf({ credito, token: jwt });
-        const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
-        saveAs(blob, `demanda_${credito}.pdf`); 
-        toast.update(toastId, {
-            render: 'PDF descargado correctamente',
-            type: 'info',
-            icon: <img src={check} alt="Success Icon" />,
-            progressStyle: {
-                background: '#1D4ED8',
-            },
-            isLoading: false
-        });
-    } catch (error) {
-        console.error(error);
-        if (error.response && error.response.status === 404) {
-            toast.update(toastId, {
-                render: 'El crédito ingresado no es válido o no se encontró. Intente de nuevo',
-                type: 'error',
-                isLoading: false
-            });
-        } else {
-            toast.update(toastId, {
-                render: 'Error al descargar el PDF. Intente de nuevo',
-                type: 'error',
-                isLoading: false
-            });
-        }
-    }
-};
-
-const handleDownloadingCertificate = async (credito) => {
-  setOpenMenuIndex(null);
-  setIsOpen([]);
-  const toastId = toast.loading('Descargando Certificado...', {
-    icon: <Spinner size="sm" />,
-    progressStyle: {
-      background: '#1D4ED8',
-    }
-  });
-
-  try {
-    const pdfBuffer = await getDemandaCertificate({ credito, token: jwt });
-    const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
-    saveAs(blob, `certificado_${credito}.pdf`);
-    toast.update(toastId, {
-      render: 'Certificado descargado correctamente',
-      type: 'info',
-      icon: <img src={check} alt="Success Icon" />,
+      icon: <Spinner size="sm" />,
       progressStyle: {
         background: '#1D4ED8',
-      },
-      isLoading: false
+      }
     });
-  } catch (error) {
-    console.error(error);
-    if (error.response && error.response.status === 404) {
+  
+    try {
+      const pdfBuffer = await getDemandaPdf({ credito, token: jwt });
+      const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+      saveAs(blob, `demanda_${credito}.pdf`);
       toast.update(toastId, {
-        render: 'El crédito ingresado no es válido o no se encontró. Intente de nuevo',
-        type: 'error',
-        isLoading: false
+        render: 'PDF descargado correctamente',
+        type: 'info',
+        icon: <img src={check} alt="Success Icon" />,
+        progressStyle: {
+          background: '#1D4ED8',
+        },
+        isLoading: false,
+        autoClose: 3000 
       });
-    } else {
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response && error.response.status === 404
+        ? 'El crédito ingresado no es válido o no se encontró. Intente de nuevo'
+        : 'Error al descargar el PDF. Intente de nuevo';
+  
       toast.update(toastId, {
-        render: 'Error al descargar el Certificado. Intente de nuevo',
+        render: errorMessage,
         type: 'error',
-        isLoading: false
+        isLoading: false,
+        autoClose: 5000 
       });
     }
-  }
-};
+  };
+  
+  const handleDownloadingCertificate = async (credito) => {
+    setOpenMenuIndex(null);
+    setIsOpen([]);
+    const toastId = toast.loading('Descargando Certificado...', {
+      icon: <Spinner size="sm" />,
+      progressStyle: {
+        background: '#1D4ED8',
+      }
+    });
+  
+    try {
+      const pdfBuffer = await getDemandaCertificate({ credito, token: jwt });
+      const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+      saveAs(blob, `certificado_${credito}.pdf`);
+      toast.update(toastId, {
+        render: 'Certificado descargado correctamente',
+        type: 'info',
+        icon: <img src={check} alt="Success Icon" />,
+        progressStyle: {
+          background: '#1D4ED8',
+        },
+        isLoading: false,
+        autoClose: 3000
+      });
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response && error.response.status === 404
+        ? 'El crédito ingresado no es válido o no se encontró. Intente de nuevo'
+        : 'Error al descargar el Certificado. Intente de nuevo';
+  
+      toast.update(toastId, {
+        render: errorMessage,
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000 
+      });
+    }
+  };
+  
 
 const openModalUpdate = (demanda) => {
     setFormValues({

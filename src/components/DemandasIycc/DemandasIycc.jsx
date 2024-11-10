@@ -252,7 +252,7 @@ const resetFormValues = () => {
   const handleDownloadingDemanda = async (credito) => {
     setOpenMenuIndex(null);
     setIsOpen([]);
-    const toastId = toast.loading('Descargando PDF...', {
+    const toastId = toast.loading('Descargando Demanda...', {
       icon: <Spinner size="sm" />,
       progressStyle: {
         background: '#1D4ED8',
@@ -264,7 +264,7 @@ const resetFormValues = () => {
       const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
       saveAs(blob, `demanda_${credito}.pdf`);
       toast.update(toastId, {
-        render: 'PDF descargado correctamente',
+        render: 'Demanda descargada correctamente',
         type: 'info',
         icon: <img src={check} alt="Success Icon" />,
         progressStyle: {
@@ -277,7 +277,7 @@ const resetFormValues = () => {
       console.error(error);
       const errorMessage = error.response && error.response.status === 404
         ? 'El crédito ingresado no es válido o no se encontró. Intente de nuevo'
-        : 'Error al descargar el PDF. Intente de nuevo';
+        : 'Error al descargar la Demanda. Intente de nuevo';
   
       toast.update(toastId, {
         render: errorMessage,

@@ -45,7 +45,7 @@ const formatMonthYear = (fecha) => {
     return `${meses[parseInt(month, 10) - 1]} del ${year}`;
 };
 
-const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, handleDownloadingDemanda, totalPages, onPageChange, setOpenMenuIndex, setIsOpen, currentPage, }) => {
+const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openModalUpdate, openModalDelete, handleDownloadingDemanda, handleDownloadingCertificate, totalPages, onPageChange, setOpenMenuIndex, setIsOpen, currentPage, }) => {
 
     useEffect(() => {
         const handleDocumentClick = (event) => {
@@ -112,7 +112,7 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                         <li className="flex items-center">
                                             <TbCertificate className="inline-block ml-2" />
                                             <a
-                                                onClick={() => handleDownloadingDemanda(demanda.credito)}
+                                                onClick={() => handleDownloadingCertificate(demanda.credito)}
                                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
                                                 role="menuitem"
                                             >

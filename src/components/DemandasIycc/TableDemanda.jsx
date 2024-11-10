@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { IoTrash } from "react-icons/io5";
 import { GrUpdate } from "react-icons/gr";
 import { GrDocumentPdf } from "react-icons/gr";
-
+import { TbCertificate } from "react-icons/tb";
 import TablePagination from '@mui/material/TablePagination';
 
 const formatMonthYear = (fecha) => {
@@ -37,6 +37,7 @@ const TableDemanda = ({
     openModalUpdate,
     openModalDelete,
     handleDownloadingDemanda,
+    handleDownloadingCertificate,
     setOpenMenuIndex,
     setIsOpen
 }) => {
@@ -203,6 +204,7 @@ const TableDemanda = ({
                                 openModalUpdate={openModalUpdate}
                                 openModalDelete={openModalDelete}
                                 handleDownloadingDemanda={handleDownloadingDemanda}
+                                handleDownloadingCertificate={handleDownloadingCertificate}
 
 
 
@@ -246,7 +248,8 @@ const Row = ({
     openMenuIndex,
     openModalUpdate,
     openModalDelete,
-    handleDownloadingDemanda
+    handleDownloadingDemanda,
+    handleDownloadingCertificate
 }) => {
 
     const isMenuOpen = isOpen[index] !== undefined ? isOpen[index] : false;
@@ -285,9 +288,14 @@ const Row = ({
                                     <a onClick={() => openModalDelete(demanda)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Eliminar Demanda</a>
                                 </li>
                                 <li className="flex items-center">
+                                    <TbCertificate className="inline-block ml-8 w-7 h-7" />
+                                    <a onClick={() => handleDownloadingCertificate(demanda.credito)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Descargar Certificado</a>
+                                </li>
+                                <li className="flex items-center">
                                     <GrDocumentPdf className="inline-block ml-8 w-6 h-6" />
                                     <a onClick={() => handleDownloadingDemanda(demanda.credito)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Descargar Demanda</a>
                                 </li>
+                            
                             </ul>
                         </div>
                     )}

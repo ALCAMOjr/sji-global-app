@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import getDemandaByCredito from "../../views/demandasIycc/getDemandaByCredito.js";
 import ModalDelete from "./ModalDelete.jsx";
 import ModalUpdate from "./ModalUpdate.jsx";
-import { getDemandaPdf } from "../../views/demandasIycc/optional.js";
+import { getDemandaPdf, getDemandaCertificate } from "../../views/demandasIycc/optional.js";
 import { saveAs } from 'file-saver';  
 
 const formatDate = (dateString) => {
@@ -274,6 +274,31 @@ const resetFormValues = () => {
     }
 };
   
+
+const handleDownloadingCertificate = async (credito) => {
+  setOpenMenuIndex(null);
+  setIsOpen([]);
+  try {
+      const pdfBuffer = await getDemandaCertificate({ credito, token: jwt });
+      
+      const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+      saveAs(blob, `certificado_${credito}.pdf`); 
+      toast.info('Certificado descargado correctamente', {
+          icon: () => <img src={check} alt="Success Icon" />,
+          progressStyle: {
+              background: '#1D4ED8',
+          }
+      });
+  } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status === 404) {
+          toast.error('El crédito ingresado no es válido o no se encontró. Intente de nuevo');
+      } else {
+          toast.error('Error al descargar el Certificado. Intente de nuevo');
+      }
+  }
+};
+
 const openModalUpdate = (demanda) => {
     setFormValues({
         credito: demanda.credito,
@@ -785,6 +810,7 @@ const handleDelete = async () => {
           openModalUpdate={openModalUpdate}
           openModalDelete={openModalDelete}
           handleDownloadingDemanda={handleDownloadingDemanda}
+          handleDownloadingCertificate={handleDownloadingCertificate}
           menuDirection={menuDirection}
           setOpenMenuIndex={setOpenMenuIndex}
           setIsOpen={setIsOpen}

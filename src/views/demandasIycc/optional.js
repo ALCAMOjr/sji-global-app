@@ -72,3 +72,29 @@ export async function getDemandaPdf({ credito, token }) {
         throw error;
     }
 }
+
+
+export async function getDemandaCertificate({ credito, token }) {
+    try {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/pdf"
+            },
+            responseType: 'arraybuffer'  
+        };
+
+        const response = await axios.get(`${baseUrl}/${credito}/certificate`, config);
+
+        if (response.status !== 200) {
+            throw new Error('Response is NOT ok');
+        }
+
+        return response.data;  
+
+    } catch (error) {
+        console.error("Error fetching the Certificate:", error);
+        throw error;
+    }
+}

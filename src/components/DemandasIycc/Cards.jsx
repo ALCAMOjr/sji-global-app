@@ -5,7 +5,7 @@ import { GrUpdate } from "react-icons/gr";
 import { GrDocumentPdf } from "react-icons/gr";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { Pagination } from "flowbite-react";
-
+import { TbCertificate } from "react-icons/tb";
 const customTheme = {
     pagination: {
         base: "flex overflow-x-auto justify-center",
@@ -105,6 +105,18 @@ const Cards = ({ currentDemandas, handleMenuToggle, isOpen, openMenuIndex, openM
                                                 role="menuitem"
                                             >
                                                 Eliminar Demanda
+                                            </a>
+
+                                        </li>
+
+                                        <li className="flex items-center">
+                                            <TbCertificate className="inline-block ml-2" />
+                                            <a
+                                                onClick={() => handleDownloadingDemanda(demanda.credito)}
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                                                role="menuitem"
+                                            >
+                                                Descargar Certificado
                                             </a>
 
                                         </li>

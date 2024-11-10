@@ -253,26 +253,44 @@ const resetFormValues = () => {
   const handleDownloadingDemanda = async (credito) => {
     setOpenMenuIndex(null);
     setIsOpen([]);
+    const toastId = toast.loading('Descargando PDF...', {
+        icon: <Spinner size="sm" />,
+        progressStyle: {
+            background: '#1D4ED8',
+        }
+    });
+    
     try {
         const pdfBuffer = await getDemandaPdf({ credito, token: jwt });
-        
         const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
         saveAs(blob, `demanda_${credito}.pdf`); 
-        toast.info('PDF descargado correctamente', {
-            icon: () => <img src={check} alt="Success Icon" />,
+        toast.update(toastId, {
+            render: 'PDF descargado correctamente',
+            type: 'info',
+            icon: <img src={check} alt="Success Icon" />,
             progressStyle: {
                 background: '#1D4ED8',
-            }
+            },
+            isLoading: false
         });
     } catch (error) {
         console.error(error);
         if (error.response && error.response.status === 404) {
-            toast.error('El crédito ingresado no es válido o no se encontró. Intente de nuevo');
+            toast.update(toastId, {
+                render: 'El crédito ingresado no es válido o no se encontró. Intente de nuevo',
+                type: 'error',
+                isLoading: false
+            });
         } else {
-            toast.error('Error al descargar el PDF. Intente de nuevo');
+            toast.update(toastId, {
+                render: 'Error al descargar el PDF. Intente de nuevo',
+                type: 'error',
+                isLoading: false
+            });
         }
     }
 };
+
   
 const openModalUpdate = (demanda) => {
     setFormValues({

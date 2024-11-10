@@ -291,29 +291,44 @@ const resetFormValues = () => {
     }
 };
 
-  
-
 const handleDownloadingCertificate = async (credito) => {
   setOpenMenuIndex(null);
   setIsOpen([]);
+  const toastId = toast.loading('Descargando Certificado...', {
+    icon: <Spinner size="sm" />,
+    progressStyle: {
+      background: '#1D4ED8',
+    }
+  });
+
   try {
-      const pdfBuffer = await getDemandaCertificate({ credito, token: jwt });
-      
-      const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
-      saveAs(blob, `certificado_${credito}.pdf`); 
-      toast.info('Certificado descargado correctamente', {
-          icon: () => <img src={check} alt="Success Icon" />,
-          progressStyle: {
-              background: '#1D4ED8',
-          }
-      });
+    const pdfBuffer = await getDemandaCertificate({ credito, token: jwt });
+    const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+    saveAs(blob, `certificado_${credito}.pdf`);
+    toast.update(toastId, {
+      render: 'Certificado descargado correctamente',
+      type: 'info',
+      icon: <img src={check} alt="Success Icon" />,
+      progressStyle: {
+        background: '#1D4ED8',
+      },
+      isLoading: false
+    });
   } catch (error) {
-      console.error(error);
-      if (error.response && error.response.status === 404) {
-          toast.error('El crédito ingresado no es válido o no se encontró. Intente de nuevo');
-      } else {
-          toast.error('Error al descargar el Certificado. Intente de nuevo');
-      }
+    console.error(error);
+    if (error.response && error.response.status === 404) {
+      toast.update(toastId, {
+        render: 'El crédito ingresado no es válido o no se encontró. Intente de nuevo',
+        type: 'error',
+        isLoading: false
+      });
+    } else {
+      toast.update(toastId, {
+        render: 'Error al descargar el Certificado. Intente de nuevo',
+        type: 'error',
+        isLoading: false
+      });
+    }
   }
 };
 
